@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.BscMeasureDao">
+	<!-- 根据方案ID获取所有需要计算的指标 -->
+	<select id="getMeasureByProjectId" parameterType="string" resultType="BscMeasure">
+		select a.* 
+		from bsc_measure a,bsc_proj_mea_cmd b
+		where a.measure_id = b.measure_id
+			and b.project_id = #{projectId}
+		order by exe_order_id 
+	</select>
+	
+	<!-- 获取指标计算依赖的指标 -->
+	<select id="getRelaMeasure" parameterType="string" resultType="BscMeasure">
+		select a.*
+		from bsc_measure a,bsc_measure_exe b
+		where a.measure_id = b.rely_measure_id
+			and b.measure_id = #{measureId}
+	</select>
+	
+	<!-- 获取方案所有衡量指标积分公式 -->
+	<select id="getProjectMeasure" parameterType="string" resultType="map">
+		select * from bsc_proj_mea where project_id = #{projectId}
+	</select>
+</mapper>

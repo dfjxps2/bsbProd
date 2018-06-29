@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+        >
+    <!-- 用户登录session日志记录实现 -->
+    <bean id="sessionLogWriter" class="com.rx.log.SessionLogWriter">
+    	<property name="sessionLogWriterDao" ref="sessionLogWriterDao"></property>
+    	<!-- 配置web容器session失效时间(分) 应同web.xml中session-timeout配置时间一致  默认为30分钟 -->
+    	<property name="sessionInvalidTime" value="20"></property>
+    </bean>
+    
+    <!-- session日志记录DaoMapperBean -->
+    <bean id="sessionLogWriterDao" parent="abstractDao">
+    	<property name="mapperInterface" value="com.rx.log.SessionLogWriterDao"></property>
+    </bean>
+    
+    <!-- 方法日志记录Advice -->
+	<bean id="funLogAdvice" class="com.rx.log.FunctionLogAdvice">
+		<property name="sessionLogWriterDao" ref="sessionLogWriterDao"></property>
+	</bean>
+	
+	<aop:config>
+		<!-- 方法日志切入  -->
+		<aop:aspect id="functionLog" ref="funLogAdvice">
+			<aop:pointcut id="afterNeedLogFunExe" expression="@annotation(com.rx.log.annotation.FunDesc) and @annotation(com.rx.log.annotation.UseLog)" />
+			<aop:before method="writeLog" pointcut-ref="afterNeedLogFunExe"/>
+			<!-- 
+			<aop:after-returning method="writeLog" pointcut-ref="afterNeedLogFunExe" />
+			 -->
+		</aop:aspect>
+	</aop:config>
+</beans>

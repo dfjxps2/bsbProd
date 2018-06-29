@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.RoleDao">
+	<!-- 获取角色列表 -->
+	<select id="listRole" parameterType="SysRole" resultType="SysRole">
+		select 
+			* 
+		from 
+			bsc_role_info 
+		where 
+			1=1 
+		and bank_org_id = #{bank_org_id}
+		<if test="role_id != null and role_id != ''">
+			and role_id like '%${role_id}%'
+		</if>
+		<if test="role_name != null and role_name != ''">
+			and role_name like '%${role_name}%'
+		</if>
+		order by role_name
+	</select>
+	
+	<!-- 添加角色 -->
+	<insert id="addRole" parameterType="SysRole">
+		<selectKey keyProperty="role_id" order="BEFORE" resultType="string">
+			select seq_role.nextval from dual
+		</selectKey>
+		insert into bsc_role_info(role_id,role_name,bank_org_id) values(#{role_id},#{role_name},#{bank_org_id})
+	</insert>
+
+	<!-- 根据角色ID获取角色信息 -->
+	<select id="getRoleInfoById" parameterType="string" resultType="SysRole">
+		select * from bsc_role_info where role_id = #{roleID}
+	</select>
+
+	<!-- 修改角色信息 -->
+	<update id="modifyRoleInfo" parameterType="SysRole">
+		update bsc_role_info set role_name = #{role_name} where role_id = #{role_id}
+	</update>	
+
+	<!-- 删除角色 -->
+	<delete id="removeRole" parameterType="SysRole">
+		delete from bsc_role_info where role_id = #{role_id}
+	</delete>
+	
+	<!-- 删除角色对应的菜单关系 -->
+	<delete id="deleteRoleResourceRela" parameterType="SysRole">
+		delete from bsc_role_resource_rela where role_id = #{role_id}
+	</delete>
+	<!-- 删除角色对应用户 -->
+	
+	<delete id="deleteRoleUserRela" parameterType="string">
+		delete from bsc_user_role_rela where role_id = #{role_id}
+	</delete>	
+	
+	<!-- 添加角色与菜单关系 -->
+	<insert id="insertRoleResourceRela" parameterType="map">
+		insert into bsc_role_resource_rela(role_id,resource_id) values(#{role_id},#{resource_id})
+	</insert>
+	
+</mapper>

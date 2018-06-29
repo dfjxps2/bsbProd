@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+        >
+	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<!-- 加载数据库配置文件 -->
+   <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
+		<property name="locations">
+			<list>
+				<value>classpath:spring/jdbc_oracle_local.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 配置c3p0数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" >
+		<property name="driverClass">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="user">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="acquireIncrement">
+			<value>${c3p0.acquireIncrement}</value>
+		</property>
+		<property name="initialPoolSize">
+			<value>${c3p0.initialPoolSize}</value>
+		</property>
+		<property name="minPoolSize">
+			<value>${c3p0.minPoolSize}</value>
+		</property>
+		<property name="maxPoolSize">
+			<value>${c3p0.maxPoolSize}</value>
+		</property>
+		<property name="maxIdleTime">
+			<value>${c3p0.maxIdleTime}</value>
+		</property>
+		<property name="idleConnectionTestPeriod">
+			<value>${c3p0.idleConnectionTestPeriod}</value>
+		</property>
+		<property name="acquireRetryDelay">
+			<value>${c3p0.acquireRetryDelay}</value>
+		</property>
+		<property name="acquireRetryAttempts">
+			<value>${c3p0.acquireRetryAttempts}</value>
+		</property>
+	</bean>
+	
+	<!-- 配置Weblogic JNDI数据源
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" >
+		<property name="jndiName">
+			<value>JDBC_SH_OPMTEST</value>
+		</property>
+	</bean>
+	-->
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource"><ref local="dataSource"/></property>
+	</bean>
+
+	<bean id="RXJdbcManager" class="com.rx.framework.jdbc.SupportedJdbcManager">
+		<constructor-arg index="0"><ref bean="jdbcTemplate" /></constructor-arg>
+	</bean>
+	
+	<!-- mybatis 配置SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		
+		<property name="configLocation">
+			<value>classpath:mybatis/mybatis-conf.xml</value>
+		</property>
+		
+		<property name="typeAliasesPackage" value="com.rx.system.domain" />
+		
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/rx/system/dao/mapper/*.xml</value>
+				<value>classpath:com/rx/log/*.xml</value>
+				<value>classpath:com/rx/system/bsc/dao/mapper/*.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="abstractDao" class="org.mybatis.spring.mapper.MapperFactoryBean" abstract="true">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- ***************************  Action *********************************** -->
+	<bean id="loginAction" class="com.rx.system.action.LoginAction" scope="prototype">
+		<property name="userService" ref="userService"></property>
+		<property name="store" ref="dataStore"></property>
+		<property name="logWriter" ref="sessionLogWriter"></property>
+	</bean>
+	
+	<bean id="userAction" class="com.rx.system.action.UserAction" scope="prototype">
+		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	<!-- <bean id="skipAction" class="com.rx.system.action.SkipAction" scope="prototype"></bean> -->
+	<!-- selectorAction -->
+	<bean id="selectorAction" class="com.rx.system.action.SelectorAction" scope="prototype">
+		<property name="selectorService" ref="selectorService"></property>
+		<property name="dataStore" ref="dataStore"></property>
+	</bean>
+	
+	<!-- 系统菜单Action -->
+	<bean id="resourceAction" class="com.rx.system.action.ResourceAction" scope="prototype">
+		<property name="resourceService" ref="resourceService"></property>
+		<property name="store" ref="dataStore"></property>
+	</bean>
+	
+	<!-- 角色维护Action -->
+	<bean id="roleAction" class="com.rx.system.action.RoleAction" scope="prototype">
+		<property name="roleService" ref="roleService"></property>
+	</bean>
+	
+	<!-- 平衡计分卡考核指标维护Action -->
+	<bean id="bscCtrlMeasureAction" class="com.rx.system.bsc.action.BscCtrlMeasureAction" scope="prototype">
+		<property name="bscMeasureCtrlService" ref="bscMeasureCtrlService"></property>
+	</bean>
+	
+	<!-- 平衡计分卡考核方案执行Action -->
+	<bean id="bscProjectExecuteAction" class="com.rx.system.bsc.action.BscProcedureExecuteAction" scope="prototype">
+		<property name="measureService" ref="bscMeasureService"></property>
+		<property name="dataSourceService" ref="dataSourceConfigService"></property>
+		<property name="bscProjectService" ref="bscProjectService"></property>
+		<property name="jdbcManager" ref="RXJdbcManager" />
+	</bean>
+	
+	<!-- 平衡计分卡结果查询Action -->
+	<bean id="bscResultAction" class="com.rx.system.bsc.action.BscResultAction" scope="prototype">
+		<property name="bscResultService" ref="bscResultService"></property>
+		<property name="selectorService" ref="selectorService"></property>
+		<property name="jdbcManager" ref="RXJdbcManager"></property>
+	</bean>
+	
+	<!-- 平衡计分卡方案定义Action -->
+	<bean id="bscProjectAction" class="com.rx.system.bsc.action.BscProjectAction" scope="prototype">
+		<property name="bscProjectService" ref="bscProjectService"></property>
+	</bean>
+	
+	<!-- 新的指标维护Action -->
+	<bean id="privateMeasureAction" class="com.rx.system.bsc.action.PrivateMeasureAction" scope="prototype">
+		<property name="privateMeasureService" ref="privateMeasureService"></property>
+	</bean>
+	<bean id="publicMeasureAction" class="com.rx.system.bsc.action.PublicMeasureAction" scope="prototype">
+		<property name="publicMeasureService" ref="publicMeasureService"></property>
+		<property name="parameterService" ref="bscParameterService"></property>
+	</bean>
+	<bean id="enteringMeasureAction" class="com.rx.system.bsc.action.EnteringMeasureAction" scope="prototype">
+		<property name="enteringMeasureService" ref="enteringMeasureService"></property>
+	</bean>
+	
+	<!-- new 数据源配置action -->
+	<bean id="dataSourceConfigAction" class="com.rx.system.bsc.action.DataSourceConfigAction" scope="prototype">
+		<property name="dataSourceConfigService" ref="dataSourceConfigService"></property>
+	</bean>
+	
+	<!-- bsc数据源字段维护Action -->
+	<bean id="dimLinkAction" class="com.rx.system.bsc.action.DimLinkAction" scope="prototype">
+		<property name="dimLinkService" ref="dimLinkService"></property>
+	</bean>	
+	
+	<!-- 考核方案Action -->
+	<bean id="measureAnalysisAction" class="com.rx.system.bsc.action.MeasureAnalysisAjax" scope="prototype">
+		<property name="measureAnalysisService" ref="measureAnalysisService"></property>
+	</bean>		
+	
+	<!-- 考核参数Action -->
+	<bean id="bscParameterAction" class="com.rx.system.bsc.action.ParameterAction" scope="prototype">
+		<property name="bscParameterService" ref="bscParameterService"></property>
+	</bean>	
+
+	
+	<!-- 考核结果直接由外部导入的指标action -->
+	<bean id="projMeaImpAction" class="com.rx.system.bsc.action.ProjMeaImpAction" scope="prototype">
+		<property name="projMeaImpService" ref="projMeaImpService"></property>
+		<property name="bscMeasureService" ref="bscMeasureService"></property>
+	</bean>	
+	
+	<!-- 权重维护action -->
+	<bean id="scoreWeightAction" class="com.rx.system.bsc.action.ScoreWeightAction" scope="prototype">
+		<property name="scoreWeightService" ref="scoreWeightService"></property>
+	</bean>
+	
+	<!-- 评定结果action -->
+	<bean id="assessResultAction" class="com.rx.system.bsc.action.AssessResultAction" scope="prototype">
+		<property name="assessResultService" ref="assessResultService"></property>
+	</bean>
+	
+	<!-- BSC测算发布action -->
+	<bean id="bSCCalcPblshAction" class="com.rx.system.bsc.action.BSCCalcPblshAction" scope="prototype">
+		<property name="bSCCalcPblshService" ref="bSCCalcPblshService"></property>
+	</bean>
+	
+	<!-- 计分卡结果action -->
+	<bean id="bscCardAction" class="com.rx.system.bsc.action.BscCardAction" scope="prototype">
+		<property name="bscCardService" ref="bscCardService"></property>
+		<property name="selectorService" ref="selectorService"></property>
+		<property name="jdbcManager" ref="RXJdbcManager"></property>
+	</bean>
+	
+	<!-- 方案分析Action -->
+	<bean id="projectAnalyseAction" class="com.rx.system.bsc.action.ProjectAnalyseAcion" scope="prototype">
+		<property name="projectAnalyseService" ref="projectAnalyseService"></property>
+	</bean>
+	
+	<!-- 初始页 -->
+	<bean id="initAction" class="com.rx.system.action.InitAction" scope="prototype">
+		<property name="initService" ref="initService"></property>
+	</bean>
+	
+	<!-- 日志前端页面调用 -->
+	<bean id="logAction" class="com.rx.system.action.LogAction" scope="prototype">
+		<property name="logService" ref="logService"></property>
+	</bean>
+	
+	<!-- 日志模块 -->
+	<bean id="logModuleAction" class="com.rx.system.action.LogModuleAction" scope="prototype">
+		<property name="logModuleService" ref="logModuleService"></property>
+	</bean>
+	<!-- ***************************  Service *********************************** -->
+	<bean id="baseService" class="com.rx.system.base.BaseService" abstract="true">
+		<property name="jdbcManager" ref="RXJdbcManager"></property>
+	</bean>
+	
+	<bean id="selectorService" class="com.rx.system.service.impl.SelectorServiceImpl" parent="baseService"></bean>
+	
+	<bean id="userService" class="com.rx.system.service.impl.UserServiceImpl" parent="baseService">
+		<property name="userDao" ref="userDao" />
+	</bean>
+	
+	<bean id="resourceService" class="com.rx.system.service.impl.ResourceServiceImpl" parent="baseService">
+		<property name="resourceDao" ref="resourceDao"></property>
+		<property name="dataStore" ref="dataStore"></property>
+	</bean>
+	
+	<bean id="roleService" class="com.rx.system.service.impl.RoleServiceImpl" parent="baseService">
+		<property name="roleDao" ref="roleDao"></property>
+	</bean>
+	
+	<bean id="bscMeasureCtrlService" class="com.rx.system.bsc.service.impl.BscMeasureCtrlServiceImpl" parent="baseService">
+		<property name="bscCtrlMeasureDao" ref="bscCtrlMeasureDao"></property>
+	</bean>
+	
+	<bean id="bscMeasureService" class="com.rx.system.bsc.service.impl.BscMeasureServiceImpl" parent="baseService">
+		<property name="bscMeasureDao" ref="bscMeasureDao"></property>
+	</bean>
+	
+	<bean id="bscResultService" class="com.rx.system.bsc.service.impl.BscResultServiceImpl" parent="baseService">
+		<property name="bscResultDao" ref="bscResultDao"></property>
+	</bean>
+	
+	<!--平衡计分卡方案定义Service-->
+	<bean id="bscProjectService" class="com.rx.system.bsc.service.impl.BscProjectServiceImpl" parent="baseService">
+		<property name="bscProjectDao" ref="bscProjectDao"></property>
+	</bean>
+	
+	<bean id="privateMeasureService" class="com.rx.system.bsc.service.impl.PrivateMeasureServiceImpl" parent="baseService">
+		<property name="privateMeasureDao" ref="privateMeasureDao"></property>
+	</bean>
+	
+	<bean id="publicMeasureService" class="com.rx.system.bsc.service.impl.PublicMeasureServiceImpl" parent="baseService">
+		<property name="publicMeasureDao" ref="publicMeasureDao"></property>
+	</bean>
+	<bean id="enteringMeasureService" class="com.rx.system.bsc.service.impl.EnteringMeasureServiceImpl" parent="baseService">
+		<property name="enteringMeasureDao" ref="enteringMeasureDao"></property>
+	</bean>
+	
+	<!-- new 数据源配置service -->
+	<bean id="dataSourceConfigService" class="com.rx.system.bsc.service.impl.DataSourceConfigServiceImpl" parent="baseService">
+		<property name="dataSourceConfigDao" ref="dataSourceConfigDao"></property>
+	</bean>
+	
+	<bean id="dimLinkService" class="com.rx.system.bsc.service.impl.DimLinkServiceImpl" parent="baseService">
+		<property name="dimLinkDao" ref="dimLinkDao"></property>
+	</bean>
+	
+	<bean id="measureAnalysisService" class="com.rx.system.bsc.service.impl.MeasureAnalysisServiceImpl" parent="baseService">
+		<property name="measureAnalysisDao" ref="measureAnalysisDao"></property>
+	</bean>	
+	
+	<bean id="bscParameterService" class="com.rx.system.bsc.service.impl.ParameterServiceImpl" parent="baseService">
+		<property name="bscParameterDao" ref="bscParameterDao"></property>
+	</bean>
+	
+	<!-- 考核结果直接由外部导入的指标service -->
+	<bean id="projMeaImpService" class="com.rx.system.bsc.service.impl.ProjMeaImpServiceImpl" parent="baseService">
+		<property name="projMeaImpDao" ref="projMeaImpDao"></property>
+	</bean>
+	
+	<!-- 权重维护service -->
+	<bean id="scoreWeightService" class="com.rx.system.bsc.service.impl.ScoreWeightServiceImpl" parent="baseService">
+		<property name="scoreWeightDao" ref="scoreWeightDao"></property>
+	</bean>
+	
+	<bean id="bscCardService" class="com.rx.system.bsc.service.impl.BscCardServiceImpl" parent="baseService">
+		<property name="bscCardDao" ref="bscCardDao"></property>
+	</bean>	
+	
+	<!-- 评定结果service -->
+	<bean id="assessResultService" class="com.rx.system.bsc.service.impl.AssessResultServiceImpl" parent="baseService">
+		<property name="assessResultDao" ref="assessResultDao"></property>
+	</bean>	
+	
+	<!-- BSC测算发布service -->
+	<bean id="bSCCalcPblshService" class="com.rx.system.bsc.service.impl.BSCCalcPblshServiceImpl" parent="baseService">
+		<property name="bSCCalcPblshDao" ref="bSCCalcPblshDao"></property>
+	</bean>
+	
+	<!-- BSC测算发布service -->
+	<bean id="projectAnalyseService" class="com.rx.system.bsc.service.impl.ProjectAnalyseServiceImple" parent="baseService">
+		<property name="projectAnalyseDao" ref="projectAnalyseDao"></property>
+	</bean>
+	
+	<bean id="initService" class="com.rx.system.service.impl.InitServiceImpl" parent="baseService">
+		<property name="initDao" ref="initDao"></property>
+	</bean>	
+	
+	<bean id="logService" class="com.rx.system.service.impl.LogServiceImpl" parent="baseService">
+		<property name="logDao" ref="logDao"></property>
+	</bean>
+	
+	<bean id="logModuleService" class="com.rx.system.service.impl.LogModuleServiceImpl" parent="baseService">
+		<property name="logModuleDao" ref="logModuleDao"></property>
+	</bean>
+	
+	<!-- ***************************  Dao *********************************** -->
+	<bean id="userDao"  parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.UserDao" />
+	</bean>
+	
+	<bean id="storeDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.StoreDao" />
+	</bean>
+	
+	<bean id="resourceDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.ResourceDao" />
+	</bean>
+	
+	<bean id="roleDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.RoleDao"></property>
+	</bean>
+	
+	<bean id="bscCtrlMeasureDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BscCtrlMeasureDao"></property>
+	</bean>
+	
+	<bean id="bscMeasureDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BscMeasureDao"></property>
+	</bean>
+	
+	<bean id="bscResultDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BscResultDao"></property>
+	</bean>
+	
+	<!-- 平衡计分卡方案定义Dao -->
+	<bean id="bscProjectDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BscProjectDao"></property>
+	</bean>
+	
+	<bean id="privateMeasureDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.PrivateMeasureDao"></property>
+	</bean>
+	
+	<bean id="publicMeasureDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.PublicMeasureDao"></property>
+	</bean>	
+	<bean id="enteringMeasureDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.EnteringMeasureDao"></property>
+	</bean>
+	
+	<!-- new 数据源配置dao -->
+	<bean id="dataSourceConfigDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.DataSourceConfigDao"></property>
+	</bean>
+	
+	<bean id="dimLinkDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.DimLinkDao"></property>
+	</bean>	
+	
+	<bean id="measureAnalysisDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.MeasureAnalysisDao"></property>
+	</bean>
+	
+	<bean id="bscParameterDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.ParameterDao"></property>
+	</bean>		
+
+	<!-- 考核结果直接由外部导入的指标dao -->
+	<bean id="projMeaImpDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.ProjMeaImpDao"></property>
+	</bean>
+	
+	<!-- 权重维护dao -->
+	<bean id="scoreWeightDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.ScoreWeightDao"></property>
+	</bean>	
+	
+	<!-- 评定结果dao -->
+	<bean id="assessResultDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.AssessResultDao"></property>
+	</bean>	
+	
+	<!-- BSC测算发布dao -->
+	<bean id="bSCCalcPblshDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BSCCalcPblshDao"></property>
+	</bean>
+	
+	<!-- 计分卡dao -->
+	<bean id="bscCardDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.BscCardDao"></property>
+	</bean>
+		
+	<!-- 方案分析dao -->
+	<bean id="projectAnalyseDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.bsc.dao.ProjectAnalyseDao"></property>
+	</bean>	
+		
+	<!-- 初始页查询dao -->
+	<bean id="initDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.InitDao"></property>
+	</bean>	
+	
+	<bean id="logDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.LogDao"></property>
+	</bean>
+	
+	<bean id="logModuleDao" parent="abstractDao">
+		<property name="mapperInterface" value="com.rx.system.dao.LogModuleDao"></property>
+	</bean>
+	
+	<import resource="applicationContext-transaction.xml"/>
+	
+	<import resource="applicationContext-log.xml"/>	
+	<import resource="applicationContext-cache.xml"/>	
+	
+</beans>

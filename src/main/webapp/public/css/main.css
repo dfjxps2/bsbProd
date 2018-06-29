@@ -1,0 +1,59 @@
+.north_layout {
+	width: 100%;
+	height: 51px;
+	overflow: hidden;
+	border: 0px;
+	scroll: no;
+}
+
+.banner_frame {
+	width: 100%;
+	height: 51px;
+	overflow: hidden border:  0px;
+	scroll: no;
+	background: #551f0a;
+	padding: 0px;
+}
+
+.menu_title_l {
+	background-image: url("../images/main/menu_title_l.png");
+	height: 34px;
+	width: 100%;
+	background-repeat: no-repeat;
+	padding-right: 10px;
+	background-position: 100% 0%;
+}
+
+.menu_title_r {
+	background-image: url("../images/main/menu_title_r.png");
+	height: 34px;
+	width: 100%;
+	background-repeat: no-repeat;
+	padding-left: 10px;
+	background-position: 0% 0%
+}
+
+.menu_title_c {
+	background-image: url("../images/main/menu_title_c.png");
+	height: 34px;
+	width: 100%;
+	background-repeat: repeat-x;
+	text-align: center;
+	font-weight: bold;
+	line-height: 34px;
+	font-size: 14px;
+}
+
+.center_layout {
+	width: 100%;
+	background-color: white;
+	overflow: auto;
+	border: 0px
+}
+
+#menu_parent {
+	position: absolute;
+	height: 100%;
+	background-image: url("../images/main/menu-bg.png");
+	border-left: solid 1px #551f0a;
+}

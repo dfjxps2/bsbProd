@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.AssessResultDao">
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+			<![CDATA[
+				) m
+				where rownum <= #{endrow}
+			)
+			where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 方案列表 -->
+	<select id="listProject" parameterType="map" resultType="map">
+		select *
+		  from bsc_project t
+		 where 1=1 
+		   and t.record_status = 'A'
+		   and t.owner_org_id = #{owner_id}
+		   and t.obj_cate_id = 'OG'
+		<if test="searchKey != null and searchKey != ''">
+		   and project_name like '%${searchKey}%'
+		</if>
+		 order by project_name 
+	</select>
+	
+	<!-- 结果列表 -->
+	<select id="listResults" parameterType="map" resultType="map">
+		<include refid="pageDataHeader"/>
+		select t.*, a.object_name
+		  from bsc_proj_obj_score t, bsc_proj_obj_h a
+		 where t.object_id = a.object_id
+		   and t.project_id = a.project_id
+		   and t.project_id = #{project_id}
+		   and t.month_id = #{month_id}
+		   and a.project_id = #{project_id}
+		   and #{query_date} between a.begin_date and a.end_date
+		   and a.year_id = #{year_id} 
+		   <if test="results_search !=null and results_search != ''">
+		   and (t.object_id like '%${results_search}%' or a.object_name like '%${results_search}%')
+		   </if>
+		 order by t.score desc
+		 <include refid="pageDataEnd"/>
+	</select>
+	
+	<update id="modifyAssessRank" parameterType="hashMap">
+		 update bsc_proj_obj_score t
+			set t.adj_proj_rank_id = #{new_rank_id}, 
+				t.adj_reason = #{new_rank_reason}
+	      where t.project_id = #{project_id}
+			and t.object_id = #{object_id}
+			and t.month_id = #{month_id}
+	</update>
+	
+	<!-- 等级下拉框数据 -->
+	<select id="queryRsltStat" parameterType="map" resultType="map">
+		select t.proj_rank_id , t.score_low
+		from bsc_proj_rslt_stat_h t
+		where t.project_id = #{project_id}
+		and #{query_date} between t.begin_date and t.end_date
+		and t.year_id = #{year_id} 
+		order by t.score_low desc
+	</select>
+	
+	<select id="listResultsCount" parameterType="map" resultType="int">
+		<include refid="totalCountHeader"/>
+		select 
+			t.*, 
+			a.object_name
+		from 
+			bsc_proj_obj_score t, 
+			bsc_proj_obj_h a
+		where 
+			t.object_id = a.object_id
+		and t.project_id = a.project_id
+		and t.project_id = #{project_id}
+		and t.month_id = #{month_id}
+		and a.project_id = #{project_id}
+		and #{query_date} between a.begin_date and a.end_date
+		and a.year_id = #{year_id} 
+	   	<if test="results_search !=null and results_search != ''">
+	   	and (t.object_id like '%${results_search}%' or a.object_name like '%${results_search}%')
+	   	</if>
+		order by t.score desc
+		<include refid="totalCountEnd"/>
+	</select>
+</mapper>

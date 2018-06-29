@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.rx.system.bsc.dao.ProjMeaImpDao">
+
+<select id="list" parameterType="map" resultType="map">
+		select rownum , t.*,a.*
+		  from bsc_proj_obj t
+		  left join bsc_proj_mea_imp a
+		    on t.project_id = a.project_id
+		   and t.object_id = a.object_id
+		   and a.year_id = #{year_id}
+		   and a.cycle_id = #{cycle_id}
+		   and a.measure_id = #{measure_id}
+		 where t.project_id = #{project_id}
+		 <if test="object_search != null and object_search != ''">
+		 	and (t.object_id like '%${object_search}%' or object_name like '%${object_search}%' )  
+		 </if>
+		  order by t.object_id
+	</select>
+	
+	<delete id="delete" parameterType="map">
+		delete from bsc_proj_mea_imp t
+		 where t.year_id = #{year_id}
+		   and t.project_id = #{project_id}
+		   and t.cycle_id = #{cycle_id}
+		   and t.measure_id = #{measure_id}
+		   and t.object_id in 
+		<foreach collection="object_ids" index="index" item="item" open="(" separator="," close=")">
+		    #{item}
+      	 </foreach>  
+	</delete>
+	
+	<insert id="save" parameterType="map">
+		insert into bsc_proj_mea_imp
+		  (year_id, project_id, cycle_id, measure_id, object_id, value)
+		values
+		  (#{year_id},#{project_id},#{cycle_id},#{measure_id},#{object_id},#{value})
+	</insert>
+	
+	<select id="queryMeasure" resultType="hashmap" parameterType="map">
+		select pm.measure_id, m.measure_name
+		  from bsc_proj_mea_cmd pm, bsc_measure m
+		 where pm.measure_id = m.measure_id
+		 <if test="project_id!=null and project_id!=''">
+		   and pm.project_id = #{project_id}
+		 </if>
+		 <if test="measure_search!=null and measure_search!=''">
+		   and (pm.measure_id like '%${measure_search}%' or m.measure_name like '%${measure_search}%')
+		 </if>
+		 <if test="source_type_id!=null and source_type_id!=''">
+		   and m.source_type_id = #{source_type_id}
+		 </if>
+		 order by pm.measure_id
+	</select>
+	
+	<select id="projectIsValid" resultType="int" parameterType="map">
+			select count(*)
+			 from bsc_project p
+			where p.owner_org_id = #{owner_id}
+			  and p.project_id = #{project_id}
+			  and p.record_status = 'A'
+	</select>
+	
+	<select id="cycleIsValid" resultType="int" parameterType="map">
+		select count(*)
+		  from bsc_project p, bsc_cycle c
+		 where p.cycle_type_id = c.cycle_type_id
+		   and p.record_status = 'A'
+		   and p.project_id = #{project_id}	
+		   and c.cycle_id=#{cycle_id}
+	</select>
+	
+	<select id="measureIsValid" resultType="int" parameterType="map">
+	   select count(*)
+		  from bsc_proj_mea_cmd pm, bsc_measure m
+		 where pm.measure_id = m.measure_id
+		   and pm.project_id = #{project_id}
+		   and m.source_type_id = '02'
+		   and pm.measure_id = #{measure_id}
+	</select>
+	
+	<select id="objectIsValid" resultType="map" parameterType="map">
+ 				select o.object_id
+				  from bsc_proj_obj o	
+				 where o.project_id = #{project_id}				
+	</select>
+
+</mapper>

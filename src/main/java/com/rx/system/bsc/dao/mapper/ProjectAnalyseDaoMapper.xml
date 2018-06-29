@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.ProjectAnalyseDao">
+	<!-- 查询方案历史得分列表 -->
+	<select id="projectScoreLine" parameterType="map" resultType="map">
+		select s.month_id, s.month_label, s.score, s.score_coef, s.score_order
+		  from (select a.month_id,
+		               substr(a.month_id, 1, 4) || '-' || substr(a.month_id, 5, 2) as month_label,
+		               a.score,
+		               a.score_coef,
+		               a.score_order
+		          from bsc_proj_obj_score a, bsc_proj_exe_mth b
+		         where a.project_id = #{project_id}
+		           and a.object_id = #{object_id}
+		           and a.month_id = b.month_id
+		           and a.project_id = b.project_id
+		           and b.is_published = 'Y'
+		           and b.is_cycle_end_mth = 'Y'
+		           and a.month_id &lt;= #{month_id}
+		           and rownum &lt;= 12
+		         order by a.month_id desc) s
+		 order by s.month_id
+	</select>
+	
+	<!-- 查询指标分析列表 -->
+	<select id="measureList" parameterType="map" resultType="map">
+		select
+			b.measure_id as measure_id,
+			c.measure_name as measure,
+			a.mea_order_id as mea_order_id,
+			b.score as score,
+			b.max_score as highest_score,
+			b.min_score as lowest_score,
+			b.serial as serial
+		from
+			bsc_proj_mea_h a,
+			(
+				select
+					aa.object_id,
+					aa.measure_id,
+					aa.score,
+					max(aa.score) over (partition by aa.measure_id) as max_score,
+					min(aa.score) over (partition by aa.measure_id) as min_score,
+					row_number() over (partition by aa.measure_id order by aa.score desc) as serial
+				from
+					bsc_proj_mea_obj_score aa,
+					bsc_proj_exe_mth bb
+				where
+					aa.month_id = bb.month_id
+					and aa.project_id = bb.project_id
+					and aa.month_id = #{month_id}
+					and aa.project_id = #{project_id}
+					and bb.is_published = 'Y'
+			) b,
+				bsc_measure_h c
+		where
+			a.measure_id = b.measure_id
+			and b.object_id = #{object_id}
+			and a.measure_id = c.measure_id
+			and a.project_id = #{project_id}
+			and #{query_date} between a.begin_date and a.end_date
+			and a.year_id = #{year_id}
+			and c.project_id = #{project_id}
+			and #{query_date} between c.begin_date and c.end_date
+			and c.year_id = #{year_id}
+		order by a.mea_order_id,a.measure_id
+	</select>
+	
+	<!-- 查询指标得分 -->
+	<select id="measureScoreList" parameterType="map" resultType="map">
+		select s.month_id, s.month_label, s.score
+		  from (select a.month_id,
+		               substr(a.month_id, 1, 4) || '-' || substr(a.month_id, 5, 2) as month_label,
+		               b.score
+		          from bsc_proj_exe_mth a, bsc_proj_mea_obj_score b
+		         where b.project_id = #{project_id}
+		           and b.object_id = #{object_id}
+		           and b.measure_id = #{measure_id}
+		           and a.month_id = b.month_id
+		           and a.project_id = b.project_id
+		           and a.is_published = 'Y'
+		           and a.month_id &lt;= #{month_id}
+		           and rownum &lt;= 12
+		         order by a.month_id desc) s
+		 order by s.month_id
+	</select>
+	
+	<!-- 查询指标完成值 -->
+	<select id="measureValueList" parameterType="map" resultType="map">
+		select s.month_id, s.month_label, s.value
+            from (select a.month_id,
+                         substr(a.month_id, 1, 4) || '-' ||
+                         substr(a.month_id, 5, 2) as month_label,
+                         b.value
+                    from bsc_proj_exe_mth a, bsc_result b
+                   where b.project_id = #{project_id}
+                     and b.object_id = #{object_id}
+                     and b.measure_id = #{measure_id}
+                     and a.month_id = b.month_id
+                     and a.project_id = b.project_id
+                     and a.is_published = 'Y'
+                     and a.month_id &lt;= #{month_id}
+                     and rownum &lt;= 12
+                   order by a.month_id desc) s
+           order by s.month_id
+	</select>
+	
+	<!-- 查询月份 -->
+	<select id="listMonth" parameterType="map" resultType="map">
+		select month_id month_name 
+		from dmd_month 
+		where month_id &lt;= #{month_id}
+			and substr(month_id,0,4) = #{year_id}
+	</select>
+</mapper>

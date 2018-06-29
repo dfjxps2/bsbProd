@@ -1,0 +1,78 @@
+.dumascroll_area {
+	height: 100%;
+	overflow: hidden;
+}
+
+.dumascroll_bar,.dumascroll_handle,.dumascroll_handle_a,.dumascroll_arrow_up,.dumascroll_arrow_up_a,.dumascroll_arrow_down,.dumascroll_arrow_down_a{
+	background: #dcd4c3;
+}
+
+.dumascroll_bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 9;
+	width: 6px;
+	height: 100%;
+	cursor: default;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	user-select: none;
+	background-repeat: repeat-y;
+	float: left;
+	background: #eeeeee;
+}
+
+.dumascroll_arrow_up,.dumascroll_arrow_up_a,.dumascroll_handle,.dumascroll_handle_a,.dumascroll_arrow_down,.dumascroll_arrow_down_a{
+	position: absolute;
+	left: 0;
+}
+
+.dumascroll_arrow_up,.dumascroll_arrow_up_a,.dumascroll_arrow_down,.dumascroll_arrow_down_a{
+	width: 100%;
+	height: 6px;
+	color: #fff;
+	text-align: center;
+}
+
+.dumascroll_arrow_up,.dumascroll_arrow_up_a {
+	top: 0;
+}
+
+.dumascroll_arrow_down,.dumascroll_arrow_down_a {
+	bottom: 0;
+}
+
+.dumascroll_handle,.dumascroll_handle_a {
+	width: 100%;
+	background-repeat: repeat-y;
+}
+
+.dumascroll_arrow_up {
+	background-image: url("images/up.gif");
+	background-repeat: no-repeat;
+	background-position: 0% 0%;
+}
+
+.dumascroll_arrow_up_a {
+	background-image: url("images/up-clicked.gif");
+}
+
+.dumascroll_handle {
+	background: #ff0000;
+}
+
+.dumascroll_handle_a {
+	background: #fff0da;
+}
+
+.dumascroll_arrow_down {
+	background-image: url("images/down.gif");
+	background-repeat: no-repeat;
+	background-position: 0% 100%;
+	line-height: 1px;
+}
+
+.dumascroll_arrow_down_a {
+	background-image: url("images/down-clicked.gif");
+}

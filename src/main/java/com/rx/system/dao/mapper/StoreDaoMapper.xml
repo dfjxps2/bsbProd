@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.StoreDao">
+	<!-- 获取机构树表 -->
+	<select id="getBankList" resultType="Bank">
+		select a.*,
+		         case
+		         when b.bank_org_id is null then
+		          'Y'
+		         else
+		          'N'
+		       end as leaf
+		 from dmd_bank_inter_org a,
+		      (select parent_bank_org_id as bank_org_id
+		         from dmd_bank_inter_org
+		         group by parent_bank_org_id) b
+		 where a.bank_org_id = b.bank_org_id(+)
+		 order by display_order desc
+	</select>
+	
+	<!-- 获取菜单树列表 -->
+	<select id="getResourceList" resultType="Resource">
+		select * from bsc_resource order by resource_id
+	</select>
+	
+	<!-- 获取系统时间 -->
+	<select id="getSysDate" resultType="string">
+		select to_char(date_id,'yyyy-mm-dd') date_id from dmd_date
+	</select>
+	
+	<!-- 获取当前月 -->
+	<select id="getCurrentMonth" resultType="string">
+		select month_id from dmd_month order by month_id desc
+	</select>
+	
+</mapper>

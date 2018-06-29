@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.DimLinkDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) m
+			where rownum <= #{endrow}
+		)
+		where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+
+	<!-- 添加分组字段链接 -->
+	<insert id="addDimLink" parameterType="DimLink">
+		insert into bsc_dim_link
+		  (link_id,
+		   link_name,
+		   source_expression,
+		   is_tree,
+		   id_field,
+		   parent_id_field,
+		   label_field,
+		   root_value)
+		values
+		  (#{link_id},
+		   #{link_name},
+		   #{source_expression},
+		   #{is_tree},
+		   #{id_field},
+		   #{parent_id_field},
+		   #{label_field},
+		   #{root_value})
+	</insert>
+	
+	<!-- 删除分组字段链接 -->
+	<delete id="deleteDimLink" parameterType="string">
+		delete from bsc_dim_link where link_id = #{link_id}
+	</delete>
+	
+	<!-- 编辑分组字段对象 -->
+	<update id="editDimLink" parameterType="DimLink">
+		update bsc_dim_link
+		   set link_name         = #{link_name},
+		       source_expression = #{source_expression},
+		       is_tree           = #{is_tree},
+		       id_field          = #{id_field},
+		       parent_id_field   = #{parent_id_field},
+		       label_field       = #{label_field},
+		       root_value        = #{root_value}
+		 where link_id = #{link_id}
+	</update>
+	
+	<!-- 查询分组字段对象 -->
+	<select id="queryDimLinkList" parameterType="map" resultType="DimLink">
+		select * from bsc_dim_link where 1=1
+		<if test="searchKey != null and searchKey != '' ">
+			and (upper(link_id) like upper('%${searchKey}%')
+				or upper(link_name) like upper('%${searchKey}%'))
+		</if>
+		<if test="link_id != null and link_id != '' ">
+			and link_id = #{link_id}
+		</if>
+		order by link_id
+	</select>
+	
+	<!-- 查询分组字段对象个数  -->
+	<select id="queryDimLinkListCount" parameterType="map" resultType="string">
+		<include refid="totalCountHeader"/>
+		select * from bsc_dim_link where 1=1
+		<if test="searchKey != null and searchKey != '' ">
+			and (link_id like '%${searchKey}%'
+				or link_name like '%${searchKey}%')
+		</if>	
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<!-- 维护校验 -->
+	<select id="checkLink" parameterType="map" resultType="int">
+		select count(*) from bsc_dim_link t where upper(t.link_id) = upper(#{link_id})
+	</select>
+	
+</mapper>

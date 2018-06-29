@@ -1,0 +1,41 @@
+<%@ page language="java" pageEncoding="UTF-8" isELIgnored="false"%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title>角色-菜单</title>
+	<meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/scripts/ext3.4.0/resources/css/ext-all.css" />
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/icon.css" />
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxtree.css">
+
+	<%@ include file="/skin.jsp"%>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/ext3.4.0/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/ext3.4.0/ext-all.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/ext3.4.0/locale/ext-lang-zh_CN.js"></script>
+
+	<script  src="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxcommon.js"></script>
+	<script  src="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxtree.js"></script>
+</head>
+<%@ include file="/skin.jsp"%>
+<body>
+	<div id="north"></div>
+  	<div id="center" style="overflow: auto;	height: 100%"></div>
+</body>
+	<script>
+		var xml = '${requestScope.xml}';
+  		var pathUrl = "${pageContext.request.contextPath}";
+		var extPath = "${pageContext.request.contextPath}/public/scripts/ext3.4.0";
+		Ext.BLANK_IMAGE_URL = extPath + '/resources/images/default/s.gif';
+		Ext.QuickTips.init();
+		var selectRoleID = '${requestScope.selectRoleID}';
+		tree=new dhtmlXTreeObject("center","100%","100%","");
+		tree.setImagePath("${pageContext.request.contextPath}/public/scripts/dhtmlx/imgs/");
+		tree.enableCheckBoxes(1);
+		tree.loadXMLString(xml);
+	</script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/sys/scripts/roleLayout.js"></script>
+</html>

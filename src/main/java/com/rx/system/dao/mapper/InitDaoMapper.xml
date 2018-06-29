@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.InitDao">
+	<sql id="queryUserHasResource">
+		select a.resource_id
+		from bsc_resource a
+		where a.resource_id in (
+			select 
+				d.resource_id
+			from bsc_user_info b,bsc_user_role_rela c,bsc_role_resource_rela d
+			where b.user_id = #{user_id}
+				and b.bank_org_id = #{owner_id}
+				and b.user_id = c.user_id
+				and c.role_id = d.role_id
+			union all
+			select 
+				e.resource_id
+			from bsc_user_spec_priv e
+			where e.user_id = #{user_id}
+			and e.bank_org_id = #{owner_id}
+		)
+	</sql>
+	<!-- 查询最近一年得分趋势 -->
+	<select id="listYearSocre" parameterType="map" resultType="map">
+		select 
+			a.month_id label,
+			a.score val
+		from bsc_proj_obj_score a
+		where substr(a.month_id,0,4) = #{year_id}
+			and a.project_id = #{project_id}
+			and a.object_id = #{object_id}
+			and a.month_id <![CDATA[<=]]>#{month_id}
+		order by a.month_id
+	</select>
+	
+	<!-- 查询最近一年排名趋势 -->
+	<select id="listYearOrder" parameterType="map" resultType="map">
+		select 
+			a.month_id label,
+			a.object_id,
+			sum(case when a.month_id <![CDATA[<>]]>b.month_id or a.object_id = b.object_id or a.score <![CDATA[<]]> b.score then 0 else 1 end) + 1 as val
+		from bsc_proj_obj_score a,bsc_proj_obj_score b
+		where a.month_id = b.month_id
+			and a.project_id = b.project_id
+			and substr(a.month_id,0,4) = #{year_id}
+			and a.object_id = #{object_id}
+			and a.project_id = #{project_id}
+			and a.month_id <![CDATA[<=]]>#{month_id}
+		group by a.month_id,a.object_id
+	</select>
+	
+	<!-- 获取衡量指标趋势 -->
+	<select id="listMeasureValue" parameterType="map" resultType="map">
+		select b.measure_id,c.measure_name,a.month_id,a.value val
+		from bsc_result a,bsc_proj_mea b,bsc_measure c,bsc_proj_exe_mth d
+		where a.project_id = b.project_id
+			and a.measure_id = b.measure_id
+			and a.object_id = #{object_id}
+			and a.project_id = d.project_id
+			and a.month_id = d.month_id
+			and d.is_published = 'Y'
+			and b.measure_id = c.measure_id
+			and a.project_id = #{project_id}
+			and a.month_id <![CDATA[<=]]>#{month_id}
+		order by b.mea_order_id,b.measure_id,a.month_id
+	</select>
+	
+	<!-- 查询登录用户的首页链接 -->
+	<select id="queryInitUrl" parameterType="map" resultType="map">
+		select 
+			b.resource_name,
+			b.handler default_page
+		from
+			bsc_user_dft_page a,
+			bsc_resource b
+		where
+			a.default_page = b.resource_id
+		and	a.user_id = #{user_id}
+		and a.bank_org_id = #{owner_id}
+		and a.default_page in (
+				<include refid="queryUserHasResource"/>
+		)
+	</select>
+	
+	<!-- 获取当前用户功能菜单列表 -->
+	<select id="getCurrentUserResourceList" resultType="Resource" parameterType="map">
+		select a.*
+		from bsc_resource a
+		where a.resource_id in (
+			select 
+				d.resource_id
+			from bsc_user_info b,bsc_user_role_rela c,bsc_role_resource_rela d
+			where b.user_id = #{user_id}
+				and b.bank_org_id = #{owner_id}
+				and b.user_id = c.user_id
+				and c.role_id = d.role_id
+			union all
+			select 
+				e.resource_id
+			from bsc_user_spec_priv e
+			where e.user_id = #{user_id}
+			and e.bank_org_id = #{owner_id}
+		)
+		order by a.resource_id
+	</select>
+	
+	<update id="updateUserDefaultInitPage" parameterType="map">
+		update bsc_user_info set default_page = #{default_page} where user_id = #{user_id}
+	</update>
+	
+	<!-- 2013-10-24增加用户,机构,初始页关系表 bsc_user_dft_page  删除用户初始页 -->
+	<delete id="deleteUserInitPage" parameterType="map">
+		delete from bsc_user_dft_page where user_id = #{login_user_id} and bank_org_id = #{owner_id}
+	</delete>
+	
+	<!-- 2013-10-24增加用户,机构,初始页关系表 bsc_user_dft_page 增加用户初始页 -->
+	<insert id="addUserInitPage" parameterType="map">
+		insert into bsc_user_dft_page(user_id,bank_org_id,default_page)
+		values(#{login_user_id},#{owner_id},#{default_page})
+	</insert>
+</mapper>

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.BscCardDao">
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+			<![CDATA[
+				) m
+				where rownum <= #{endrow}
+			)
+			where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+
+	<!-- 查询方案的指标状态 -->
+	<select id="listMeasureStatus" parameterType="map" resultType="map">
+		select a.*, b.strategy_id
+		from bsc_proj_mea_obj_score a, bsc_proj_mea b
+		where a.project_id = b.project_id
+			and a.measure_id = b.measure_id
+			and a.month_id = #{month_id}
+			and a.project_id = #{project_id}
+			and a.object_id = #{object_id} 
+	</select>
+	
+	<!-- 查询机构指标状态 -->
+	<select id="queryOrgMeasureStatus" parameterType="map" resultType="map">
+		select a.*,b.rank_short_name,c.measure_name
+		from bsc_strat_mea_rslt a,bsc_mea_rslt_rank b,bsc_measure c
+		where a.mea_rank_id = b.rank_id
+			and a.month_id = #{month_id}
+			and a.owner_org_id = #{owner_id}
+			and a.obj_cate_id = #{obj_cate_id}
+			and a.measure_id = c.measure_id
+		order by a.strategy_id,a.measure_id
+	</select>
+	
+	<!-- 查询机构平衡计分卡对象结果明细 -->
+	<select id="queryOrgStatusDetail" parameterType="map" resultType="map">
+		<if test="nopage == null">
+			<include refid="pageDataHeader"/>		
+		</if>
+		select a.*,c.strategy_name,e.rank_short_name
+		from bsc_strat_mea_obj a,bsc_strategy_h c,bsc_mea_rslt_rank e
+		where 
+				a.month_id = #{month_id}
+			and a.owner_org_id = #{owner_id}
+			and a.strategy_id = c.strategy_id
+			and a.obj_cate_id = #{obj_cate_id}
+			and a.mea_rank_id = e.rank_id
+		<if test="object_id != null and object_id != 'all'">
+			and a.object_id = #{object_id}
+		</if>
+			and c.year_id = #{year_id}
+			and	#{query_date} between c.begin_date and c.end_date
+		order by a.object_id
+		<if test="nopage == null">
+			<include refid="pageDataEnd"/>		
+		</if>
+	</select>
+	
+	<!-- 查询机构平衡计分卡对象结果明细:对象列表 -->
+	<select id="queryOrgStatusDetailObjList" parameterType="map" resultType="map">
+		select distinct a.object_id,a.object_name 
+		from 
+			bsc_strat_mea_obj a
+		where 
+			a.month_id = #{month_id}
+		and a.owner_org_id = #{owner_id}
+		and a.obj_cate_id = #{obj_cate_id}
+		order by object_name 
+	</select>
+	
+	<!-- 查询机构平衡计分卡对象结果明细 记录数 -->
+	<select id="queryOrgStatusDetailCount" parameterType="map" resultType="String">
+		<include refid="totalCountHeader"/>
+		select a.*,b.bank_org_name as object_name,c.strategy_name,d.measure_name
+		from bsc_strat_mea_obj a,dmd_bank_inter_org b,bsc_strategy c,bsc_measure d
+		where a.object_id = b.bank_org_id
+			and a.month_id = #{month_id}
+			and a.owner_org_id = #{owner_id}
+			and a.obj_cate_id = #{obj_cate_id}
+			and a.strategy_id = c.strategy_id
+			and a.measure_id = d.measure_id
+			<if test="object_id != null and object_id != 'all'">
+			and a.object_id = #{object_id}
+		</if>
+		order by a.object_id
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<!-- 查询机构平衡计分卡考核结果 -->
+	<select id="queryOrgCardResult" parameterType="map" resultType="map">
+		select a.*,b.rank_short_name
+		from bsc_strat_mea_obj a,bsc_mea_rslt_rank b
+		where a.mea_rank_id = b.rank_id
+			and a.month_id = #{month_id}
+			and a.owner_org_id = #{owner_id}
+		order by a.strategy_id,a.measure_id
+	</select>
+	
+	<!-- 查询机构平衡计分卡考核结果:机构列表 -->
+	<select id="queryOrgList" parameterType="map" resultType="map">
+		select distinct a.object_id,b.bank_org_name as object_name
+		from bsc_strat_mea_obj a,dmd_bank_inter_org b
+		where a.object_id = b.bank_org_id
+			and a.month_id = #{month_id}
+			and a.owner_org_id = #{owner_id}
+		order by b.bank_org_name,a.object_id 
+	</select>
+	
+	<!-- 查询对象平衡计分卡考核结果 -->
+	<select id="queryCardResult" parameterType="map" resultType="map">
+		select a.*,
+			   m.measure_name,
+			   nvl(b.value,0) complete_value,
+			   round(nvl(c.score,0),2) score,
+			   nvl(d.target_amount,0) target_amount,
+			   nvl(c.mea_rank_id,'') mea_rank_id,
+			   e.rank_short_name,
+			   nvl(nvl(r.score_weight_rate,a.dft_scr_wght_rate),0.00) rate
+		from bsc_proj_mea_h a
+		<if test="isMy == 'true'">
+			inner join bsc_proj_exe_mth bs
+			    on  a.project_id = bs.project_id
+		</if>
+			left join bsc_measure_h m on 
+				a.measure_id = m.measure_id
+			and	m.project_id = #{project_id}
+			and #{query_date} between m.begin_date and m.end_date
+			and m.year_id = #{year_id}
+			left join bsc_result b on 
+				a.project_id =  b.project_id 
+				and a.measure_id = b.measure_id
+				and b.month_id = #{month_id}
+				and b.object_id = #{object_id}
+			left join bsc_proj_mea_obj_score c on
+				a.project_id =  c.project_id 
+				and a.measure_id = c.measure_id
+				and c.month_id = #{month_id}
+				and c.object_id = #{object_id}
+			left join bsc_proj_target d on 
+				b.project_id = d.project_id
+				and d.year_id = #{year_id}
+				and d.cycle_id = #{cycle_id}
+				and b.object_id = d.object_id
+				and b.measure_id = d.measure_id
+			left join bsc_mea_rslt_rank_h e on
+				c.mea_rank_id = e.rank_id
+			and	e.project_id = #{project_id}
+			and #{query_date} between e.begin_date and e.end_date
+			and e.year_id = #{year_id}
+			left join bsc_proj_obj_mea_h r on
+				a.project_id = r.project_id
+			and a.measure_id = r.measure_id
+			and r.object_id = #{object_id}
+			and	r.project_id = #{project_id}
+			and #{query_date} between r.begin_date and r.end_date
+			and r.year_id = #{year_id}	
+		where a.project_id = #{project_id}
+		and #{query_date} between a.begin_date and a.end_date
+		and a.year_id = #{year_id}
+		<if test="isMy == 'true'">
+		and	  bs.month_id = #{month_id}
+		and   bs.is_published = 'Y'
+		</if>
+		order by a.mea_order_id,a.measure_id			 
+	</select>
+	
+	<!-- 查询公式 -->
+	<select id="getMeasureBaseInfo" parameterType="map" resultType="map">
+		<choose>
+			<when test="type=='score'">
+				select 
+					a.measure_id,
+					a.score_formular formula,
+					a.score_formular_desc formula_desc,
+					b.score value,
+					c.measure_name,
+					nvl(d.value,0) complete_value,
+					nvl(e.target_amount,0) target_value
+				from bsc_proj_mea_h a, bsc_proj_mea_obj_score b,bsc_measure_h c,bsc_result d,bsc_proj_target e
+				where a.project_id = b.project_id(+)
+					and a.measure_id = b.measure_id(+)
+					and a.project_id = #{project_id} 
+					and a.measure_id = #{measure_id}
+					and b.month_id(+) = #{month_id}
+					and b.object_id(+) = #{object_id}
+					and a.measure_id = c.measure_id
+					and a.measure_id = d.measure_id(+)
+					and a.project_id = d.project_id(+)
+					and d.month_id(+) = #{month_id}
+					and d.object_id(+) = #{object_id}
+					and e.year_id(+) = #{year_id}
+					and a.project_id = e.project_id(+)
+					and e.cycle_id(+) = #{cycle_id}
+					and a.measure_id = e.measure_id(+)
+					and e.object_id(+) = #{object_id}
+					and #{query_date} between a.begin_date and a.end_date
+					and a.year_id = #{year_id} 
+					and c.project_id = #{project_id}
+					and #{query_date} between c.begin_date and c.end_date
+					and c.year_id = #{year_id} 
+				order by a.mea_order_id
+			</when>
+			<otherwise>
+				select 
+					a.measure_id,
+					a.measure_name,
+					a.formula_expr formula,
+					a.formula_desc formula_desc,
+					b.value value,
+					c.source_type_desc
+				from bsc_measure_h a,bsc_result b,bsc_mea_source_type c 
+				where a.measure_id =  b.measure_id(+)
+					and a.measure_id = #{measure_id}
+					and b.project_id(+) = #{project_id}
+					and b.month_id(+) = #{month_id}
+					and b.object_id = #{object_id}
+					and c.source_type_id = a.source_type_id
+					and a.project_id = #{project_id}
+					and #{query_date} between a.begin_date and a.end_date
+					and a.year_id = #{year_id} 
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询指标公式的明细值 -->
+	<select id="getFormulaDetail" parameterType="map" resultType="map">
+		select a.*,b.value score,c.source_type_desc 
+		from bsc_measure_h a,bsc_result b, bsc_mea_source_type c
+		where a.measure_id =  b.measure_id(+)
+			and b.project_id(+) = #{project_id}
+			and b.month_id(+) = #{month_id}
+			and b.object_id = #{object_id}
+			and a.measure_id in ('${measureIds}')
+			and a.source_type_id = c.source_type_id
+			and a.project_id = #{project_id}
+			and #{query_date} between a.begin_date and a.end_date
+			and a.year_id = #{year_id} 
+	</select>
+	
+	<!-- 查询参数的值 -->
+	<select id="getParamaValue" parameterType="map" resultType="map">
+		select a.parameter_id,a.parameter_name,nvl(b.value,a.value) value
+		from bsc_parameter_h a,bsc_proj_obj_para_h b
+		where a.parameter_id = b.parameter_id(+)
+			and b.project_id(+) = #{project_id}
+			and b.object_id(+) = #{object_id}
+			and a.parameter_id in ('${paramIds}')
+			and a.project_id = #{project_id}
+			and #{query_date} between a.begin_date and a.end_date
+			and a.year_id = #{year_id} 
+			and b.project_id(+) = #{project_id}
+			and #{query_date} between b.begin_date(+) and b.end_date(+)
+			and b.year_id(+) = #{year_id} 
+		order by a.parameter_id
+	</select>
+	
+	<!-- 查询对象计分卡结果信息 -->
+	<select id="queryInfo" parameterType="map" resultType="map">
+		select 
+			a.month_id,
+			a.project_id,
+			a.object_id,
+			round(a.score,2) total_point,
+			a.score_order result_order,
+			nvl(a.adj_proj_rank_id,a.sys_proj_rank_id) rank_result
+		from bsc_proj_obj_score a
+		where a.project_id = #{project_id}
+			and a.month_id = #{month_id}
+			and a.object_id = #{object_id}
+	</select>
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.BscCtrlMeasureDao">
+	<!-- 添加bsc考核指标  -->
+	<insert id="addBscMeasure" parameterType="map">
+		insert into bsc_proj_mea(
+			project_id,
+			measure_id,
+			mea_definition
+		) values (
+		 	#{project_id},
+			#{measure_id},
+			#{mea_definition jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 编辑bsc考核指标 -->
+	<update id="editBscMeasure" parameterType="map">
+		update bsc_proj_mea
+		set 
+			mea_definition = #{mea_definition}
+		where project_id = #{project_id}
+			and measure_id = #{measure_id}
+	</update>
+	
+	<!-- 删除bsc考核指标 -->
+	<delete id="removeBscMeasure" parameterType="map">
+		delete from bsc_proj_mea
+		where project_id = #{project_id}
+			and measure_id = #{measure_id}
+	</delete>
+	
+	<!-- 获取考核指标列表 -->
+	<select id="listBscMeasure" parameterType="map" resultType="map">
+		select a.*,
+		    b.measure_name,
+		    b.formula_expr as mea_formula,
+		    b.formula_desc as mea_formula_desc
+		    from bsc_proj_mea a,bsc_measure b
+		    where a.project_id = #{project_id}
+		      and a.measure_id = b.measure_id
+		    order by a.mea_order_id
+	</select>
+	
+	<!-- 查询指标名 -->
+	<select id="getMeasureName" parameterType="string" resultType="string">
+		select measure_name from bsc_measure where measure_id = #{measure_id}
+	</select>
+	
+	<!-- 查询参数名 -->
+	<select id="getParamName" parameterType="string" resultType="string">
+		select parameter_name from bsc_parameter where parameter_id = #{parameter_id}
+	</select>
+	
+	<!-- 根据方案和指标id，删除方案与参数的关系 -->
+	<delete id="deleteProjectParam" parameterType="map">
+		delete from bsc_proj_mea_para 
+		where 		project_id = #{project_id} 
+		and			measure_id = #{measure_id}
+	</delete>
+	<!-- 增加方案与参数的关系 -->
+	<insert id="insertProjectParam" parameterType="map">
+		insert into bsc_proj_mea_para (
+			project_id,  
+			measure_id, 
+			parameter_id
+		)values(
+			#{project_id},
+			#{measure_id},
+			#{parameter_id}
+		)
+	</insert>
+	<!-- 生成新方案_去掉多余指标 -->
+	<delete id="deleteSpareMea" parameterType="map">
+		delete from bsc_proj_mea t
+		where t.project_id = #{new_project_id}
+		and t.measure_id not in 
+		 <foreach collection="measure_ids" index="index" item="item" open="(" separator="," close=")">
+       	        #{item}
+         </foreach> 
+	</delete>
+	
+	<delete id="deleteSpareMeaPara" parameterType="map">
+		delete from bsc_proj_mea_para t
+		where t.project_id = #{new_project_id}
+		and t.measure_id not in 
+		<foreach collection="measure_ids" index="index" item="item" open="(" separator="," close=")">
+       	        #{item}
+         </foreach> 
+	</delete>
+	
+	<!-- 获取方案所有衡量指标积分公式 -->
+	<select id="getProjectMeasure" parameterType="string" resultType="map">
+		select * from bsc_proj_mea where project_id = #{projectId}
+	</select>
+	
+	<!-- 保存指标顺序 -->
+	<update id="setMeasureOrder" parameterType="map">
+		update bsc_proj_mea set mea_order_id = #{mea_order_id}
+		where project_id = #{project_id}
+			and measure_id= #{measure_id}
+	</update>
+</mapper>

@@ -1,0 +1,233 @@
+@CHARSET "UTF-8";
+#nav {
+	width: 157px;
+	line-height: 30px;
+	list-style-type: none;
+	text-align: left;
+	/*定义整个ul菜单的行高和背景色*/
+}
+#nav .last_level1{
+	height: 5px;
+	background-image: url("../images/menu/menu-level2bottom.png");
+	background-repeat: no-repeat;
+}
+#nav .last_level2{
+	height: 6px;
+	background-image: url("../images/menu/menu-level3bottom.png");
+	background-repeat: no-repeat;
+}
+#nav A.haschildren1{
+	background-image: url("../images/menu/hachildren.png");
+	background-position: 90% 10px;
+	background-repeat: no-repeat;
+}
+#nav A.haschildren1:hover{
+	background-image: url("../images/menu/hachildren.png");
+	background-position: 90% 10px;
+	background-repeat: no-repeat;
+}
+/*==================一级目录===================*/
+#nav a {
+	width: 125px;
+	display: block;
+	font-family: arial, 宋体, serif;
+	font-size:13px;
+	height:32px;
+	color:#5c2813;
+	font-weight: bold;
+	text-align: center;
+	background-image: url("../images/menu/menu-a.png");
+	display: inline-block;
+	text-decoration: none;
+	outline: none;
+	/*Width(一定要)，否则下面的Li会变形*/
+}
+#nav .item_focus{
+	background-image: url("../images/menu/menu-a-focus.png");
+	color: #ffffff;
+}
+#nav .item_focus:hover{
+	background-image: url("../images/menu/menu-a-focus.png");
+	color: #ffffff;
+}
+#nav a img {
+	vertical-align: middle;
+}
+
+#nav li {
+	 margin:8px 0px 8px 0px; 
+	 text-align: center;
+	 z-index: 1;
+	 position: relative;
+}
+
+#nav li a:hover {
+	background-image: url("../images/menu/menu-a-hover.png");
+	color: #5c2813;
+}
+
+
+#nav a:hover {
+	color: #FFF;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+/*==================二级目录===================*/
+#nav li ul {
+	list-style: none;
+	text-align: left;
+	position: relative;
+	top:-11px;
+	left:0px;
+	padding-top: 15px;
+	background-image: url("../images/menu/menu-level2top.png");
+	background-repeat: no-repeat;
+	z-index: -12;
+	width: 141px;
+}
+
+#nav li ul li {
+	margin: 0px;
+	background-image: url("../images/menu/menu-level2bg.png");
+	background-repeat: repeat-y;
+}
+
+#nav li ul a {
+	width: 120px;
+	font-weight: normal;
+	text-align: center;
+	text-decoration: none;
+	background-image: none;
+}
+
+#nav li ul a img {
+	vertical-align: middle;
+}
+ 
+/*下面是二级目录的链接样式*/
+#nav li ul a:link {
+	color:#5c2813;
+	text-decoration: none;
+	outline: none;
+}
+
+#nav li ul a:hover {
+	color: #ffffff;
+	background-image: none;
+	font-weight: normal;
+}
+
+/*==============================
+#nav li:hover ul {
+	left: auto;
+}
+
+#nav li.sfhover ul {
+	left: auto;
+}
+*/
+#content {
+	clear: left;
+}
+
+#nav ul.collapsed {
+	display: none;
+}
+
+#menu {
+	width: 100%;
+	padding-left:0px;
+	height : 94% !important;
+}
+
+
+/*=======三级目录================*/
+#nav li ul li ul{
+	width:141px;
+	list-style: none;
+	text-align: center;
+	background-image: url("../images/menu/menu-level3top.png");
+	background-repeat: no-repeat;
+	z-index: 1;
+}
+
+#nav li ul li ul li{
+	background-image: url("../images/menu/menu-level3bg.png");
+	background-repeat: repeat-y ;
+	height : 32px;
+}
+
+#nav li ul li ul a {
+	width: 120px;
+	font-weight: normal;
+	vertical-align: middle;
+	background-image: none;
+}
+#nav li ul li ul a img {
+	vertical-align: middle;
+}
+ 
+/*下面是三级目录的链接样式*/
+#nav li ul li ul a:link {
+	color: #5c2813;
+	text-decoration: none;
+	vertical-align: middle;
+	outline: none;
+}
+
+ 
+
+#nav li ul li ul a:hover {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: normal;
+	background-image: none;
+	vertical-align: middle;
+}
+.now {
+	height : 83px;
+	width: 33px;
+	cursor : hand;
+	background-image: url("../images/menu/navigate.png");
+}
+
+.nav {
+	position: absolute;
+	right: 10px;
+	top: 80px;
+	width: 33px;
+	height: 20px;
+	float: right;
+	margin-top: 4px;
+	margin-right: 5px;
+}
+ 
+.nav .box {
+	position: absolute;
+	right: 33px;
+	top: 30px;
+	background: #e2dbcb;
+	overflow: hidden;
+	height: 0;
+	filter: alpha(opacity = 0);
+	opacity: 0;
+}
+
+.nav .cont {
+	position: relative;
+}
+
+.movehandle{
+	z-index: 999999999;
+	height : 20px;
+	cursor : move;
+	margin-bottom: 5px;
+	background-image: url("../images/main/move.png");
+	background-repeat: no-repeat;
+}
+.movestarting{
+	background-image: url("../images/main/movestart.png");
+	background-repeat: no-repeat;
+	background-position:  center center;
+}

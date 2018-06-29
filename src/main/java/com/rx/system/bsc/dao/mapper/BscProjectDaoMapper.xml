@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.BscProjectDao">
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+			<![CDATA[
+				) m
+				where rownum <= #{endrow}
+			)
+			where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 查询方案已经发布的月份个数 -->
+	<select id="getPublishedCount" parameterType="map" resultType="int">
+		select
+			count(*)
+		from bsc_project a,bsc_proj_exe_mth b
+		where a.project_id=b.project_id
+			and b.is_published='Y'
+			and a.project_id=#{project_id} 
+	</select>
+	
+	<select id="getProjectCountByName" parameterType="map" resultType="int">
+		select count(*)  from bsc_project 
+		where project_name = trim(#{project_name})
+			and owner_org_id = #{owner_id}
+			<if test="project_id!=null and project_id!=''">
+			and project_id &lt;&gt; #{project_id} 
+			</if>
+	</select>
+		
+	<!-- 查询平衡计分卡方案定义列表 -->
+	<select id="listProject" parameterType="map" resultType="map">
+		 select t.project_id,
+				t.project_name, 
+				t.project_desc, 
+				t.cycle_type_id, 
+				t.obj_cate_id, 
+				t.app_type_id, 
+				t.obj_link_id,
+				b.link_name as obj_link_name,
+				t.owner_org_id, 
+				t.create_user, 
+				t.create_time, 
+				t.update_user, 
+				t.update_time,
+				t.obj_cate_id as icon,
+				t.record_status
+		 from bsc_project t
+		 left join
+		 	bsc_dim_link b
+		 on t.obj_link_id = b.link_id
+		 where 1=1 
+		 and t.owner_org_id = #{owner_id}
+		 <if test="record_status != 'All'">
+		 and t.record_status = 'A'
+		 </if> 
+		<if test="searchKey != null and searchKey != ''">
+			and project_name like '%${searchKey}%'
+		</if>
+			order by record_status,project_name 
+	</select>
+	
+	<!-- 查询方案已经执行的月份 -->
+	<select id="listExecutedMonth" parameterType="map" resultType="map">
+		select * from bsc_proj_exe_mth where project_id = #{project_id}
+		order by month_id desc
+	</select>
+	
+	<!-- 添加平衡计分卡方案 -->
+	<insert id="addProject" parameterType="map">
+		insert into bsc_project
+		  (project_id,
+		   project_name,
+		   project_desc,
+		   cycle_type_id,
+		   obj_cate_id,
+		   app_type_id,
+		   obj_link_id,
+		   owner_org_id,
+		   create_user,
+		   create_time,
+		   update_user,
+		   update_time,
+		   record_status)
+		values
+		  (#{project_id},
+		   #{project_name},
+		   #{project_desc},
+		   #{cycle_type_id},
+		   #{obj_cate_id},
+		   '01',
+		   #{obj_link_id},
+		   #{owner_id},
+		   #{login_user_id},
+		   sysdate,
+		   #{login_user_id},
+		   sysdate,
+		   'A')
+	</insert>
+	
+	<!-- 编辑平衡计分卡方案 -->
+	<update id="editProject" parameterType="map">
+		update bsc_project t
+		   set t.project_name     = #{project_name},
+		       t.project_desc     = #{project_desc},
+		       t.cycle_type_id    = #{cycle_type_id},
+		       t.obj_cate_id      = #{obj_cate_id},
+		       t.obj_link_id      = #{obj_link_id},
+		       t.update_user      = #{login_user_id},
+		       t.update_time      = sysdate
+		 where t.project_id = #{project_id}
+	</update>
+		
+	<!-- 停用平衡计分卡方案 -->
+	<update id="updateProjectStatus" parameterType="map">
+		 update bsc_project t
+		    set t.record_status = 'I',
+		        t.project_name  = t.project_name || '[停用-' ||
+		                          to_char(sysdate, 'yyyymmdd') || ']'
+		  where t.project_id = #{project_id}
+	</update>
+	
+	<!-- 方案下达 -->
+	<update id="doPublish" parameterType="map">
+		update bsc_project t
+		   set t.app_type_id = #{app_type_id}
+		 where t.project_id = #{project_id}
+	</update>
+	
+	<select id="checkExist" parameterType="map" resultType="map">
+		select t.*
+		  from bsc_proj_rslt_stat t
+		 where  t.project_id = #{project_id}
+		   and t.proj_rank_id = #{proj_rank_id}
+	</select>
+
+	<!-- 查询方案执行情况 -->
+	<select id="listExeInfoCount" parameterType="map" resultType="int">
+		<include refid="totalCountHeader"/>
+		select 
+			b.*
+		from bsc_proj_exe_mth b
+		where b.project_id = #{project_id}
+		order by b.month_id desc
+		<include refid="totalCountEnd"/>
+	</select>
+	<select id="listExeInfo" parameterType="map" resultType="map">
+		<include refid="pageDataHeader"/>
+		select 
+			b.*
+		from bsc_proj_exe_mth b
+		where b.project_id = #{project_id}
+		order by b.month_id desc
+		<include refid="pageDataEnd"/>
+	</select>
+	
+	<select id="hasRelation" parameterType="map" resultType="int">
+		select count(*) from bsc_proj_obj t where t.project_id = #{project_id}
+	</select>
+</mapper>

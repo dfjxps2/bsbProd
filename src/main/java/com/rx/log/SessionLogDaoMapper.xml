@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.log.SessionLogWriterDao">
+	<!--
+		SQL功能描述: 更新session登出时间 ;
+		参数描述: sessionId: 更新记录的sessionId;
+	-->
+	<update id="writeLogOut" parameterType="string">
+		update
+			bsc_login_his
+		set 
+			end_time=sysdate,
+			end_flag='Y'
+		where
+			session_id=#{sessionId} 
+			and end_flag = 'N'
+	 </update>
+
+	<!--
+		SQL功能描述: 更新session超时销毁时间 
+		参数描述: 
+				sessionId: 更新记录的sessionId
+				sessionInvalidTime: session自动销毁时间[分钟] 
+	-->
+	<update id="sessionDestroyLog" parameterType="Map">
+		update 
+			bsc_login_his 
+		set
+			end_time=sysdate-#{sessionInvalidTime}/60/24,
+			end_flag='Y' 
+		where 
+			session_id=#{sessionId} 
+			and end_flag = 'N'
+	 </update>
+	
+	<!--
+		SQL功能描述: 记录用户登录日志
+		参数描述: 
+				sessionId: 更新记录的sessionId
+				user_id: 登录用户id
+				owner_id: 登录用户使用的权限机构号
+				loginIP: 登录用户ip 
+	-->
+	<insert id="addSessionLog" parameterType="map">
+		insert into bsc_login_his(session_id,user_id,login_ip,begin_time,end_time,end_flag,bank_org_id)
+		values(#{sessionId},#{user_id},#{loginIP},sysdate,trunc(sysdate,'dd')+86399/86400,'N',#{owner_id} )
+	</insert>
+	
+	<!-- 
+		SQL功能描述: 记录用户操作方法日志
+		参数描述: 
+				sessionId: 更新记录的sessionId
+				functionCode: 操作方法的ID
+	 -->
+	 <insert id="addFunctionLog" parameterType="map">
+	 	insert into bsc_operation_his(session_id,oper_time,function_id) values(#{sessionId},sysdate,#{functionCode})
+	 </insert>
+</mapper>

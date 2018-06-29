@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.ResourceDao">
+	<!-- 通过角色获取对应的菜单 -->
+	<select id="getResourceByRoleId" parameterType="string" resultType="Resource">
+		select a.* 
+		from bsc_resource a,bsc_role_resource_rela b 
+		where a.resource_id = b.resource_id
+			  and b.role_id = #{roleId}
+	</select>
+	
+	<!-- 得到登陆用户的菜单 -->
+	<!-- 20131023修改  合并上用户特殊权限机构中的菜单资源 -->
+	<select id="getUserResource" parameterType="SysUser" resultType="Resource">
+	select a.*
+	from bsc_resource a
+	where a.resource_id in (
+		select 
+			d.resource_id
+		from bsc_user_info b,bsc_user_role_rela c,bsc_role_resource_rela d
+		where b.user_id = #{user_id}
+			and b.bank_org_id = #{bank_org_id}
+			and b.user_id = c.user_id
+			and c.role_id = d.role_id
+		union all
+		select 
+			e.resource_id
+		from bsc_user_spec_priv e
+		where e.user_id = #{user_id}
+		and e.bank_org_id = #{bank_org_id}
+	)
+	order by a.resource_id
+	</select>
+	
+	<!-- 添加菜单 -->
+	<insert id="addResource" parameterType="Resource">
+		insert into bsc_resource(
+			resource_id,
+			resource_name,
+			parent_resource_id,
+			resource_type,
+			handler
+		) values(
+			#{resource_id},
+			#{resource_name},
+			#{parent_resource_id},
+			#{resource_type},
+			#{handler}
+		)
+	</insert>
+	
+	<!-- 删除菜单 -->
+	<delete id="removeResource" parameterType="Resource">
+		delete from bsc_resource where resource_id = #{resource_id}
+	</delete>
+	
+	<!-- 删除菜单与角色对象的关系 -->
+	<delete id="removeResourceRoleRela" parameterType="Resource">
+		delete from bsc_role_resource_rela where resource_id = #{resource_id}
+	</delete>
+	
+	<!-- 修改菜单信息 -->
+	<update id="updateResource" parameterType="Resource">
+		update bsc_resource set 
+				resource_name = #{resource_name},
+				resource_type = #{resource_type},
+				handler = #{handler}
+		where resource_id = #{resource_id}
+	</update>
+	
+	<!-- 根据菜单ID查询菜单对象 -->
+	<select id="getResourceById" parameterType="string" resultType="Resource">
+		select * from bsc_resource where resource_id = #{resourceID}
+	</select>
+</mapper>

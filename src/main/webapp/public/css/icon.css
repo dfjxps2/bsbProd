@@ -1,0 +1,337 @@
+.add { background-image:url(../images/icons/add.png) !important;}
+.edit { background-image:url(../images/icons/page_edit.png) !important;}
+.delete { background-image:url(../images/icons/delete.png) !important;}
+.save { background-image:url(../images/icons/save.png) !important;}
+.fresh { background-image:url(../images/icons/sync.png) !important;}
+.version { background-image:url(../images/icons/version.png) !important;}
+.technology {background-image:url(../images/icons/wrench.png) !important;}
+.stack { background-image:url(../images/icons/stack.png) !important;}
+.trade { background-image:url(../images/icons/trade.png) !important;}
+.test { background-image:url(../images/icons/test.png) !important;}
+.exportdata {background-image:url(../images/icons/exportdata.png) !important;}
+.refresh {background-image:url(../scripts/mxgraph/images/refresh.gif) !important;}
+.analysis{background-image:url(../images/icons/analysis.png) !important;}
+.open { background-image:url(../images/icons/open.png) !important;}
+.reckon { background-image:url(../images/icons/change.png) !important;}
+.updata { background-image:url(../images/icons/updata.gif) !important;}
+.search { background-image:url(../images/icons/search.png) !important;}
+.importdata {background-image:url(../images/icons/importdata.png) !important;}
+.publish {background-image:url(../images/icons/publish.gif) !important;}
+.cancel {background-image:url(../images/icons/cancel.png) !important;}
+.cross {background-image:url(../images/icons/cross.gif) !important;}
+.up_img {background-image:url(../images/icons/arrow-up.gif)!important;}
+.down_img {background-image:url(../images/icons/arrow-down.gif) !important;}
+.application_go {background-image:url(../images/icons/application_go.png) !important;}
+.setting_img {background-image:url(../images/icons/setting.png) !important;}
+.details {background-image:url(../images/icons/details.gif) !important;}
+.copy{background-image:url(../images/icons/table_multiple.png) !important;}
+.export{background-image:url(../images/icons/excel.png) !important;}
+.connect{background-image:url(../images/icons/connect.png) !important;}
+.error{background-image:url(../images/icons/error.png) !important;}
+.employee{background-image:url(../images/icons/employee.png) !important;}
+.execute{background-image:url(../images/icons/execute2.png) !important;}
+.list{background-image:url(../images/icons/list.png) !important;}
+.revoke{background-image:url(../images/icons/revoke.png) !important;}
+.approve{background-image:url(../images/icons/approve.png) !important;}
+.forbid{background-image:url(../images/icons/forbid.png) !important;}
+.design{background-image:url(../images/icons/design.png) !important;}
+.lock{background-image:url(../images/icons/lock.png) !important;}
+.dispatch{background-image:url(../images/icons/dispatch.png) !important;}
+.bsc_formula{background-image:url(../../bsc/img/formula.gif) !important;}
+.bsc_truncate{background-image:url(../../bsc/img/truncate.gif) !important;}
+.bsc_information{background-image:url(../../bsc/img/information.gif) !important;}
+.bsc_revoke{background-image:url(../../bsc/img/revoke.gif) !important;}
+.drop{background-image:url(../images/icons/delete_x.png) !important;}
+.check{background-image:url(../images/icons/check.gif) !important;}
+.downPublish{background-image:url(../images/icons/downPublish.png) !important;}
+.go_publish{background-image:url(../images/icons/publish.png) !important;}
+
+.icon-cls {
+    background-image: url(../images/docs/class.gif) !important;
+}
+.icon-event {
+    background-image: url(../images/docs/event.gif) !important;
+}
+.icon-config {
+    background-image: url(../images/docs/config.gif) !important;
+}
+.icon-prop {
+    background-image: url(../images/docs/prop.gif) !important;
+}
+.icon-method {
+    background-image: url(../images/docs/method.gif) !important;
+}
+.icon-cmp {
+    background-image: url(../images/docs/cmp.gif) !important;
+}
+.icon-pkg {
+    background-image: url(../images/docs/pkg.gif) !important;
+}
+.icon-fav {
+    background-image: url(../images/docs/fav.gif) !important;
+}
+.icon-static {
+    background-image: url(../images/docs/static.gif) !important;
+}
+.icon-docs {
+    background-image: url(../images/docs/docs.gif) !important;
+}
+.icon-page {
+    background-image: url(../images/docs/example.gif) !important;
+}
+.icon-expand-all {
+    background-image: url(../images/docs/expand-all.gif) !important;
+}
+.icon-collapse-all {
+    background-image: url(../images/docs/collapse-all.gif) !important;
+}
+.icon-expand-members {
+    background-image: url(../images/docs/expand-members.gif) !important;
+}
+.icon-hide-inherited {
+    background-image: url(../images/docs/hide-inherited.gif) !important;
+}
+
+/*仪表盘图标*/
+.x-tree-node-leaf .jkybp{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .fxybp{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .yxybp{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+
+/*监控分析*/
+.x-tree-node-leaf .ywjk{
+	background-image:url(../images/icons/budget.png); 	
+}
+.x-tree-node-leaf .dxfx{
+	background-image:url(../images/icons/telephone.png);   	
+} 
+.x-tree-node-leaf .zbfx{ 
+	background-image:url(../images/icons/print.gif);	 
+} 
+.x-tree-node-leaf .ybfx{
+	background-image:url(../images/icons/engage.png);	 
+} 
+.x-tree-node-leaf .mkfx{
+	background-image:url(../images/icons/adjust.png);   	
+} 
+.x-tree-node-leaf .yjmx{ 
+	background-image:url(../images/icons/application_go.png);	
+} 
+
+/*对象管理*/
+.x-tree-node-leaf .dxdxgl_dxwh{
+	background-image:url(../images/icons/party.png);	
+}
+.x-tree-node-leaf .dxsjbwh{
+	background-image:url(../images/icons/plugin.png);   	
+}  
+.x-tree-node-leaf .dxzbgxwh{ 
+	background-image:url(../images/icons/retreat.png);	
+}
+.x-tree-node-leaf .dxcswh{ 
+	background-image:url(../images/icons/server.png);	
+}
+
+/*指标管理*/
+.x-tree-node-leaf .jczbwh{
+	background-image:url(../images/icons/version.png);	
+}
+.x-tree-node-leaf .zbmbgxwh{
+	background-image:url(../images/icons/trade.png);   	
+} 
+.x-tree-node-leaf .zbcswh{ 
+	background-image:url(../images/icons/tabs.gif);	
+}
+
+/*收集管理*/
+.x-tree-node-leaf .mbwh{
+	background-image:url(../images/icons/table_multiple.png);	
+}
+.x-tree-node-leaf .mbpz{
+	background-image:url(../images/icons/script.png);   	
+} 
+.x-tree-node-leaf .czwh{ 
+	background-image:url(../images/icons/salary.png);	
+}
+.x-tree-node-leaf .mbczwh{
+	background-image:url(../images/icons/rss_go.png);	
+}
+.x-tree-node-leaf .czcswh{
+	background-image:url(../images/icons/publish.png);   	
+} 
+.x-tree-node-leaf .zxylgxpz{ 
+	background-image:url(../images/icons/page_white_c.png);	
+}
+.x-tree-node-leaf .ybzypz{ 
+	background-image:url(../images/icons/organization.png);	
+}
+
+/*监控方案*/
+.x-tree-node-leaf .jksjy{
+	background-image:url(../images/icons/open.png);	
+}
+.x-tree-node-leaf .jksj{
+	background-image:url(../images/icons/measure.png);   	
+} 
+.x-tree-node-leaf .jkzb{ 
+	background-image:url(../images/icons/knowledge.png);	
+}
+.x-tree-node-leaf .jkfa{
+	background-image:url(../images/icons/insurance.png);	
+}
+.x-tree-node-leaf .jkjg{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .jktbzspz{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+
+/*监控管理*/
+.x-tree-node-leaf .jgrygl{
+	background-image:url(../images/icons/group_link.png);	
+}
+.x-tree-node-leaf .jgrwfp{
+	background-image:url(../images/icons/folder_wrench.png);   	
+} 
+
+/*监控工作平台*/
+.x-tree-node-leaf .jkgzpt_dxwh{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .wdywjk{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .wddxfx{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+.x-tree-node-leaf .wdybfx{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .wdmkfx{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .wdyjmx{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+
+/*参数维护*/
+.x-tree-node-leaf .ywczwh{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .ggczwh{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .llcswh{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+.x-tree-node-leaf .lszccswh{
+	background-image:url(../images/icons/test.png);	
+}
+
+/*参数维护*/
+.x-tree-node-leaf .sjwh{
+	background-image:url(../images/icons/test.png);	
+}
+
+/*数据库管理*/
+.x-tree-node-leaf .sjkwh{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .xtbgl{
+	background-image:url(../images/icons/time.png);   	
+} 
+
+/*系统管理*/
+.x-tree-node-leaf .yhgl{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .jsgl{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .cdgl{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+
+/*调度管理*/
+.x-tree-node-leaf .rwpz{
+	background-image:url(../images/icons/test.png);	
+}
+.x-tree-node-leaf .zypz{
+	background-image:url(../images/icons/time.png);   	
+} 
+.x-tree-node-leaf .hhpz{ 
+	background-image:url(../images/icons/wrench.png);	
+}
+.x-tree-node-leaf .rwview{ 
+	background-image:url(../images/icons/application_view_list.png);	
+}
+.x-tree-node-leaf .elog{ 
+	background-image:url(../images/icons/book_open.png);	
+}
+.x-tree-node-leaf .freq{ 
+	background-image:url(../images/icons/time.png);	
+}
+.x-tree-node-leaf .param{ 
+	background-image:url(../images/icons/toolbarlog.gif);	
+}
+.x-tree-node-leaf .mage{ 
+	background-image:url(../images/icons/insurance.png);	
+}
+.x-tree-node-leaf .exec{ 
+	background-image:url(../images/icons/budget.png);	
+}
+.OG{
+    background-image: url(../images/icons/building.png);
+}
+.CM{
+    background-image: url(../images/icons/cust_mgr.png);
+}
+.x-icon-combo-item {
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    padding-left: 17px;
+}
+.x-icon-combo-icon{
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    width: 17px;
+    height: 7px;
+}
+.x-icon-combo-input {
+    padding-left: 25px;
+}
+.x-form-field-wrap .x-icon-combo-icon {
+    top: 3px;
+    left: 6px;
+}
+
+.x-combo-list-item {
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    font-size : 12px;
+}
+
+.x-combo-list-row {
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    font-size : 12px;
+}
+
+.help{background-image: url(../images/icons/help.png) !important;}
+
+.spec_auth{background-image: url(../images/icons/spec_auth.png) !important;}
+
+.x-tree-node .category-node{
+    background:#eee;
+    margin-top:2px;
+    border-top:1px solid #ddd;
+    border-bottom:1px solid #ccc;
+    padding-top:4px;
+    padding-bottom:2px;
+}
+

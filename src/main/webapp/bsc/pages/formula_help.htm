@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>编辑公式帮助</title>
+<style type="text/css">
+<!--
+.Font_Heading_1 {
+	font-size: 16px;
+}
+
+.Font_Body {
+	font-family: Arial, "宋体";
+	font-size: 15px;
+	font-style: normal;
+	line-height: normal;
+	font-variant: normal;
+	text-transform: none;
+	color: #000000;
+	text-decoration: none;
+}
+table {
+	border-collapse:collapse;
+}
+
+.P_1{
+	text-indent:21px;
+}
+
+.P_2{
+	text-indent:60px;
+}
+-->
+</style>
+</head>
+<body class="Font_Body">
+<p class="Font_Heading_1">1. 公式</p>
+<p class="P_1">公式是指标值的运算表达式，其中表达式中可能包含函数、被引用的指标、参数、常量、数学运算操作符甚至逻辑运算操作符。公式的运算结果当且应当是一个数值。</p>
+<p class="P_1">公式的主要因子是计算该指标时被引用的指标，公式的运算逻辑着重于被引用指标的关系以及关系的结果。</p>
+<p class="Font_Heading_1">2. 运算操作符</p>
+<p class="P_1">用户可通过键盘或者面板两种方式输入操作符。系统支持的操作符有算数操作符，逻辑运算符，逻辑操作符。</p>
+<p>2.1 算数操作符</p>
+<p class="P_1">包括：+，-，*，/，()等。加减乘除的左右操作数可以是指标、常量、参数、函数。算数操作符的运算规则等价于数学运算规则。算数操作符的运算结果是标量值。</p>
+<p>值得注意的是，公式要防止除数为零。如果公式的除数有可能为零，则应选择函数DIV进行除法运算，否则系统不能正确执行公式。</p>
+<p>2.2 逻辑运算符</p>
+<p class="P_1">逻辑运算符用于比较数值或字符值，运算结果要么为真，要么为假。逻辑运算表达式可以作为条件表达式，但不能作为标量值表达式。所以逻辑运算表达式只能是公式运算的一部分，但不能作为公式的结果使用。逻辑运算符如下表所示，</p>
+<table width="635" border="1px" bordercolor="#000000" cellpadding="0" cellspacing="0" align="center">
+  <tr style=" font-weight:bold" align="center">
+    <td width="63">运算符</td>
+    <td width="70">含义</td>
+    <td width="305">操作规则</td>
+    <td width="187">示例</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">=</div></td>
+    <td>等于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1=2，结果为假</td>
+  </tr>
+  <tr>
+    <td><div align="center">&gt;</div></td>
+    <td>大于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1&gt;2，结果为假</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">&lt;</div></td>
+    <td>小于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1&lt;2，结果为真</td>
+  </tr>
+  <tr>
+    <td><div align="center">&gt;=</div></td>
+    <td>大于等于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1&gt;=2，结果为假</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">&lt;=</div></td>
+    <td>小于等于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1&lt;=2，结果为真</td>
+  </tr>
+  <tr>
+    <td><div align="center">&lt;&gt;</div></td>
+    <td>不等于</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1&lt;&gt;2，结果为真</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">!=</div></td>
+    <td>不等于，与’&lt;&gt;’等价</td>
+    <td>左右操作数可以是指标、常量、参数、函数</td>
+    <td>表达式：1!=2，结果为真</td>
+  </tr>
+  <tr>
+    <td><div align="center">in</div></td>
+    <td>存在</td>
+    <td>公式大小写敏感；<br />
+      左操作数可以是指标、常量、参数、函数；<br />
+    右操作数是值列表，值与值之间以英文逗号隔开。值可以是常量或函数，但函数的参数必须是常量。</td>
+    <td>'1' in ('a','b','c','1')，结果为真；<br />
+    '0' in ('a','b','c','1')，结果为假；</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>2.3 逻辑操作符</p>
+<p class="P_1">逻辑操作符用于运算逻辑真假值，运算结果要么为真，要么为假。逻辑操作符表达式可以作为条件表达式，但不能作为标量值表达式。所以逻辑操作符表达式只能是公式运算的一部分，但不能作为公式的结果使用。逻辑操作符如下表所示，</p>
+<table width="683" border="1px" bordercolor="#000000" cellpadding="0" cellspacing="0" align="center">
+  <tr style=" font-weight:bold" align="center">
+    <td width="63">运算符</td>
+    <td width="106">含义</td>
+    <td width="269">操作规则</td>
+    <td width="235">示例</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">and</div></td>
+    <td>并且</td>
+    <td>左右操作数必须是逻辑表达式</td>
+    <td>表达式：1=2 and 1=1，结果为假；<br />
+    表达式：2=2 and 1=1，结果为真；</td>
+  </tr>
+  <tr>
+    <td><div align="center">or</div></td>
+    <td>或者</td>
+    <td>左右操作数必须是逻辑表达式</td>
+    <td>表达式：1=2 or 1=1，结果为真；<br />
+    表达式：2!=2 or 1!=1，结果为假；</td>
+  </tr>
+  <tr bgcolor="#B6B6B6">
+    <td><div align="center">not</div></td>
+    <td>否</td>
+    <td>只有右操作符，右操作数必须是逻辑表达式</td>
+    <td>表达式：not 1=2，结果为真；<br />
+    表达式：not 1=1，结果为假；</td>
+  </tr>
+  <tr>
+    <td><div align="center">()</div></td>
+    <td>圆括号，用于调整优先级</td>
+    <td>只有一个操作符，操作符必须是逻辑表达式</td>
+    <td>表达式：(1=1 or 1&gt;2) and 2=2，结果为真</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p class="Font_Heading_1">3. 被引用的指标</p>
+<p class="P_1">在公式内部，引用指标的格式为：[@指标号]。用户在编辑公式时，并不需要记住指标号，只需要选择一个指标即可带出对应的指标号。公式对指标号的大小写敏感。</p>
+<p class="Font_Heading_1">4. 函数</p>
+<p class="P_1">本系统支持的函数全部是标量函数，即函数的参数和返回值都只能是标量。公式对函数名称的大小写不敏感。系统支持的函数如下：</p>
+<p>4.1 ABS绝对值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">ABS(n1)</p>
+<p class="P_1">返回值： </p>
+<p class="P_2">如果n1>=0，则返回n1，否则返回-1 * n1。</p>
+<p>&nbsp;</p>
+<p>4.2 CASE多条件取值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">CASE(条件1,值1,条件2,值2,...,条件N,值N)</p>
+<p class="P_1">参	数：</p>
+<p class="P_2">条件1，条件2，...，条件N都是逻辑表达式，</p>
+<p class="P_2">值1，值2，…，值N都是数值表达式。</p>
+<p class="P_2">参数的个数不固定，只要条件和值能够匹配即可。</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">当条件1成立（表达式为真），则返回值1，</p>
+<p class="P_2">否则判断条件2，当条件2成立，则返回值2，</p>
+<p class="P_2">否则判断条件3，依次类推，直到找到一个条件满足即返回对应的值。</p>
+<p class="P_2">如果条件都不满足，则返回0。如果有多个条件满足，则返回第一个为真的条件对应的值。</p>
+<p>&nbsp;</p>
+<p>4.3 DIV除法</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">DIV(n1, n2)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">如果n2为0，则返回0，否则返回n1/n2。</p>
+<p>&nbsp;</p>
+<p>4.4 IIF单条件取值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">IIF(条件,值1,值2)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">条件为逻辑表达式，如果条件成立，则返回值1，否则返回值2。</p>
+<p>&nbsp;</p>
+<p>4.5 LESS最小值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">LESS(n1, n2)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">返回n1，n2中较小的一个值。</p>
+<p>&nbsp;</p>
+<p>4.6 MIDDLE中间值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">MIDDLE(n1, n2, n3)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">返回n1，n2，n3中按从大到小排列第二的值。</p>
+<p>&nbsp;</p>
+<p>4.7 MORE最大值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">MORE(n1, n2)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">返回n1，n2中较大的一个值。</p>
+<p>&nbsp;</p>
+<p>4.8 POWER幂值</p>
+<p class="P_1">格	式：</p>
+<p class="P_2">POWER(n1, n2)</p>
+<p class="P_1">返回值：</p>
+<p class="P_2">返回n1的n2次幂，n1必须为正数，n2可以为任何有理数。</p>
+<p class="Font_Heading_1">5. 参数</p>
+<p class="P_1">在公式内部，引用参数的格式为：[$参数号]。用户在编辑公式时，并不需要记住参数号，只需要选择一个参数即可带出对应的参数号。公式对参数号的大小写敏感。</p>
+<p class="Font_Heading_1">6. 操作步骤</p>
+<p class="P_1">a. 鼠标选择公式编辑区域的空白区域。</p>
+<p class="P_1">b. 鼠标选择指标、参数，并用操作符编辑指标、参数、常量之间的数值表达关系。如果需要，选择一个或多个函数（函数与函数之间可以嵌套），并把函数的参数占位符用合适的指标、参数值、常量替换掉。</p>
+<p class="P_1">c. 保存编辑后的公式。</p>
+</body>
+</html>

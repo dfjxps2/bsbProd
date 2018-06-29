@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+        >
+    <!-- ehcache manager 工厂类-->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:cache/ehcache.xml"></property>
+	</bean>
+	
+	<!-- 
+	<bean id="cacheEventListenerFactory" class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory">
+	</bean>
+	 -->
+	<!-- 
+	<bean id="cacheEventListener" class="net.sf.ehcache.event.CacheEventListener" factory-bean="cacheEventListenerFactory" factory-method="createCacheEventListener" scope="singleton">
+		<constructor-arg>
+			<props>
+				<prop key="replicateAsynchronously">true</prop>
+				<prop key="replicatePuts">true</prop>
+				<prop key="replicateUpdates">true</prop>
+				<prop key="replicateUpdatesViaCopy=">false</prop>
+				<prop key="replicateRemovals">true</prop>
+				<prop key="asynchronousReplicationIntervalMillis">1000</prop>
+			</props>
+		</constructor-arg>
+	</bean>
+	 -->
+	<!-- cache 对象工厂 -->
+	<bean id="cache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="overflowToDisk" value="false"></property>
+		<!-- 
+		<property name="cacheEventListeners"  ref="cacheEventListener"></property>
+		 -->
+	</bean>
+	
+	<!-- 缓存service抽象bean -->
+	<bean id="baseCacheService" class="com.rx.system.base.BaseCacheService" abstract="true" parent="baseService">
+		<property name="cache" ref="cache"></property>
+	</bean>
+	
+	<bean id="dataStore" class="com.rx.system.service.impl.DataStore" parent="baseCacheService">
+		<property name="storeDao" ref="storeDao"></property>
+	</bean>
+		
+</beans>

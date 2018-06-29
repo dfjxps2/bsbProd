@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.bea.com/ns/weblogic/weblogic-web-app http://www.bea.com/ns/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd">
+	<session-descriptor>
+		<id-length>32</id-length>
+		<cookie-name>JSESSIONID</cookie-name>
+		
+		<!-- <persistent-store-type>replicated</persistent-store-type> -->
+		<persistent-store-type>replicated_if_clustered</persistent-store-type>
+		<!--<persistent-store-type>memory</persistent-store-type>   -->
+		
+		<url-rewriting-enabled>true</url-rewriting-enabled>
+	</session-descriptor>
+</weblogic-web-app>

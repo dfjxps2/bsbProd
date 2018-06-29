@@ -1,0 +1,106 @@
+package com.rx.system.bsc.dao;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 平衡计分卡结果Dao接口类
+ * @author chenxd
+ *
+ */
+public interface BscResultDao {
+	
+	/**
+	 * 发布平衡计分卡结果
+	 * @param paramMap
+	 * @throws Exception
+	 */
+	public void publishBscResult(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 查询积分结果列表
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listResult(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 查询积分结果列表记录总数
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public String listResultCount(Map<String, Object> paramMap) throws Exception;
+	
+	
+	/**
+	 * 获取考核对象明细结果
+	 * @param paramMap
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getBscResultDetail(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 查询考核积分维度占比
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> dimRsult(Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 查询各考核对象的方案得分
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listScoreResult(
+			Map<String, Object> paramMap) throws Exception;
+	
+	public List<Map<String, Object>> listScoreSubResult(
+			Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 查询各考核对象的方案得分总数
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public String listScoreResultCount(Map<String, Object> paramMap) throws Exception;
+
+	public List<Map<String, Object>> listScoreTotalResult(
+			Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 图表排名查询
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getScoreTopPoint(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 图表等级分布查询
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getLevelList(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 是否可以公布计分卡方案（公布的月份是否是周期期末月份）
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public String canPublish(Map<String, Object> paramMap) throws Exception;
+	
+	/**
+	 * 详细计分卡结构中对比12个周期的积分卡结果
+	 * */
+	public List<Map<String,Object>> getCompareDetailProjectScore(Map<String, Object> paramMap) throws Exception;
+
+	public List<Map<String, Object>> listProjectMeasure(Map<String,Object> paramMap) throws Exception;
+	
+	public List<Map<String, Object>> listSubMeasure(Map<String, Object> paramMap) throws Exception;
+}

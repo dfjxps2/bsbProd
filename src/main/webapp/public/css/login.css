@@ -1,0 +1,15 @@
+@CHARSET "UTF-8";
+html{overflow: hidden;font-family: '黑体'}
+body{background: #ffffff;overflow: hidden;padding:0px;margin:0px;}
+.logo{margin-top: 141px;height:59px;background-image: url("../images/login/name.gif");background-repeat: no-repeat;background-position: 20px 0px;}
+.container{height: 279px;position: relative;width: 100%;background-image: url("../images/login/repeat.jpg");}
+.left{position: absolute;width: 394px;height: 279px;left:20px;top:0px;background-image: url("../images/login/left.jpg");background-position:0px 100%; background-repeat: no-repeat;z-index: 100}
+.right{position: absolute;width: 630px;height: 279px;right:0px;top:0px;background-image: url("../images/login/right.jpg");;background-position:0px 0px;background-repeat: no-repeat;}
+.info{position: absolute;left: 270px;top:35px;border: solid 1px #ff00000;width:200px;height: 30px;line-height: 30px;color:#ffffff;}
+.loginlayout{position: absolute;left: 175px;top:120px;width: 276px;height: 80px;}  
+.input{position: absolute;left:0px;top:0px;width: 200px;height: 80px;}
+.input .name{position: absolute;top:5px;left:34px;width:161px;height: 24px;}
+.input .password{position: absolute;top:48px;left:34px;width:161px;height: 24px;line-height: 24px;}
+.button{position: absolute;right:1px;top:3px;width: 60px;height: 70px;cursor: pointer;}	
+.loadding{position: absolute;left:451px;top:130px;width: 60px;height: 60px;background-image: url("../images/login/loading.gif");background-repeat: no-repeat;background-position: center center;display: none;}	
+.input INPUT{border: none;line-height: 13px;width: 161x;border:solid 1px #ffffff;margin-top: 2px;background-color:#ffffff;}		

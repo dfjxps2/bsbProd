@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.ParameterDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) m
+			where rownum <= #{endrow}
+		)
+		where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 查询参数列表 -->
+	<select id="listParameter" parameterType="map" resultType="BscParameter">
+		select *
+		  from bsc_parameter t
+		 where (t.owner_org_id = #{owner_id}
+		    or t.param_type_id = '01')
+		 <if test="param_type_id != null and param_type_id != ''">
+		 	and t.param_type_id = '${param_type_id}'
+		 </if>
+		 order by  param_type_id,parameter_id
+	</select>
+	
+	
+	<!-- 添加考核参数 -->
+	<insert id="addParameter" parameterType="map">
+		insert into bsc_parameter
+		  (parameter_id,
+		   parameter_name,
+		   data_type_id,
+		   value,
+		   param_type_id,
+		   owner_org_id)
+		values
+		  (#{parameter_id}, #{parameter_name}, #{data_type_id}, #{value}, #{param_type_id}, #{owner_id})
+	</insert>
+		
+	<!-- 根据参数param_id ,owner_id获取参数对象 -->
+	<select id="getParameterById" parameterType="map" resultType="BscParameter">
+		select * from bsc_parameter where parameter_id = #{parameter_id}
+	</select>
+	
+	<!-- 通过id修改考核参数 -->
+	<update id="updateParameter" parameterType="map">
+	     update bsc_parameter
+	        set parameter_name = #{parameter_name},
+	            data_type_id   = #{data_type_id},
+	            value          = #{value},
+	            param_type_id  = #{param_type_id}
+	      where parameter_id = #{parameter_id}
+	</update>
+	
+	<delete id="deleteParameter" parameterType="map">
+		delete from bsc_parameter t
+		 where t.parameter_id = #{parameter_id}
+	</delete>
+	
+	<select id="listItems" parameterType="map" resultType="BscOwnObjPara">
+	</select>
+	
+	<select id="listObjects" parameterType="map" resultType="BscOwnObjPara">
+		<include refid="pageDataHeader"/>
+		<choose>
+			<when test="obj_cate_id == 'OG'">
+				select t.bank_org_id object_id, t.bank_org_name object_name
+				  from dmd_bank_inter_org t
+				 where t.parent_bank_org_id = #{orgId}
+				   <if test="searchObjectId != null and searchObjectId != ''">
+					   and ( t.bank_org_id like '%${searchObjectId}%'
+					   or t.bank_org_name like '%${searchObjectId}%' )
+				   </if>
+				   order by t.bank_org_id
+			</when>
+			<when test="obj_cate_id == 'CM'">
+				select t.employee_id object_id, t.employee_name object_name
+				  from vw_bsc_employee t
+				 where t.bank_org_id = #{orgId}
+				   <if test="searchObjectId != null and searchObjectId != ''">
+					   and ( t.employee_id like '%${searchObjectId}%'
+					   or t.employee_name like '%${searchObjectId}%' )
+				   </if>
+				   order by t.employee_id
+			</when>
+		</choose>
+		<include refid="pageDataEnd"/>	
+	</select>
+
+	<select id="listObjectsTotalCount" parameterType="map" resultType="int">
+		<choose>
+			<when test="obj_cate_id == 'OG'">
+				select count(*)
+				  from dmd_bank_inter_org t
+				 where t.parent_bank_org_id = #{orgId}
+				   <if test="searchObjectId != null and searchObjectId != ''">
+					   and ( t.bank_org_id like '%${searchObjectId}%'
+					   or t.bank_org_name like '%${searchObjectId}%' )
+				   </if>
+			</when>
+			<when test="obj_cate_id == 'CM'">
+				select count(*)
+				   from vw_bsc_employee t
+				 where t.bank_org_id = #{orgId}
+				   <if test="searchObjectId != null and searchObjectId != ''">
+					   and ( t.employee_id like '%${searchObjectId}%'
+					   or t.employee_name like '%${searchObjectId}%' )
+				   </if>
+			</when>
+		</choose>
+	</select>
+
+	<delete id="deleteItemByParamId" parameterType="map">
+		delete from bsc_own_obj_para t
+		 where t.parameter_id = #{parameter_id}
+	</delete>
+	
+	<delete id="deleteItem" parameterType="map">
+		delete from bsc_own_obj_para t
+		 where t.parameter_id = #{parameter_id}
+		   and t.owner_org_id = #{owner_id}
+		<if test="obj_cate_id != null and obj_cate_id != ''">
+		   and t.obj_cate_id = #{obj_cate_id}
+		</if>
+	    and t.object_id in
+	    <foreach collection="objectIds" open="(" close=")" item="item" separator="," index="index">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<insert id="saveItem" parameterType="map">
+		insert into bsc_own_obj_para
+		  (owner_org_id, parameter_id, obj_cate_id, object_id, value)
+		values
+		  (#{owner_id}, #{parameter_id}, #{obj_cate_id}, #{object_id}, #{value})
+	</insert>
+</mapper>

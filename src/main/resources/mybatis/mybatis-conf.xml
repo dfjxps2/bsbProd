@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration> 
+<!-- 
+	<typeAliases>
+		<typeAlias alias="User" type="com.po.User" />
+		<typeAlias alias="SysResource" type="com.po.SysResource" />
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/rx/dao/mapper/UserDaoMapper.xml" />
+	</mappers>
+ -->
+ <!-- SQL语句拦截器
+ <plugins>
+ 	<plugin interceptor="com.rx.log.MyBatisInterceptor"></plugin>
+ </plugins>
+  -->
+</configuration>

@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.UserDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * from (select rownum as frameworkRownum, t1.* from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) t1) where frameworkRownum between #{start} and #{endrow}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 通过查询条件,查询出用户列表 -->
+	<select id="listUsers" parameterType="map" resultType="hashmap">
+		<include refid="pageDataHeader"/>
+		select a.*, d.bank_org_name owner_org_name, c.bank_org_name bank_org_name
+		  from bsc_user_info a, dmd_bank_inter_org c , dmd_bank_relation d 
+		 where a.owner_org_id = d.bank_org_id
+		   and d.bank_rela_type_cd = '00'
+		   and a.bank_org_id = c.bank_org_id
+		<if test="user_id != null and user_id != ''">
+			and a.user_id like '%${user_id}%' 
+		</if>
+		<if test="user_name != null and user_name != ''">
+			and a.user_name like '%${user_name}%' 
+		</if>
+		<if test="bankOrgID != null and bankOrgID != ''">
+			and d.parent_bank_org_id = #{bankOrgID} 
+		</if>
+			order by a.user_id
+		<include refid="pageDataEnd"/>
+	</select>
+	
+	<!-- 通过查询条件,查询出用户列表总记录数 -->
+	<select id="getUsersCount" parameterType="map" resultType="string">
+		<include refid="totalCountHeader"/>
+		select a.*, d.bank_org_name owner_org_name, c.bank_org_name bank_org_name
+		  from bsc_user_info a, dmd_bank_inter_org c , dmd_bank_relation d 
+		 where a.owner_org_id = d.bank_org_id
+		   and d.bank_rela_type_cd = '00'
+		   and a.bank_org_id = c.bank_org_id
+		<if test="user_id != null and user_id != ''">
+			and a.user_id like '%${user_id}%' 
+		</if>
+		<if test="user_name != null and user_name != ''">
+			and a.user_name like '%${user_name}%' 
+		</if>
+		<if test="bankOrgID != null and bankOrgID != ''">
+			and d.parent_bank_org_id = #{bankOrgID} 
+		</if>
+			order by a.user_id
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<!-- 添加用户 -->
+	<insert id="addUser" parameterType="SysUser">
+		insert into bsc_user_info(
+			user_id,
+			password,
+			user_name,
+			bank_org_id,
+			owner_org_id,
+			cert_id,
+			gender_code,
+			user_mobile,
+			user_email,
+			user_address,
+			user_post,
+			user_status,
+			begin_date,
+			end_date,
+			busi_line_id,
+			job_type_id
+		) values (
+			#{user_id},
+			#{password},
+			#{user_name},
+			#{bank_org_id},
+			#{owner_org_id},
+			#{cert_id},
+			#{gender_code},
+			#{user_mobile},
+			#{user_email},
+			#{user_address},
+			#{user_post},
+			#{user_status},
+			to_date(#{begin_date},'yyyy-mm-dd'),
+			to_date(#{end_date},'yyyy-mm-dd'),
+			#{busi_line_id},
+			#{job_type_id}
+		)
+	</insert>
+	
+	<!-- 删除用户 -->
+	<delete id="removeUser" parameterType="string">
+		delete from bsc_user_info where user_id = #{userID}
+	</delete>
+	
+	<!-- 删除用户与用户角色关系 -->
+	<delete id="removeUserRoleRela" parameterType="SysUser">
+		delete from 
+			bsc_user_role_rela a
+		where 
+			user_id = #{user_id}
+		<!-- 
+		and	exists(
+				select
+					0
+				from
+					bsc_role_info b
+				where	
+					a.role_id = b.role_id
+				and	b.bank_org_id = #{bank_org_id})
+		 -->			
+	</delete>
+	
+	<delete id="deleteInitPage" parameterType="string">
+		delete from bsc_user_dft_page where user_id = #{userID}
+	</delete>
+	
+	<!-- 修改用户信息 -->
+	<update id="modifyUser" parameterType="SysUser">
+		update bsc_user_info set
+			user_name=#{user_name},
+			password=#{password},
+			bank_org_id=#{bank_org_id},
+			owner_org_id=#{owner_org_id},
+			cert_id=#{cert_id},
+			gender_code=#{gender_code},
+			user_mobile=#{user_mobile},
+			user_email=#{user_email},
+			user_address=#{user_address},
+			user_post=#{user_post},
+			user_status=#{user_status},
+			begin_date=to_date(#{begin_date},'yyyy-mm-dd'),
+			end_date=to_date(#{end_date},'yyyy-mm-dd'),
+			busi_line_id = #{busi_line_id},
+			job_type_id = #{job_type_id}
+		where user_id=#{user_id}
+	</update>
+	
+	<!-- 根据用户ID查找用户 -->
+	<select id="findUserById" parameterType="string" resultType="SysUser">
+		select t.user_id,
+		       t.password,
+		       t.user_name,
+		       t.bank_org_id,
+		       t.owner_org_id,
+		       t.cert_id,
+		       t.gender_code,
+		       t.user_mobile,
+		       t.user_email,
+		       t.user_address,
+		       t.user_post,
+		       t.user_status,
+		       to_char(t.begin_date, 'yyyy-mm-dd') begin_date,
+		       to_char(t.end_date, 'yyyy-mm-dd') end_date,
+		       t.busi_line_id,
+			   t.job_type_id,
+			   a.bank_org_name as owner_org_name,
+			   b.bank_org_name as bank_org_name
+		  from bsc_user_info t
+		  left join dmd_bank_inter_org a on t.owner_org_id = a.bank_org_id
+		  left join dmd_bank_inter_org b on t.bank_org_id = b.bank_org_id
+		 where t.user_id=#{userID}
+	</select>
+	
+	<!-- 修改用户密码 -->
+	<update id="modifyPassword" parameterType="map">
+		update bsc_user_info set password=#{password} where user_id=#{user_id}
+	</update>
+	
+	<!-- 添加用户角色 -->
+	<insert id="addUserRole" parameterType="map">
+		insert into bsc_user_info(user_id,role_id)values(#{user_id},#{role_id})
+	</insert>
+	
+	<!-- 根据用户ID获取用户角色 -->
+	<select id="getUserRole" parameterType="map" resultType="map">
+		select
+			d.role_id,
+			d.role_name,
+			d.bank_org_id,
+			e.bank_org_name,
+			'1' checked
+		from
+			bsc_role_info d,
+			dmd_bank_inter_org e,
+			bsc_user_role_rela f
+		where
+			d.bank_org_id = e.bank_org_id
+		and d.role_id = f.role_id
+		<![CDATA[
+		and	d.bank_org_id <> #{bank_id}
+		]]>
+		and	f.user_id = #{user_id}
+		union
+		select
+			a.role_id,
+			a.role_name,
+			a.bank_org_id,
+			c.bank_org_name,
+			case when b.role_id is not null then '1' else '0' end checked
+		from	
+			dmd_bank_inter_org c,
+			bsc_role_info a
+				left join 
+					bsc_user_role_rela b 
+				on 
+					a.role_id = b.role_id
+				and b.user_id = #{user_id}
+		where
+			c.bank_org_id = a.bank_org_id
+		and	a.bank_org_id = #{bank_id}
+	</select>
+	
+	<!-- 插入用户与角色关系 -->
+	<insert id="insertUserRoleRela" parameterType="map">
+		insert into bsc_user_role_rela(user_id,role_id) values(#{user_id},#{role_id})
+	</insert>
+	
+	<select id="checkPassword" parameterType = "SysUser" resultType="int">
+		<include refid="totalCountHeader"/>
+		select * from bsc_user_info t where t.user_id = #{user_id} and t.password = #{password}
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<!-- 获取当前用户的菜单树 -->
+	<select id="getCurrentUserResourceList" parameterType="map" resultType="Resource">
+		select 
+			a.*
+		from 
+			bsc_resource a 
+		where  
+			exists(
+				select 
+					0
+				from
+					bsc_user_info b,
+					bsc_user_role_rela c,
+					bsc_role_resource_rela d
+				where
+					b.user_id = c.user_id
+				and	c.role_id = d.role_id
+				and	d.resource_id = a.resource_id
+				and b.user_id = #{current_user_id}
+			)
+		order by resource_id
+	</select>
+	<!-- 获得待分配用户已经拥有的特殊权限 -->
+	<select id="getSpeciallyResourceList" parameterType="map" resultType="map">
+		select 
+			resource_id
+		from
+			bsc_user_spec_priv
+		where
+			user_id = #{user_id}
+		and	bank_org_id = #{bank_id}
+	</select>
+	
+	<delete id="deleteSpeciallyAuthorize" parameterType="map">
+		delete from
+			bsc_user_spec_priv a
+		where
+			a.user_id = #{user_id}
+		<if test="bank_id != null and bank_id != ''"><!-- 删除用户时删除用的特殊授权（bank_id为空） -->
+		and	a.bank_org_id = #{bank_id}
+		and exists(
+				select 
+					0
+				from
+					bsc_user_info b,
+					bsc_user_role_rela c,
+					bsc_role_resource_rela d
+				where
+					b.user_id = c.user_id
+				and	c.role_id = d.role_id
+				and	d.resource_id = a.resource_id
+				and b.user_id = #{current_user_id}
+			)
+		</if>
+	</delete>
+	
+	<insert id="saveSpeciallyAuthorize" parameterType="map">
+		insert into 
+			bsc_user_spec_priv
+		values(#{user_id},#{bank_id},#{resource_id})
+	</insert>
+	
+	<!-- 判断用户是否存在特殊权限机构ID -->
+	<select id="isExistSpecialOrg" parameterType="map" resultType="int">
+		select 
+			count(*)
+		from
+			(select 
+				a.user_id
+			from
+				bsc_user_spec_priv a
+			where
+				a.user_id = #{login_user_id}
+			and	a.bank_org_id = #{special_org_id}
+			union all
+			select
+				b.user_id
+			from
+				bsc_user_info b
+			where
+				b.user_id = #{login_user_id}
+			and	b.bank_org_id = #{special_org_id})
+	</select>
+	
+	<!-- 查询某用户所有的权限机构 -->
+	<select id="getAllBankOrgIdByUserId" parameterType="String" resultType="map">
+		select 
+			c.bank_org_id,
+			c.bank_org_name
+		from
+			dmd_bank_inter_org c
+		where
+			c.bank_org_id in
+			(select 
+				a.bank_org_id
+			from
+				bsc_user_spec_priv a
+			where
+				a.user_id = #{login_user_id}
+			union all
+			select
+				b.bank_org_id
+			from
+				bsc_user_info b
+			where
+				b.user_id = #{login_user_id})
+	</select>
+	
+	<delete id="deleteRoleByUserIdAndBankOrgId" parameterType="map">
+		delete from 
+			bsc_user_role_rela a
+		where
+			a.user_id = #{user_id}
+		and	exists(
+				select 
+					0
+				from
+					bsc_role_info b
+				where	
+					a.role_id = b.role_id
+				and	b.bank_org_id = #{bank_id}
+				)
+	</delete>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.dao.LogDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * from (select rownum as frameworkRownum, t1.* from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) t1) where frameworkRownum > #{start} and frameworkRownum <= #{endrow}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	<!-- 查询日志列表 -->
+	<select id="queryList" parameterType="map" resultType="hashmap">
+		<if test="!isExport==true">
+		<include refid="pageDataHeader"/>
+		</if>
+		select t.session_id,
+			   to_char(t.begin_time, 'yyyy-mm-dd HH24:mi:ss') as begin_time,
+		       to_char(t.end_time, 'yyyy-mm-dd HH24:mi:ss') as end_time,
+		       t.login_ip,
+		       a.user_name || '['|| t.user_id ||']' as user_name
+		  from bsc_login_his t, bsc_user_info a
+		 where t.user_id = a.user_id
+   			and t.begin_time >= to_date(#{begin_date}, 'yyyy-mm-dd')
+		   <![CDATA[
+ 		    and t.end_time <= to_date(#{end_date}, 'yyyy-mm-dd')
+		   ]]>
+		   <if test="userKey!='' and userKey!=null">
+		    and (t.user_id like '%${userKey}%' or a.user_name like '%${userKey}%')
+		   </if> 
+		    order by t.begin_time desc
+		<if test="!isExport==true">
+		<include refid="pageDataEnd"/>
+		</if>
+	</select>
+	
+	<!-- 查询日志列表总数 -->
+	<select id="queryListCount" parameterType="map" resultType="int">
+		<include refid="totalCountHeader"/>
+		select t.session_id,
+			   to_char(t.begin_time, 'yyyy-mm-dd HH24:mi:ss') as begin_time,
+		       to_char(t.end_time, 'yyyy-mm-dd HH24:mi:ss') as end_time,
+		       t.login_ip,
+		       t.user_id,
+		       a.user_name
+		  from bsc_login_his t, bsc_user_info a
+		 where t.user_id = a.user_id
+   			and t.begin_time >= to_date(#{begin_date}, 'yyyy-mm-dd')
+		   <![CDATA[
+ 		    and t.end_time <= to_date(#{end_date}, 'yyyy-mm-dd')
+		   ]]>
+		   <if test="userKey!='' and userKey!=null">
+		    and (t.user_id like '%${userKey}%' or a.user_name like '%${userKey}%')
+		   </if>
+		   order by t.begin_time desc
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<select id="queryDetail" parameterType="map" resultType="map">
+		select c.user_name || '[' || c.user_id || ']' as user_name,
+		       to_char(a.oper_time, 'yyyy-mm-dd HH24:mi:ss') as oper_time,
+		       b.function_name
+		  from bsc_login_his t
+		 inner join bsc_user_info c
+		    on t.user_id = c.user_id
+		 inner join bsc_operation_his a
+		    on t.session_id = a.session_id
+		   and a.oper_time between t.begin_time and t.end_time
+		  left join bsc_function b
+		    on a.function_id = b.function_id
+		 where t.session_id = #{session_id,jdbcType=VARCHAR}
+		   and t.begin_time = to_date(#{begin_time,jdbcType=VARCHAR},'yyyy-mm-dd HH24:mi:ss')
+		 order by oper_time desc
+
+	</select>
+</mapper>

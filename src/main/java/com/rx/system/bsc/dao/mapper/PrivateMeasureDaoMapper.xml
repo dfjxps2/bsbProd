@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.PrivateMeasureDao">
+
+	<!-- 添加指标 -->
+	<insert id="addEngMeasure" parameterType="map">
+		insert into bsc_measure
+		  (measure_id,
+		   parent_measure_id,
+		   measure_name,
+		   source_type_id,
+		   formula_expr,
+		   source_id,
+		   is_private,
+		   owner_org_id,
+		   result_type_id,
+		   obj_cate_id,
+		   inner_level_order,
+		   measure_desc)
+		values
+		  (#{measure_id},
+		   #{parent_measure_id},
+		   #{measure_name},
+		   #{source_type_id},
+		   '',
+		   '',
+		   'Y',
+		   #{owner_id},
+		   '00',
+		   #{obj_cate_id},
+		   #{inner_level_order jdbcType=INTEGER},
+		   #{measure_desc})
+	</insert>
+	
+	<!-- 编辑指标 -->
+	<update id="editEngMeasure" parameterType="map">
+		update bsc_measure set 
+			measure_name = #{measure_name},
+			measure_desc = #{measure_desc},
+			inner_level_order = #{inner_level_order jdbcType=INTEGER}
+		where measure_id = #{measure_id} and owner_org_id = #{owner_id}
+	</update>
+	
+	<!-- 编辑指标公式 -->
+	<update id="editEngMeasureFormula" parameterType="map">
+		update bsc_measure set 
+			formula_expr = #{formula_expr},
+			formula_desc = #{formula_desc}
+		where measure_id = #{measure_id} and owner_org_id = #{owner_id}
+	</update>
+	
+	<!-- 删除指标 -->
+	<delete id="deleteEngMeasure" parameterType="map">
+		delete from bsc_measure where measure_id = #{measure_id} and owner_org_id = #{owner_id}
+	</delete>
+	
+	<!-- 根据指标ID获取指标对象 -->
+	<select id="getEngMeasureById" parameterType="map" resultType="map">
+		select a.*,b.obj_cate_desc,c.source_type_desc
+		from bsc_measure a,bsc_obj_cate b,bsc_mea_source_type c 
+		where a.measure_id = #{measure_id} and a.owner_org_id = #{owner_id}
+			and a.obj_cate_id = b.obj_cate_id(+)
+			and a.source_type_id = c.source_type_id(+)
+	</select>
+	
+	<!-- 获取指标列表 -->
+	<select id="listEngMeasure" parameterType="map" resultType="map">
+		select a.*,
+			case when b.measure_id is null then 'Y' else 'N' end is_leaf
+		  from bsc_measure a,(select parent_measure_id as measure_id
+               					from bsc_measure
+              					group by parent_measure_id) b
+		 where a.parent_measure_id = #{parent_measure_id}
+		   and a.owner_org_id = #{owner_id}
+		   and a.is_private = 'Y'
+		   and a.measure_id = b.measure_id(+)
+		   <if test="obj_cate_id != null and obj_cate_id != ''">
+		   	and a.obj_cate_id = '${obj_cate_id}'
+		   </if>
+		   order by a.inner_level_order, a.measure_id
+	</select>
+	
+	<!-- 查询指标计算依赖的指标[运算下级指标] -->
+	<select id="listMeasureCalcDepend" parameterType="map" resultType="map">
+		select a.* 
+		from bsc_measure a,bsc_measure_exe b
+		where a.measure_id = b.rely_measure_id
+			and b.measure_id = #{measure_id}
+		order by b.in_level_order
+	</select>
+	
+	<!-- 添加指标运算依赖的指标 -->
+	<insert id="addDependMeasure" parameterType="map">
+		insert into bsc_measure_exe(measure_id,rely_measure_id) values(#{measure_id},#{rely_measure_id})
+	</insert>
+	
+	<!-- 删除指标运算依赖的指标 -->
+	<insert id="removeDependMeasure" parameterType="map">
+		delete from bsc_measure_exe
+		where measure_id = #{measure_id}
+		<if test="rely_measure_id != null and rely_measure_id != ''">and rely_measure_id = #{rely_measure_id}</if>
+	</insert>
+	
+	<!-- 查询指标名 -->
+	<select id="getMeasureName" parameterType="string" resultType="string">
+		select measure_name from bsc_measure where measure_id = #{measure_id}
+	</select>
+	
+	<!-- 查询参数名 -->
+	<select id="getParamName" parameterType="string" resultType="string">
+		select parameter_name from bsc_parameter where parameter_id = #{parameter_id}
+	</select>
+	
+	<!-- 删除某指标与参数的关系 -->
+	<delete id="deleteMeasureParam" parameterType = "String">
+		delete from bsc_measure_param where measure_id = #{measure_id}		
+	</delete>
+	
+	<!-- 增加指标与参数的关系 -->
+	<insert id="insertMeasureParam" parameterType = "map">
+		insert into bsc_measure_param(
+			measure_id,
+			parameter_id
+		)
+		values(
+			#{measure_id},
+			#{parameter_id}
+		)
+	</insert>
+	
+	<select id="getSubNodeCount" parameterType="map" resultType="int">
+		select count(*) from bsc_measure where parent_measure_id = #{measure_id}
+	</select>
+</mapper>

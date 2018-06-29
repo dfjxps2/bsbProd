@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.rx.system.bsc.dao.ScoreWeightDao">
+	<!-- 分页头 -->
+	<sql id="pageDataHeader">
+		select * from ( select m.*,rownum rn from (
+	</sql>
+	<!-- 分页尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+		) m
+			where rownum <= #{endrow}
+		)	where rn >=#{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<select id="queryProject"  parameterType="map"  resultType="hashMap">
+		select p.project_id,
+		       p.project_name project_name,
+		       p.owner_org_id,
+		       obj_cate_id    as icon
+		  from bsc_project p
+		 where p.owner_org_id = #{owner_id}
+		 and p.record_status = 'A'
+		 order by p.project_name
+	</select>
+	
+	<select id="getTotalNum" parameterType="map" resultType="string" >
+		<include refid="totalCountHeader"/>
+		select t.object_id object_id, t.object_name object_name
+		  from bsc_proj_obj t
+		 where t.project_id = #{project_id}
+		<if test="object_search!=null and object_search!=''">
+		   and (lower(t.object_id) like lower('%${object_search}%')
+		    or lower(t.object_name) like lower('%${object_search}%'))
+		</if>
+		 order by t.object_id
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<select id="queryObject" parameterType="map" resultType="hashMap" >
+	<include refid="pageDataHeader"/>
+		select t.object_id object_id, t.object_name object_name
+		  from bsc_proj_obj t
+		 where t.project_id = #{project_id}
+		<if test="object_search!=null and object_search!=''">
+		   and (lower(t.object_id) like lower('%${object_search}%')
+		    or lower(t.object_name) like lower('%${object_search}%'))
+		</if>
+		 order by t.object_id
+	<include refid="pageDataEnd"/>	
+	</select>
+	
+	<select id="queryMeasure" parameterType="map" resultType="hashMap">
+	  select t.measure_id as measure_id,
+	         t.project_id as project_id,
+	         b.object_id as object_id,
+	         t.mea_definition as mea_definition,
+	         t.dft_scr_wght_rate as dft_scr_wght_rate,
+	         nvl(b.score_weight_rate,t.dft_scr_wght_rate) as score_weight_rate,
+	         (select sum(nvl(b.score_weight_rate,t.dft_scr_wght_rate))
+		            from bsc_proj_mea t
+		            left join bsc_proj_obj_mea b
+		              on t.measure_id = b.measure_id
+		             and t.project_id = b.project_id
+		             and b.object_id = #{object_id}
+		           where t.project_id = #{project_id}
+		           	 and t.is_addon_score = 'N') as score_total
+		from bsc_proj_mea t 
+   left join bsc_proj_obj_mea b on t.measure_id = b.measure_id and t.project_id = b.project_id
+		 and b.object_id = #{object_id} 
+	   where t.project_id = #{project_id}
+		<if test="measure_search!=null and measure_search!=''">
+		 and (lower(t.measure_id) like lower('%${measure_search}%') or lower(t.mea_definition) like lower('%${measure_search}%'))
+		</if>
+		and t.is_addon_score = 'N'
+		order by t.measure_id
+	</select>
+	
+	<delete id="deleteScoreWeight" parameterType="map">
+		delete from bsc_proj_obj_mea t
+		 where t.measure_id = #{measure_id}
+	       and t.project_id = #{project_id}
+	       and t.object_id = #{object_id}
+	</delete>
+	
+	<insert id="saveScoreWeight" parameterType="map">
+		 insert into bsc_proj_obj_mea
+		   (project_id,measure_id , object_id, score_weight_rate)
+		 values
+		   (#{project_id},#{measure_id},#{object_id},#{score_weight_rate})
+	</insert>
+	
+	<!-- 参数 -->
+	<select id="queryParam" parameterType="map" resultType="map">
+		select aa.parameter_id,
+		       aa.parameter_name,
+		       aa.value as dft_value,
+		       case
+		         when bb.value is null then
+		          aa.value
+		         else
+		          bb.value
+		       end as adj_value
+		  from bsc_parameter aa
+		  left join bsc_proj_obj_para bb
+		    on bb.project_id = #{project_id}
+		   and bb.object_id = #{object_id}
+		   and aa.parameter_id = bb.parameter_id
+		 where aa.parameter_id in (select b.parameter_id
+		                             from bsc_proj_mea_cmd a
+		                            inner join bsc_measure_param b
+		                               on a.measure_id = b.measure_id
+		                            where a.project_id = #{project_id}
+		                            group by b.parameter_id
+		                           union
+		                           select c.parameter_id
+		                             from bsc_proj_mea_para c
+		                            where c.project_id = #{project_id}
+		                            group by c.parameter_id)
+		<if test="param_search !=null and param_search !=''">
+		and (lower(aa.parameter_id) like lower('%${param_search}%') or lower(aa.parameter_name) like lower('%${param_search}%'))
+		</if>
+	</select>
+	
+	<delete id="deleteParamValue" parameterType="map">
+		delete from bsc_proj_obj_para t
+		 where t.parameter_id = #{parameter_id}
+	       and t.project_id = #{project_id}
+	       and t.object_id = #{object_id}
+	</delete>
+	
+	<insert id="saveParamValue" parameterType="map">
+		insert into bsc_proj_obj_para
+		   (parameter_id,project_id , object_id, value)
+		 values
+		   (#{parameter_id},#{project_id},#{object_id},#{value})
+	</insert>
+	
+</mapper>

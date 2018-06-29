@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+    
+<struts>
+	
+	<!-- 开发模式 -->
+	<constant name="struts.devMode" value="false" />
+	
+	<!-- action请求后缀 -->
+	<constant name="struts.action.extension" value="do,action" />
+	
+	<constant name="struts.i18n.encoding" value="utf-8"></constant>
+	<constant name="struts.locale" value="utf-8"></constant>
+	
+	<!-- 关闭动态调用  -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	
+	<package name="basePackage" extends="struts-default">
+		<!-- 全局跳转 -->
+		<global-results>
+			<result name="error">/sr/error_info.jsp</result>
+			<result name="login" type="redirect">/login</result>
+		</global-results>
+	</package>
+	
+	<!-- 默认包 -->
+	<package name="/" extends="struts-default">
+		<!-- 登陆Action -->
+		<action name="login_*" class="loginAction" method="{1}">
+			<result name="main" type="redirect">/main.jsp</result>
+			<result name="rlogin" type="redirect">/login.jsp</result>
+		</action>
+		
+		<!-- Selector -->
+		<action name="selector_*" class="selectorAction" method="{1}"></action>
+		
+		<!-- Excel文件下载 -->
+		<action name="exceldownload" class="com.rx.system.action.ExcelDownloadAction" method="setParam">
+			<result name="success" type="stream">
+				<param name="contentType">application/x-excel</param>
+				<param name="inputName">downloadInputStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">4096</param>
+			</result>
+		</action>
+		
+		<!-- 初始页Action -->
+		<action name="init_*" class="initAction" method="{1}">
+			<result name="initPage">/initPage.jsp</result>
+			<result name="normal">/default_page.jsp</result>
+			<result name="init_chart">/init_chart.jsp</result>
+		</action>
+	</package>
+	
+	
+	<!-- 系统管理 -->
+	<package name="/sys/" extends="struts-default">
+	
+		<!-- 用户管理 -->
+		<action name="user_*" class="userAction" method="{1}"></action>
+		
+		<!-- 系统菜单 -->
+		<action name="resource_*" class="resourceAction" method="{1}">
+			<result name="ShowResource" type="dispatcher">/sys/pages/resource.jsp</result> 
+			<result name="ShowCheckResource" type="dispatcher">/sys/pages/role_resource.jsp</result> 
+		</action>
+		
+		<!-- 角色维护 -->
+		<action name="role_*" class="roleAction" method="{1}"></action>
+		
+		<!-- 登陆日志 -->
+		<action name="log_*" class="logAction" method="{1}">
+			<result name="excelDownload" type="chain">
+				<param name="actionName">exceldownload</param>
+			</result>
+		</action>
+		
+		<!-- 模块日志 -->
+		<action name="logModule_*" class="logModuleAction" method="{1}">
+			<result name="showchart">/charts.jsp</result>
+		</action>
+		
+	</package>
+	
+	<!-- 平衡计分卡考核 -->
+	<package name="/bsc/" extends="struts-default">
+		
+		<global-results>
+			<result name="showchart">/charts.jsp</result>
+		</global-results>
+		
+		<!-- 考核指标 -->
+		<action name="bscmeasure_*" class="bscCtrlMeasureAction" method="{1}">
+			<result name="excelDownload" type="chain">
+				<param name="actionName">exceldownload</param>
+			</result>
+		</action>
+		
+		<!-- 考核方案执行 -->
+		<action name="bscprojectexe_*" class="bscProjectExecuteAction" method="{1}"></action>
+		
+		<!-- 平衡计分卡结果查询 -->
+		<action name="bscresult_*" class="bscResultAction" method="{1}">
+			<result name="excelDownload" type="chain">
+				<param name="actionName">exceldownload</param>
+			</result>
+		</action>
+		
+		<!-- 平衡计分卡方案定义 -->
+		<action name="bscProject_*" class="bscProjectAction" method="{1}"></action>
+		
+		<!-- 私有指标维护 -->
+		<action name="privateMeasure_*" class="privateMeasureAction" method="{1}"></action>
+		
+		<!-- 公有指标维护 -->
+		<action name="publicMeasure_*" class="publicMeasureAction" method="{1}"></action>	
+		
+		<!-- 录入指标维护 -->
+		<action name="enteringMeasure_*" class="enteringMeasureAction" method="{1}"></action>		
+		
+		<!-- new数据源配置 -->
+		<action name="datasourceconfig_*" class="dataSourceConfigAction" method="{1}"></action>
+		
+		<!-- 数据源分组字段维护 -->
+		<action name="dimLink_*" class="dimLinkAction" method="{1}"></action>	
+		
+		<action name="measureAnalysis_*" class="measureAnalysisAction" method="{1}">
+			<result name="Success">/bsc/pages/testTree.jsp</result>
+		</action>	
+		
+		<!-- 考核参数 -->
+		<action name="bscParameter_*" class="bscParameterAction" method="{1}"></action>
+		
+		<!-- 参数导入 -->
+		<action name="uploadFile" class="com.rx.system.bsc.action.UploadFileAction" >
+		</action>
+		
+		<action name="bscParameterImportAjax" class="com.rx.system.bsc.action.BscParameterImportAction" >
+		</action>
+		
+		<!-- 考核结果直接由外部导入的指标 -->
+		<action name="projMeaImp_*" class="projMeaImpAction" method="{1}"></action>	
+		
+		<!-- 权重维护 -->
+		<action name="scoreWeight_*" class="scoreWeightAction" method="{1}"></action>
+		
+		<!-- 评定结果 -->
+		<action name="assessResult_*" class="assessResultAction" method="{1}"></action>
+		
+		<!-- BSC测算发布 -->
+		<action name="bscCalcPblsh_*" class="bSCCalcPblshAction" method="{1}"></action>
+		
+		<!-- 计分卡结果查询 -->
+		<action name="bsccard_*" class="bscCardAction" method="{1}">
+			<result name="excelDownload" type="chain">
+				<param name="actionName">exceldownload</param>
+			</result>
+			<result name="detail">/bsc/pages/formula_detail.jsp</result>
+		</action>
+		
+		<!-- 方案分析 -->
+		<action name="projectAnalyse_*" class="projectAnalyseAction" method="{1}"></action>
+		
+		<!-- 绩效方案执行 -->
+		<action name="bonusProjExec_*" class="bonusProjectExecAction" method="{1}">
+		
+		</action>
+	</package>
+	
+</struts>

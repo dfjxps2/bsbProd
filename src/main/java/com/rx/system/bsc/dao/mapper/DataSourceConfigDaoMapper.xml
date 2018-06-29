@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.DataSourceConfigDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * from ( select m.*,rownum rn from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) m
+			where rownum <= #{endrow}
+		)
+		where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 添加基础数据源 -->
+	<insert id="addDataSource" parameterType="DataSource">
+		insert into bsc_datasource
+  			   (source_id, source_name, source_expression, obj_cate_id, obj_column)
+		values
+  		      (#{source_id},#{source_name},#{source_expression},#{obj_cate_id},#{obj_column})
+	</insert>
+	
+	<!-- 修改数据源信息 -->
+	<update id="editDataSource" parameterType="DataSource">
+		update bsc_datasource  
+		set source_name = #{source_name},
+			source_expression = #{source_expression},
+			obj_cate_id = #{obj_cate_id},
+			obj_column = #{obj_column}
+		where source_id = #{source_id}
+	</update>
+	
+	<!-- 删除数据源记录  -->
+	<delete id="removeDataSource" parameterType="string">
+		delete from bsc_datasource where source_id = #{source_id}
+	</delete>
+	
+	<!-- 删除数据源与字段关系  -->
+	<delete id="removeSourceField" parameterType="string">
+		delete from bsc_datasource_map where source_id = #{source_id}
+	</delete>
+	
+	<!-- 获取数据源列表  -->
+	<select id="listDataSource" parameterType="map" resultType="DataSource">
+		select d.source_id,
+		       d.source_name,
+		       d.source_expression,
+		       d.obj_cate_id,
+		       c.obj_cate_desc,
+		       d.obj_column
+		  from bsc_datasource d, bsc_obj_cate c
+		 where d.obj_cate_id = c.obj_cate_id(+)
+		<if test="searchKey != null and searchKey != ''">
+			and (upper(d.source_id) like upper('%${searchKey}%') or upper(d.source_name) like upper('%${searchKey}%'))
+		</if>
+		 order by d.source_id	<!-- 添加排序 add by mabo at 2013-07-08-->
+	</select>
+	
+	<!-- 查询数据源信息  -->
+	<select id="getDataSourceById" parameterType="string" resultType="DataSource">
+		select * from bsc_datasource where source_id = #{source_id}
+	</select>
+	
+	<!-- 查询数据源字段  -->
+	<select id="listDataSourceField" parameterType="map" resultType="hashmap">
+		select m.*,
+		       d.data_type_desc,
+		       k.*
+		  from bsc_datasource_map m, bsc_dim_link k,bsc_datatype d
+		 where m.link_id = k.link_id(+)
+		   and m.data_type_id = d.data_type_id(+)
+		   and m.source_id = #{source_id}
+		 <if test="is_dim_col != null and is_dim_col != ''"> and is_dim_col = '${is_dim_col}'</if>
+		   order by m.is_dim_col, m.column_order_id asc
+	</select>
+	
+	<!-- 添加数据源字段 -->
+	<insert id="addDataSourceField" parameterType="map">
+		insert into bsc_datasource_map
+			  (source_id,
+			   column_name,
+			   column_biz_name,
+			   column_order_id,
+			   data_type_id,
+			   is_dim_col,
+			   link_id)
+			values
+			  (#{source_id},
+			  #{column_name},
+			  #{column_biz_name},
+			  #{column_order_id},
+			  #{data_type_id},
+			  #{is_dim_col},
+			  #{link_id})
+	</insert>
+	
+	<!-- 编辑数据源字段属性  -->
+	<update id="editDataSourceField" parameterType="map">
+		update bsc_datasource_map
+		set column_biz_name = #{column_biz_name},
+			column_order_id = #{column_order_id},
+			data_type_id=#{data_type_id},
+			is_dim_col=#{is_dim_col},
+			link_id=#{link_id}  
+		where source_id = #{source_id}
+		  and column_name = #{column_name}
+	</update>
+	
+	<!--  -->
+	<delete id="deleteDataSourceField" parameterType="map">
+		delete from bsc_datasource_map where source_id = #{source_id} and column_name = #{column_name}
+	</delete>
+	
+	<!-- 数据源字段 查询考核对象类型 -->
+	<select id="queryObjCate" resultType="hashmap">
+	    select c.obj_cate_id, c.obj_cate_desc from bsc_obj_cate c
+	</select>
+	
+	<!-- 数据源字段 参数链接 数据 -->
+	<select id="queryDimLink" resultType="hashmap">
+	    select k.link_id,'['||k.link_id||']'||k.link_name link_name from bsc_dim_link k 
+	</select>
+	
+	<!-- 数据源字段： 字段类型 -->
+	<select id="queryDataType" resultType="hashmap">
+	   select t.data_type_id,t.data_type_desc from bsc_datatype t
+	</select>
+	<!--数据源信息总数 -->
+	<select id="listDataSourceCount" parameterType="map" resultType="int">
+	   <include refid="totalCountHeader"/>
+		select d.source_id,
+		       d.source_name,
+		       d.source_expression,
+		       d.obj_cate_id,
+		       c.obj_cate_desc,
+		       d.obj_column
+		  from bsc_datasource d, bsc_obj_cate c
+		 where d.obj_cate_id = c.obj_cate_id(+)
+		<if test="searchKey != null and searchKey != ''">
+			and (d.source_id like '%${searchKey}%' or d.source_name like '%${searchKey}%')
+		</if>
+		<include refid="totalCountEnd"/>
+	</select>
+	
+	<select id="hasSourceID" parameterType='map' resultType="int">
+		select count(*) from bsc_datasource t where t.source_id = #{source_id}
+	</select>
+	<select id="hasSourceName" parameterType='map' resultType="int">
+		select count(*) from bsc_datasource t where t.source_name = trim(#{source_name})
+	</select>
+	<select id="editHasSourceName" parameterType='map' resultType="int">
+		select count(*) from bsc_datasource t where t.source_id != #{source_id} and t.source_name = trim(#{source_name})
+	</select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.EnteringMeasureDao">
+	
+	<!-- 分页查询数据Sql头 -->
+	<sql id="pageDataHeader">
+		select * 
+		from ( 
+			select m.*,rownum rn
+			from (
+	</sql>
+	
+	<!-- 分页查询数据Sql尾 -->
+	<sql id="pageDataEnd">
+		<![CDATA[
+			) m
+			where rownum <= #{endrow}
+		)
+		where rn > #{start}
+		]]>
+	</sql>
+	
+	<!-- 查询总数Sql头 -->
+	<sql id="totalCountHeader">
+		select count(*) from (
+	</sql>
+	
+	<!-- 查询总数Sql头尾-->
+	<sql id="totalCountEnd">
+		)
+	</sql>
+	
+	<!-- 查询参数列表 -->
+	<select id="listMeasure" parameterType="map" resultType="BscEnterMeasure">
+		select *
+		  from bsc_entering_measure t
+		 order by sys_time desc
+	</select>
+	
+	
+	<!-- 添加考核参数 -->
+	<insert id="addMeasure" parameterType="map">
+		insert into bsc_entering_measure
+		  (measure_id,
+		   org_id,
+		   praise_org,
+		   type,
+		   remark,
+		   sys_time,
+		   mouth_id,
+		   score)
+		values
+		  (#{measure_id}, #{org_id}, #{praise_org}, #{type}, #{remark}, #{sys_time}, #{mouth_id}, #{score})
+	</insert>
+		
+	<!-- 根据参数param_id ,owner_id获取参数对象 -->
+	<select id="getMeasureById" parameterType="map" resultType="BscEnterMeasure">
+		select * from bsc_entering_measure where measure_id = #{measure_id}
+	</select>
+	
+	<!-- 通过id修改考核参数 -->
+	<update id="updateMeasure" parameterType="map">
+	     update bsc_entering_measure
+	        set praise_org = #{praise_org},
+	            type   = #{type},
+	            remark  = #{remark},
+	            year  = #{mouth_id},
+	            score  = #{score}
+	      where measure_id = #{measure_id}
+	</update>
+</mapper>

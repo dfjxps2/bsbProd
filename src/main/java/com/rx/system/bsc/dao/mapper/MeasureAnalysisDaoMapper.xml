@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rx.system.bsc.dao.MeasureAnalysisDao">
+	<!--  -->
+	<select id="listHeader" parameterType="map" resultType="map">
+		select * from dmd_bank_inter_org where parent_bank_org_id = #{bankOrgId}
+	</select>
+	
+	<!--  -->
+	<select id="listData" parameterType="map" resultType="map">
+		select dim_id,
+		       dim_name,
+		       parent_dim_id,
+		       dim_level
+		  from BSC_KPI_DIM
+		 where 1=1
+		 <if test="dimId!='root'">
+		 	and dim_id = #{dimId}
+		 </if>
+		<if test="dimId=='root'">
+			and parent_dim_id = 'root'
+		</if>
+		 order by dim_id
+	</select>	
+	
+	<!--  -->
+	<select id="listSubData" parameterType="map" resultType="map">
+		select dim_id,
+		       dim_name,
+		       parent_dim_id,
+		       dim_level,
+		       count(*) over(partition by parent_dim_id) as count_num
+		  from BSC_KPI_DIM
+		 where parent_dim_id = #{dimId}
+		 order by dim_id
+	</select>
+	
+	<select id="listView" parameterType="map" resultType="map">
+		select 'v' || t.bank_org_id bank_org_id,
+		       'v' || t.parent_bank_org_id parent_bank_org_id,
+		       t.bank_org_name,
+		       'e' || t.bank_org_id e_bank_org_id
+		  from dmd_bank_inter_org t
+		 where t.parent_bank_org_id in ('8888')	
+	</select>
+</mapper>
