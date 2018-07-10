@@ -1,6 +1,11 @@
 var LastLeftID = "";
 var lastSecLeftID = "";
 function menuFix() {
+	 $(".img0").addClass('fa fa-line-chart')
+	 $(".img1").addClass('fa fa-paste');
+	 $(".img2").addClass('fa fa-list-alt');
+	 $(".img3").addClass('fa fa-cog');
+	 
 	var obj = document.getElementById("nav").getElementsByTagName("li");
 	for (var i = 0; i < obj.length; i++) {
 		obj[i].onmouseover = function() {
@@ -20,7 +25,6 @@ function menuFix() {
 		}
 	}
 }
-
 
 function DoMenu(emid){
 	if ((lastSecLeftID != "") && (emid != lastSecLeftID)) {// 关闭上一个二级Menu

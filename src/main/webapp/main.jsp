@@ -23,6 +23,7 @@
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxtree.css">
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxgrid.css">
 	
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/font-awesome/css/font-awesome.min.css" />
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxcommon.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/dhtmlx/dhtmlxgrid.js"></script>
@@ -60,11 +61,9 @@
 			<iframe src="banner.jsp" class="banner_frame" frameborder="0"></iframe>
 		</div> 
 		<div id='west'>
-			<div id="menu_parent">
+			<div id="menu_parent" style="background-color: #2e3d50">
 				<div class="menu_title_l">
-					<div class="menu_title_r">
-						<div class="menu_title_c">主菜单</div>
-					</div>
+				<div class="menu_title_c"><p style="text-align: center;color:#fff;font-size:16px">主菜单</p></div>
 				</div>
 				<div id="menu">${requestScope.menuCode}</div>
 			</div>
@@ -73,25 +72,7 @@
 		</div>
 	</div>
 	
-	<!-- 导航开始
-	<div class="nav" id="navigate_layout">
-		<div class="movehandle" id="navigate_hanlde" title="移动位置"></div>
-		<div id="navlist" class="now">
-			<a href="javascript:void(0);" style="color:black;text-decoration:none;">&nbsp;</a>
-		</div>
-		<div class="box" id="navbox" style="height:483px;opacity:0;overflow:hidden;">
-			<div class="cont" style="display:none;">
-				<img src="map/functionMap.png" usemap="#MapMap2" alt="快速菜单"/>
-				&nbsp; 
-				<map id="Map3" name="MapMap2">
-					<s:iterator value="#request.userMenuPictMap" >
-						<area id="<s:property value='key.menuID' />" shape="rect" coords="<s:property value='key.pictCoord' />" href="javaScript:void(0);" onclick="topage('<s:property value='key.menuID' />')"/>
-					</s:iterator>
-				</map> 
-			</div> 
-		</div>
-	</div>
-	导航结束 -->
+	
 	<div id="res_tree" style="width:100%;height: 100%;background-color:white;border:0px;display: none;"></div>
 	
 	<!-- 变更权限机构Form -->

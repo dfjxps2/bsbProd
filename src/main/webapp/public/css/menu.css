@@ -1,76 +1,74 @@
 @CHARSET "UTF-8";
 #nav {
-	width: 157px;
-	line-height: 30px;
+	width: 174px;
+	line-height: 40px;
 	list-style-type: none;
-	text-align: left;
+	color:#fff;
 	/*定义整个ul菜单的行高和背景色*/
 }
+#menu{
+background-color: #2e3d50;	
+	
+}
+
+
+#BSC20,
+#BSC30,
+#BSCz0{
+	background-color: #17283c;
+	
+}
+#BSC20{
+    margin-bottom: -16px;
+}
+
 #nav .last_level1{
 	height: 5px;
-	background-image: url("../images/menu/menu-level2bottom.png");
-	background-repeat: no-repeat;
+	
 }
 #nav .last_level2{
 	height: 6px;
-	background-image: url("../images/menu/menu-level3bottom.png");
-	background-repeat: no-repeat;
+	
 }
-#nav A.haschildren1{
-	background-image: url("../images/menu/hachildren.png");
-	background-position: 90% 10px;
-	background-repeat: no-repeat;
-}
-#nav A.haschildren1:hover{
-	background-image: url("../images/menu/hachildren.png");
-	background-position: 90% 10px;
-	background-repeat: no-repeat;
-}
+
 /*==================一级目录===================*/
+.img{
+	height: 18px;
+	width:27px;
+	float: left;
+	margin-left: 25px;
+}
+
 #nav a {
-	width: 125px;
+	width: 100%;
 	display: block;
 	font-family: arial, 宋体, serif;
-	font-size:13px;
-	height:32px;
-	color:#5c2813;
+	font-size:16px;
+	height:45px;
+	color:#fff;
 	font-weight: bold;
-	text-align: center;
-	background-image: url("../images/menu/menu-a.png");
 	display: inline-block;
+	
 	text-decoration: none;
 	outline: none;
 	/*Width(一定要)，否则下面的Li会变形*/
 }
 #nav .item_focus{
-	background-image: url("../images/menu/menu-a-focus.png");
-	color: #ffffff;
-}
-#nav .item_focus:hover{
-	background-image: url("../images/menu/menu-a-focus.png");
-	color: #ffffff;
-}
-#nav a img {
-	vertical-align: middle;
+	background-color: #0c1f36;
 }
 
 #nav li {
-	 margin:8px 0px 8px 0px; 
-	 text-align: center;
+	 margin:0px 0px 0px 0px;
 	 z-index: 1;
 	 position: relative;
 }
 
-#nav li a:hover {
-	background-image: url("../images/menu/menu-a-hover.png");
-	color: #5c2813;
-}
-
 
 #nav a:hover {
-	color: #FFF;
+	color: #3f8aff;
 	text-decoration: none;
 	font-weight: bold;
+	background-color: #0c1f36;
 }
 
 /*==================二级目录===================*/
@@ -78,55 +76,73 @@
 	list-style: none;
 	text-align: left;
 	position: relative;
-	top:-11px;
+	top:-15px;
 	left:0px;
 	padding-top: 15px;
-	background-image: url("../images/menu/menu-level2top.png");
-	background-repeat: no-repeat;
+	background-color: #17283C;
 	z-index: -12;
-	width: 141px;
+	width: 100%;
+}
+#nav li ul li a:hover {
+	background-color: #0c1f36;
+
+	}
+
+.level1{
+	line-height: 11px;
+}
+.a1,.a2{
+	margin-top: 17px
+}
+.a0{
+	margin-top: 4px;
 }
 
 #nav li ul li {
 	margin: 0px;
-	background-image: url("../images/menu/menu-level2bg.png");
-	background-repeat: repeat-y;
 }
 
 #nav li ul a {
-	width: 120px;
+	width: 100%;
 	font-weight: normal;
-	text-align: center;
+	text-align: left;
 	text-decoration: none;
 	background-image: none;
+	
 }
+.a0{
+	margin-left: 24px;
 
+	}
+
+.a1{
+	margin-left: 40px;
+	float: left;
+}
+.a2{
+	margin-left: 60px;
+}
 #nav li ul a img {
 	vertical-align: middle;
 }
  
 /*下面是二级目录的链接样式*/
 #nav li ul a:link {
-	color:#5c2813;
+	color:#fff;
 	text-decoration: none;
 	outline: none;
 }
 
 #nav li ul a:hover {
-	color: #ffffff;
+	color: #3f8aff;
 	background-image: none;
 	font-weight: normal;
 }
 
-/*==============================
-#nav li:hover ul {
-	left: auto;
+.level1 ui{
+	padding-top: 5px;
 }
 
-#nav li.sfhover ul {
-	left: auto;
-}
-*/
 #content {
 	clear: left;
 }
@@ -144,25 +160,24 @@
 
 /*=======三级目录================*/
 #nav li ul li ul{
-	width:141px;
+	width:100%;
 	list-style: none;
 	text-align: center;
-	background-image: url("../images/menu/menu-level3top.png");
-	background-repeat: no-repeat;
+	background-color:#17283c;
+	margin-top: 12px;
 	z-index: 1;
+	padding-top: 0px;
 }
 
 #nav li ul li ul li{
-	background-image: url("../images/menu/menu-level3bg.png");
-	background-repeat: repeat-y ;
 	height : 32px;
 }
 
 #nav li ul li ul a {
-	width: 120px;
+	width: 100%;
 	font-weight: normal;
 	vertical-align: middle;
-	background-image: none;
+	font-size:12px;
 }
 #nav li ul li ul a img {
 	vertical-align: middle;
@@ -170,13 +185,20 @@
  
 /*下面是三级目录的链接样式*/
 #nav li ul li ul a:link {
-	color: #5c2813;
+	color: #fff;
 	text-decoration: none;
 	vertical-align: middle;
 	outline: none;
 }
 
- 
+.level1 ul{
+	margin-top: 0px;
+}
+ .last_level0,
+ .last_level1,
+ .last_level2{
+ display: none;
+ }
 
 #nav li ul li ul a:hover {
 	color: #FFFFFF;
@@ -189,7 +211,6 @@
 	height : 83px;
 	width: 33px;
 	cursor : hand;
-	background-image: url("../images/menu/navigate.png");
 }
 
 .nav {
@@ -223,11 +244,4 @@
 	height : 20px;
 	cursor : move;
 	margin-bottom: 5px;
-	background-image: url("../images/main/move.png");
-	background-repeat: no-repeat;
-}
-.movestarting{
-	background-image: url("../images/main/movestart.png");
-	background-repeat: no-repeat;
-	background-position:  center center;
 }

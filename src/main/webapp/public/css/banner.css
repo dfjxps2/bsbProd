@@ -6,9 +6,21 @@ html,body{overflow: hidden;font-family: '微软雅黑';padding:0px;margin:0px;ba
 .r_bg_l{background-image: url("../images/banner/top-right.png");position: absolute;left:-15px;top:0px;height: 43px;width:772px;} 
 .r_bg_r{height: 43px;position: absolute;right:0px;top:0px;float: right;}
 .r_bg_r .operator{position:absolute;width: 204px;height: 24px; background-image: url("../images/banner/t-r-button-bg.png");background-repeat: no-repeat;right:20px;top:0px;text-align: center;}
-.operator .opt_item{font-size: 12px;height: 24px;line-height: 24px;display: inline;margin-left: 5px;margin-right: 10px;cursor: pointer;padding-left: 20px;width: 80px;background-repeat:no-repeat;background-position: 0px 1px;}
+.operator .opt_item{font-size: 12px;height:100%;line-height: 24px;display: inline;margin-left: 5px;margin-right: 10px;cursor: pointer;padding-left: 20px;width: 180px;background-repeat:no-repeat;background-position: 0px 1px;}
 .mpsw{background-image: url("../images/banner/mpsw.png"); }
 .mpsw:hover{background-image: url("../images/banner/mpsw_hover.png"); }
 .exit{background-image: url("../images/banner/exit.png"); }
 .exit:hover{background-image: url("../images/banner/exit_hover.png"); }
-.logininfo{width:500px;position: absolute;right: 0px;top: 25px;text-align: right;padding-right: 20px;font-size: 12px;color: #551f0a;}
+.logininfo{text-align: right;padding-right: 20px;font-size: 16px;color: #fff;}
+#up_prd{
+height：30px;
+width:40px;
+background-image: url("../images/banner/up_prd.png");
+background-repeat: no-repeat;	
+}
+#log_out{
+height：30px;
+width:40px;
+background-image: url("../images/banner/log_out.png");
+background-repeat: no-repeat;	
+}

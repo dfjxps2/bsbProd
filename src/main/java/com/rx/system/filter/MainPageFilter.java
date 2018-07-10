@@ -96,13 +96,18 @@ public class MainPageFilter implements Filter {
 		for (int i = 0 ; i < treeList.size() ; i++) {
 			Tree tree = treeList.get(i);
 			TreeNode root = tree.getRootNode();
-			
 			sb.append("<li class=\"level"+level+"\">");
 			sb.append("<a");
 			if(tree.getChildren().size() > 0){
 				sb.append(" class=\"haschildren"+level+"\"");
 			}
-			sb.append(" id=\"m_"+root.getNodeID()+"\" href=\"javascript:void(0)\""+getMenuAction(root,level, baseKey)+">").append(root.getNodeName()).append("</a>");
+			sb.append(" id=\"m_"+root.getNodeID()+"\" href=\"javascript:void(0)\""+getMenuAction(root,level, baseKey)+">");
+			String img = "";
+			if (level<1) {
+				/*sb.append("<div class = \"img img"+i+"\"></div>");	*/
+				img = "img"+i;
+			}
+			sb.append("<p class = \"a"+level+"\"><i class=\""+img+"\"></i>&emsp;").append(root.getNodeName()).append("</p></a>");
 			
 			if(tree.getChildren().size() > 0)
 				sb.append("<ul id=\""+root.getNodeID()+"\" class=\"collapsed\">");
@@ -113,9 +118,9 @@ public class MainPageFilter implements Filter {
 				sb.append("</ul>");
 			
 			sb.append("</li>");
-			if(i==treeList.size()-1){
+			/*if(i==treeList.size()-1){
 				sb.append("<li class=\"last_level"+level+"\"></li>");
-			}
+			}*/
 		}
 	}
 	

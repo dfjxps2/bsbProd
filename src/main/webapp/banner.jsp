@@ -5,9 +5,10 @@
 	<head>
 		<meta http-equiv="pragma" content="no-cache"/>
 		<meta http-equiv="cache-control" content="no-cache"/>
-		<meta http-equiv="expires" content="0"/>
+		<meta http-equiv="expires" content="0"/> 
 		<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/jquery/jquery-1.9.1.js"></script>
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/banner.css" />
+		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/font-awesome/css/font-awesome.min.css" />
 		<script type="text/javascript">
 			$(function(){
 				$('.container').width(screen.width);
@@ -35,22 +36,23 @@
 		</script>
 	</head>
 <body>
-	<div class="container">
-		<div class="l_logo"></div>
-		<div class="r_bg">
-			<div class="r_bg_l"></div>
+	<div class="container" style="background-color: #2b5ca9;height:50px;">
+		<div class="opt_item mpsws" style="height: 100%;float:left;width:180px;" onclick="modifyPassword()">
+			<p style="text-align: center;color:#fff;font-size:20px;margin-top: 11px">指标管理系统</p>
 		</div>
-	</div>
-
-	<div class="r_bg_r">
-		<div class="operator">
-			<div class="opt_item mpsw" onclick="modifyPassword()">修改密码</div>
-			<div class="opt_item exit" onclick="logout()">退出系统</div>
+		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:60px;background-color:#204e97">
+		<div id = "log_out" style="width: 20px;height: 20px;margin-top: 19px;margin-left: 25px"></div>
 		</div>
-		<div class="logininfo">
+		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:124px;background-color:#204e97" onclick="modifyPassword()">
+			<div id = "up_prd" style="width: 20px;height: 20px;float: left;margin-top: 19px;margin-left: 20px"></div>
+			<p style="text-align: left;margin-left: 5px;float: left">修改密码</p>
+		</div>	
+		<div class="logininfo" style="height: 100%;;float: right">
+		<p style="text-align: center">
 			当前用户:${currentUser.user_name}&nbsp;|&nbsp;
-			<%-- 权限机构:${currentUser.bank_org_name}&nbsp;<span id="changeOrgSpan"><a href="#" onclick="switchOrg()">[切换]</a></span>&nbsp;|&nbsp; --%>
+			权限机构:${currentUser.bank_org_name}&nbsp;<span id="changeOrgSpan"><a href="#" onclick="switchOrg()">[切换]</a></span>&nbsp;|&nbsp;
 			系统日期:${sysDate}
+		</p>
 		</div>
 	</div>
 	<script type="text/javascript">
