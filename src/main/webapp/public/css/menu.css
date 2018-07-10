@@ -5,6 +5,7 @@
 	list-style-type: none;
 	color:#fff;
 	/*定义整个ul菜单的行高和背景色*/
+	margin-top: 20px;
 }
 #menu{
 background-color: #2e3d50;	
@@ -154,7 +155,7 @@ background-color: #2e3d50;
 #menu {
 	width: 100%;
 	padding-left:0px;
-	height : 94% !important;
+	height : 100% !important;
 }
 
 

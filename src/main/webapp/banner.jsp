@@ -49,9 +49,7 @@
 		</div>	
 		<div class="logininfo" style="height: 100%;;float: right">
 		<p style="text-align: center">
-			当前用户:${currentUser.user_name}&nbsp;|&nbsp;
-			权限机构:${currentUser.bank_org_name}&nbsp;<span id="changeOrgSpan"><a href="#" onclick="switchOrg()">[切换]</a></span>&nbsp;|&nbsp;
-			系统日期:${sysDate}
+			当前用户:${currentUser.user_name}&nbsp;&nbsp;
 		</p>
 		</div>
 	</div>

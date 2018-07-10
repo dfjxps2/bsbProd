@@ -62,9 +62,9 @@
 		</div> 
 		<div id='west'>
 			<div id="menu_parent" style="background-color: #2e3d50">
-				<div class="menu_title_l">
+				<!-- <div class="menu_title_l">
 				<div class="menu_title_c"><p style="text-align: center;color:#fff;font-size:16px">主菜单</p></div>
-				</div>
+				</div> -->
 				<div id="menu">${requestScope.menuCode}</div>
 			</div>
 		</div>
