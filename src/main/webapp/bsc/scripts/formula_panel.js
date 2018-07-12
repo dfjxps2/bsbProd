@@ -770,7 +770,7 @@ function doEditFormula(){
 			//数据源指标
 			var sid = Ext.getCmp('sid').getValue();
 			var formula = Ext.getCmp('formula_expr').getValue();
-			Ext.Msg.alert("",sid);
+//			Ext.Msg.alert("",sid);
 			sourceComboBox.setValue(sid);
 			sourceFormulaTextArea.setValue(formula);
 			valueFieldDS.reload({ 
