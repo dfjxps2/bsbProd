@@ -4469,7 +4469,7 @@ a.x-menu-item {
 
 .x-window-header-text {
     cursor:pointer;
-    color:#551f0a;
+    color:#fff;
 }
 
 .x-window-tc {
@@ -4920,7 +4920,7 @@ body.ext-ie6.x-body-masked .x-window select {
     line-height:1px;
     font-size:1px;
     z-index:3;
-    background: #551f0a; 
+    background: #2e3d50;
 }
 
 /* IE6 strict won't drag w/out a color */
@@ -5736,7 +5736,6 @@ ul.x-tab-strip-bottom{
 }.x-toolbar{
 	border-color:#a9bfd3;
     background-color:#d0def0;
-    background-image:url(../images/default/toolbar/bg.gif);
 }
 
 .x-toolbar td,.x-toolbar span,.x-toolbar input,.x-toolbar div,.x-toolbar select,.x-toolbar label{
@@ -6678,7 +6677,6 @@ a.x-menu-item {
 	font-weight:bold; 
     font-size: 12px;
     font-family: tahoma,arial,verdana,sans-serif;
-    background-image: url(../images/default/panel/white-top-bottom.gif);
 }
 
 .x-panel-body {
@@ -6702,11 +6700,11 @@ a.x-menu-item {
 }
 
 .x-panel-tc {
-	background-image: url(../images/default/panel/top-bottom.gif);
+    background-color:#fafafa;
 }
 
 .x-panel-tl, .x-panel-tr, .x-panel-bl,  .x-panel-br{
-	background-image: url(../images/default/panel/corners-sprite.gif);
+    background-color:#fafafa;
     border-bottom-color:#99bbe8;
 }
 
@@ -6758,27 +6756,27 @@ a.x-menu-item {
 }
 
 .x-window-tc {
-	background-image: url(../images/default/window/top-bottom.png);
+    background-color: #2b5ca9;
 }
 
 .x-window-tl {
-	background-image: url(../images/default/window/left-corners.png);
+    background-color: #2b5ca9;
 }
 
 .x-window-tr {
-	background-image: url(../images/default/window/right-corners.png);
+    background-color: #2b5ca9;
 }
 
 .x-window-bc {
-	background-image: url(../images/default/window/top-bottom.png);
+    background-color: #fafafa;
 }
 
 .x-window-bl {
-	background-image: url(../images/default/window/left-corners.png);
+    background-color: #fafafa;
 }
 
 .x-window-br {
-	background-image: url(../images/default/window/right-corners.png);
+    background-color: #fafafa;
 }
 
 .x-window-mc {
@@ -6788,11 +6786,11 @@ a.x-menu-item {
 }
 
 .x-window-ml {
-	background-image: url(../images/default/window/left-right.png);
+    background-color: #fafafa;
 }
 
 .x-window-mr {
-	background-image: url(../images/default/window/left-right.png);
+    background-color: #fafafa;
 }
 
 .x-window-maximized .x-window-tc {
@@ -6816,8 +6814,10 @@ a.x-menu-item {
 }
 
 .x-window-plain .x-window-mc {
-    background-color: #c4b3a2;
-    border-color: #c4b3a2 #c4b3a2 #c4b3a2 #c4b3a2;
+    /*background-color: #c4b3a2;
+    border-color: #c4b3a2 #c4b3a2 #c4b3a2 #c4b3a2;*/
+    background-color:#fafafa;
+    border-color:#fafafa #fafafa #fafafa #fafafa;
 }
 
 .x-window-plain .x-window-body {
@@ -6825,7 +6825,7 @@ a.x-menu-item {
 }
 
 body.x-body-masked .x-window-plain .x-window-mc {
-    background-color: #c4b3a2;
+    background-color: #fafafa;
 }.x-html-editor-wrap {
     border-color:#a9bfd3;
     background-color:#fff;
@@ -6995,10 +6995,17 @@ body.x-body-masked .x-window-plain .x-window-mc {
 }
 /*self definition*/
 .x-panel-header-text{
-	background-image: url("../images/default/panel/label-bg.png");
 	background-repeat: no-repeat;
 	background-position: center center;
-	padding:5px 30px 5px 30px;
-	color: #ffffff;
+	color: #333;
 	font-size: 12px;
+}
+.x-panel-header-text:before{
+    content:" \00a0";
+    padding: 1px 1px;
+    margin: 0 10px;
+    color:#333;
+    width:20px;
+    height:14px;
+    background-color:#2b5ca9;
 }
