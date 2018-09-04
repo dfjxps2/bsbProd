@@ -11,16 +11,13 @@ html,body{overflow: hidden;font-family: '微软雅黑';padding:0px;margin:0px;ba
 .mpsw:hover{background-image: url("../images/banner/mpsw_hover.png"); }
 .exit{background-image: url("../images/banner/exit.png"); }
 .exit:hover{background-image: url("../images/banner/exit_hover.png"); }
-.logininfo{text-align: right;padding-right: 20px;font-size: 16px;color: #fff;}
+.logininfo{text-align: right;padding-right: 20px;font-size: 14px;color: #fff;}
 #up_prd{
-height：30px;
+height:30px;
 width:40px;
-background-image: url("../images/banner/up_prd.png");
-background-repeat: no-repeat;	
+background: url("../images/banner/up_prd.png") no-repeat center;
 }
 #log_out{
-height：30px;
-width:40px;
-background-image: url("../images/banner/log_out.png");
-background-repeat: no-repeat;	
+width: 20px;height: 60px;
+background: url("../images/banner/log_out.png") no-repeat center;
 }

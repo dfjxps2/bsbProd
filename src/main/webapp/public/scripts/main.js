@@ -5,7 +5,7 @@ MainFrameUI = Ext.extend(Ext.Viewport,{
 			items: [{
 				xtype : 'panel',
 				region : 'north',
-				height : 50,
+				height : 60,
 				hideCollapseTool : true,
 				contentEl : 'north'
 			},{

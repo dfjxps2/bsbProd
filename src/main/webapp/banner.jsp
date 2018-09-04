@@ -36,25 +36,25 @@
 		</script>
 	</head>
 <body>
-	<div class="container" style="background-color: #2b5ca9;height:50px;">
-		<div class="opt_item mpsws" style="height: 100%;float:left;width:180px;" onclick="modifyPassword()">
-			<p style="text-align: center;color:#fff;font-size:20px;margin-top: 11px">指标管理系统</p>
+	<div class="container" style="background-color: #2b5ca9;height:60px;">
+		<div class="opt_item mpsws" style="height: 100%;line-height:100%;float:left;width:180px;" onclick="modifyPassword()">
+			<p style="text-align: center;color:#fff;font-size:20px;">指标管理系统</p>
 		</div>
-		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:60px;background-color:#204e97">
-		<div id = "log_out" style="width: 20px;height: 20px;margin-top: 19px;margin-left: 25px"></div>
+		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:60px;">
+		<div id = "log_out"></div>
 		</div>
-		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:124px;background-color:#204e97" onclick="modifyPassword()">
-			<div id = "up_prd" style="width: 20px;height: 20px;float: left;margin-top: 19px;margin-left: 20px"></div>
-			<p style="text-align: left;margin-left: 5px;float: left">修改密码</p>
+		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:124px;" onclick="modifyPassword()">
+			<div id = "up_prd" style="width: 20px;height: inherit;float: left;"></div>
+			<p style="text-align: left;margin: auto 5px;float: left;font-size:14px;height: 60px;line-height: 60px;">修改密码</p>
 		</div>	
-		<div class="logininfo" style="height: 100%;;float: right">
-		<p style="text-align: center">
+		<div class="logininfo" style="height: 100%;line-height: 100%;float: right">
+		<p style="height: 60px;line-height: 60px;margin: auto 5px;">
 			当前用户:${currentUser.user_name}&nbsp;&nbsp;
 		</p>
 		</div>
 	</div>
 	<script type="text/javascript">
-		if(parseInt(window.top.rightOrgNumber) <= 1) {
+		if(parseInt(window.top.rightOrgNumber) <= 1 && document.getElementById("changeOrgSpan")) {
 			document.getElementById("changeOrgSpan").style.display = "none";
 		}
 	</script>
