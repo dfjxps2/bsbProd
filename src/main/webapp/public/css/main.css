@@ -61,3 +61,11 @@
 	background-image: url("../images/main/menu-bg.png");
 	border-left: solid 1px #551f0a;
 }
+.main_footer{
+	width:100%;
+	text-align: center;
+	font-family: "微软雅黑", "宋体", Arial, sans-serif;
+	font-size:14px;
+	color:#333;
+	line-height: 30px;
+}

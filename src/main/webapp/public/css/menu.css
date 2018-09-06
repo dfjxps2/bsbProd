@@ -43,16 +43,18 @@ background-color: #2e3d50;
 #nav a {
 	width: 100%;
 	display: block;
-	font-family: arial, 宋体, serif;
+	font-family: "微软雅黑", "宋体", Arial, sans-serif;
 	font-size:16px;
 	height:45px;
 	color:#fff;
 	font-weight: bold;
 	display: inline-block;
-	
 	text-decoration: none;
 	outline: none;
 	/*Width(一定要)，否则下面的Li会变形*/
+}
+#nav .level1 a{
+	font-size:14px;
 }
 #nav .item_focus{
 	background-color: #0c1f36;
