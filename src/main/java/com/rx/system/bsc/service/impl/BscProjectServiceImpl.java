@@ -187,5 +187,17 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 			throws Exception {
 		return this.bscProjectDao.getProjectCountByName(paramMap)>0?true:false;
 	}
+	
+	/*
+	 * 查询平衡计分卡方案（通过方案编号）已执行指标名称列表
+	 * (non-Javadoc)
+	 * @see com.rx.system.bsc.service.IBscProjectService#listExecutedIndex(java.util.Map)
+	 */
+	@Override
+	public List<Map<String, Object>> listExecutedIndex(
+			Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.listExecutedIndex(paramMap));
+		return dataList;
+	}
 
 }

@@ -132,7 +132,6 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 	 */
 	public List<Map<String, Object>> listScoreResult(
 			Map<String, Object> paramMap) throws Exception {
-		System.out.println("paramMap===================="+paramMap);
 		List<Map<String, Object>> measureList = (List<Map<String, Object>>)paramMap.get("measureList");
 		String case_sql = "";
 		for (int i = 0; i < measureList.size(); i++) {
@@ -222,4 +221,9 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 		return this.toLowerMapList(bscResultDao.listSubMeasure(paramMap));
 	}
 	
+	//通过指标编号查询指标信息 
+	public List<Map<String, Object>> listProjectMeasureByIndexId(
+			Map<String, Object> paramMap) throws Exception {
+		return this.toLowerMapList(bscResultDao.listProjectMeasureByIndexId(paramMap));
+	}
 }

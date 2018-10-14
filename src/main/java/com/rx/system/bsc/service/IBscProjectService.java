@@ -98,4 +98,15 @@ public interface IBscProjectService {
 	
 	public boolean getProjectNameById(Map<String,Object> paramMap) throws Exception;
 	
+	
+	/**
+	 * 查询平衡计分卡方案（通过方案编号）已执行指标名称列表
+	 * 
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listExecutedIndex(Map<String, Object> paramMap) throws Exception;
+
+	
 }

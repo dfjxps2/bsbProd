@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" contentType="text/html; charset=utf-8" pageEncoding="utf-8" isELIgnored="false"%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
@@ -27,19 +28,21 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/public/scripts/jquery/jquery-1.9.1.js"></script>
 	
 	<script type="text/javascript">
+
     	var pathUrl = "${pageContext.request.contextPath}";
 		var extPath = "${pageContext.request.contextPath}/public/scripts/ext3.4.0";
 		Ext.BLANK_IMAGE_URL = extPath + '/resources/images/default/s.gif';
 		Ext.QuickTips.init();
+		
 		var height,width;
 		var projectID="${param.project_id}",monthID = "${param.month_id}",
-			measureID = "${param.measure_id}",obj_cate_id="${param.obj_cate_id}",
+			measure_id = "${param.measure_id}",obj_cate_id="${param.obj_cate_id}",
 			monthName = "${param.monthName}",projectName = "${param.projectName}",
-			cycle_type_id = "${param.cycle_type_id}";
-		var full_score = "${param.full_score}";
+			cycle_type_id = "${param.cycle_type_id}" ,ids = "${param.ids}",
+			full_score = "${param.full_score}";
+			
     </script>
-																						
-	<script type="text/javascript" src="${pageContext.request.contextPath}/bsc/scripts/bsc_proj_result_detail_layout.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/bsc/scripts/bsc_proj_result_index_detail_layout.js"></script>
 	
   </head>
   
@@ -57,6 +60,7 @@
 		<input type="hidden" name="full_score"/>
 		<input type="hidden" name="measure_id"/>
 		<input type="hidden" name="title"/>
+		<input type="hidden" name="ids"/>
 	</form>
     <div id="measure_table" style="width:100%;height: 100%;background-color:white;overflow:hidden;border:0px"></div>
   </body>

@@ -179,4 +179,17 @@
 	<select id="hasRelation" parameterType="map" resultType="int">
 		select count(*) from bsc_proj_obj t where t.project_id = #{project_id}
 	</select>
+	
+		<!-- 查询平衡计分卡方案（通过方案编号）已执行指标名称列表 -->
+	<select id="listExecutedIndex" parameterType="map" resultType="map">
+		select
+		    a.measure_id as value_field,
+		    a.mea_definition as display_field
+		from bsc_proj_mea_h a 
+		where a.project_id = #{project_id} 
+		<if test="month_id != null and month_id != ''">
+			and a.year_id = #{month_id} 
+		</if>
+		order by a.mea_order_id
+	</select>
 </mapper>

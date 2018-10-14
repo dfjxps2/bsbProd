@@ -6,8 +6,9 @@ Ext.onReady(function() {
 		tooltip : '导出查询结果',
 		iconCls : 'export',
 		handler : function() {
-			if (monthID == '' || projectID == '' || measureID == '')
+			if (monthID == '' || projectID == '' || measure_id == '')
 				return;
+			var flag = "1";
 			document.excelForm.month_id.value = monthID;
 			document.excelForm.project_id.value = projectID;
 			document.excelForm.cycleTypeId.value = cycle_type_id;
@@ -16,7 +17,8 @@ Ext.onReady(function() {
 			document.excelForm.title.value = "方案结果指标明细";
 			document.excelForm.file_name.value = '方案结果指标明细.xls';
 			document.excelForm.full_score.value = full_score;
-			document.excelForm.measure_id.value = measureID;
+			document.excelForm.measure_id.value = measure_id;
+			document.excelForm.title.value = flag;
 			document.excelForm.submit();
 		}
 	},'-',{
@@ -51,7 +53,6 @@ Ext.onReady(function() {
 });
 
 function queryResult() {
-	debugger;
 	dhtmlGrid = new dhtmlXGridObject('measure_table');
 	dhtmlGrid.setImagePath(pathUrl + "/public/scripts/dhtmlx/imgs/");
 	dhtmlGrid.setSkin("bsc");
@@ -61,9 +62,9 @@ function queryResult() {
 
 	mask.show();
 	var param = "?project_id=" + projectID + "&month_id=" + monthID
-			+ "&measure_id=" + measureID + "&cycle_type_id="+ cycle_type_id 
+			+ "&measure_id=" + measure_id + "&title=1&cycle_type_id="+ cycle_type_id 
 			+ "&obj_cate_id=" + obj_cate_id + "&monthName=" + encodeURI(encodeURI(monthName))
-			+ "&title=&projectName=" + encodeURI(encodeURI(projectName));
+			+ "&projectName=" + encodeURI(encodeURI(projectName));
 	dhtmlGrid.load(pathUrl + '/bscresult_scoreDhtmlSub.action' + param, function() {
 		mask.hide();
 		var xml = dhtmlGrid.serialize();
@@ -93,7 +94,8 @@ function insertTotalRow(grid) {
 
 }
 function goback() {
-	window.location = 'bsc_proj_obj_score.jsp?month_id=' + monthID
+//	var id = ids.split('.').join(',');
+	window.location = 'bsc_proj_obj_index_score.jsp?month_id=' + monthID
 			+ '&project_id=' + projectID + '&objCateId=' + obj_cate_id
 			+ '&cycle_type_id='+cycle_type_id;
 }

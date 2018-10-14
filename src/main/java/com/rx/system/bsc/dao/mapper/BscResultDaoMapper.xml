@@ -177,8 +177,10 @@
 	<select id="listScoreResult" parameterType="map" resultType="map">
 		<include refid="pageDataHeader"/>
 			select t.object_id, 
-			       '['||t.object_id||']'||' '||max(t.object_name) as object_name,
-			       ${case_sql}
+			       '['||t.object_id||']'||' '||max(t.object_name) as object_name
+			       <if test="case_sql != null and case_sql != ''">
+			 		,${case_sql}
+				   </if>
 			from bsc_proj_obj_h t 
 			     left join bsc_proj_mea_obj_val b on 
 			        t.project_id =  b.project_id 
@@ -310,6 +312,17 @@
 		     order by a.month_id desc
 		    ) s
 		order by s.month_id
+	</select>
+	
+	
+	<!-- 通过指标编号查询指标信息 -->
+	<select id="listProjectMeasureByIndexId" parameterType="map" resultType="map">
+		select
+		    measure_id  as measure_id,
+		    measure_name as mea_definition
+		from bsc_measure 
+		where measure_id in (${meaId}) 
+		order by measure_id
 	</select>
 
 </mapper>

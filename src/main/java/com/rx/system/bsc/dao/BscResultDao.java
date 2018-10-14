@@ -103,4 +103,9 @@ public interface BscResultDao {
 	public List<Map<String, Object>> listProjectMeasure(Map<String,Object> paramMap) throws Exception;
 	
 	public List<Map<String, Object>> listSubMeasure(Map<String, Object> paramMap) throws Exception;
+	
+	//通过指标编号查询指标信息
+	public List<Map<String, Object>> listProjectMeasureByIndexId(Map<String, Object> paramMap) throws Exception;
+	
+	
 }

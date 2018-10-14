@@ -122,7 +122,7 @@ var measure_store = new Ext.data.JsonStore({
 				project_id : projectId,
 				source_type_id : '02',
 				measure_search : measure_search,
-				procedure :　procedure
+				procedure :procedure
 			}
 		}
 	}
