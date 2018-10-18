@@ -86,8 +86,11 @@
 		  from bsc_datasource_map m, bsc_dim_link k,bsc_datatype d
 		 where m.link_id = k.link_id(+)
 		   and m.data_type_id = d.data_type_id(+)
+		<if test="source_id != null and source_id != ''">
 		   and m.source_id = #{source_id}
+		</if>
 		 <if test="is_dim_col != null and is_dim_col != ''"> and is_dim_col = '${is_dim_col}'</if>
+		<if test="link_id != null and link_id != ''"> and m.link_id = '${link_id}'</if>
 		   order by m.is_dim_col, m.column_order_id asc
 	</select>
 	

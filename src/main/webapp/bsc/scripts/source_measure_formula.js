@@ -32,6 +32,7 @@ var valueFieldDS = new Ext.data.JsonStore({
     fields: ['column_name','mea_fullname','source_id']
 });
 valueFieldDS.on("load",function(){
+//	debugger
 	beforeClose();
 	if (valueFieldDS.getCount() > 0) {
 		var source_id = valueFieldDS.getAt(0).get('source_id');
@@ -68,6 +69,7 @@ var dimFieldDS = new Ext.data.Store({
 });
 
 dimFieldDS.on("load",function(){
+//	debugger;
 	for (var i = 0; i < dimFieldDS.getCount(); i++) {
 		var record = dimFieldDS.getAt(i);
 		var comp = getComponment(record);

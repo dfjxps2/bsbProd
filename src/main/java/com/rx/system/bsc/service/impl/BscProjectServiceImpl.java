@@ -1,5 +1,6 @@
 package com.rx.system.bsc.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -96,11 +97,78 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 		
 		if(this.bscProjectDao.getProjectCountByName(paramMap) > 0)
 			throw new Exception("机构下存在同名方案,请修改方案名称!");
-		
+
 		this.bscProjectDao.addProject(paramMap);
+
+		//插入统计方案维度表数据
+		this.addProjectStatOjbect(paramMap);
+
+		//插入统计方案周期表数据
+		this.addProjectStatCycle(paramMap);
 		
 		this.refreshProjectObjects((String)paramMap.get("project_id")); //刷新方案下的对象
 	}
+
+
+	/*
+		统计方案维度表
+		"Family_Type_Cd" -> "01,02,"
+	 */
+	public void addProjectStatOjbect(Map<String, Object> paramMap) throws Exception {
+		String objKey = paramMap.get("obj_link_id").toString();
+		paramMap = this.getSourceExpressionByLinkID(paramMap);
+		String statObj = paramMap.get(objKey).toString();
+		if(null != statObj && !"".equals(statObj)){
+			String objVal = getStringById(statObj);
+			String sourceExp = paramMap.get("sourceExp").toString();
+			String table = sourceExp.concat(" IN ("+objVal+")");
+			paramMap.put("table",table);
+			String  project_id = paramMap.get("project_id").toString();
+			String  id_field = paramMap.get("id_field").toString();
+			String  label_field = paramMap.get("label_field").toString();
+			StringBuffer sb  = new StringBuffer ();
+			sb.append(" SELECT  "+project_id+" , "+id_field+", "+label_field+" ");
+			sb.append(" FROM ( "+table+") ");
+			String where  = sb.toString();
+			paramMap.put("where",where);
+
+			//统计方案维度表
+			this.bscProjectDao.addProjectStatOjbect(paramMap);
+		}
+	}
+
+	/*
+	  通過 link_id查詢数据源表达式
+	 */
+	public Map<String, Object>  getSourceExpressionByLinkID(Map<String, Object> paramMap) throws Exception{
+		String objKey = paramMap.get("obj_link_id").toString();
+		List<Map<String, Object>> linkList = this.bscProjectDao.getSourceExpressionByLinkID(objKey);
+		Map<String, Object> dataMap = linkList.get(0);
+		String sourceExpress = dataMap.get("SOURCE_EXPRESSION").toString();
+		paramMap.put("label_field",dataMap.get("LABEL_FIELD"));
+		paramMap.put("id_field",dataMap.get("ID_FIELD"));
+		String sourceExp = sourceExpress.concat(" WHERE ").concat(dataMap.get("ID_FIELD").toString());
+		paramMap.put("sourceExp",sourceExp);
+		return paramMap;
+	}
+
+
+      /*
+		统计方案周期表
+		 "stat_cycle_cd" -> "2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,"
+	 */
+
+	public void addProjectStatCycle(Map<String, Object> paramMap) throws Exception {
+		String statCyc = paramMap.get("stat_cycle_cd").toString();
+		if(null != statCyc && !"".equals(statCyc)){
+			String cycVal = getStringById(statCyc);
+			paramMap.put("cycles",cycVal);
+			//统计方案周期表
+			this.bscProjectDao.addProjectStatCycle(paramMap);
+		}
+
+	}
+
 	
 	/**
 	 * 编辑平衡计分卡方案
@@ -112,6 +180,15 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 			throw new Exception("机构下存在同名方案,请修改方案名称!");
 		
 		this.bscProjectDao.editProject(paramMap);
+
+		//删除统计方案维度表
+		this.bscProjectDao.removeProjectStatOjbect(paramMap);
+		//删除统计方案周期表
+		this.bscProjectDao.removeProjectStatCycle(paramMap);
+		//插入统计方案维度表数据
+		this.addProjectStatOjbect(paramMap);
+		//插入统计方案周期表数据
+		this.addProjectStatCycle(paramMap);
 		this.refreshProjectObjects((String)paramMap.get("project_id")); //刷新方案下的对象
 	}
 		
@@ -134,6 +211,10 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 			throw new Exception("方案存在已经发布的结果数据,不能删除!");
 		//通过存储过程 删除与方案关联的所有数据
 		this.jdbcManager.execute(" call usr_bsc_eng.dropProjectCascade('"+ paramMap.get("project_id") +"')");
+		//删除统计方案维度表
+		this.bscProjectDao.removeProjectStatOjbect(paramMap);
+		//删除统计方案周期表
+		this.bscProjectDao.removeProjectStatCycle(paramMap);
 	}
 
 	/**
@@ -153,6 +234,10 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 		paramMap.put("new_project_id", CommonUtil.getRandomID(18));
 		
 		this.jdbcManager.execute(" call usr_bsc_eng.copyProject('"+paramMap.get("old_project_id")+"','"+paramMap.get("new_project_id")+"','"+paramMap.get("new_project_name")+"','"+paramMap.get("owner_id")+"')");
+		//复制统计方案维度表数据
+		bscProjectDao.copyProjectStatOjbect(paramMap);
+		//复制统计方案周期表数据
+		bscProjectDao.copyProjectStatCycle(paramMap);
 	}
 	
 	/**
@@ -199,5 +284,43 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.listExecutedIndex(paramMap));
 		return dataList;
 	}
+
+	/*
+	   查询下拉框值
+	 */
+	@Override
+	public Map<String, String> getDimDataDS(Map<String, Object> paramMap) throws Exception {
+		String projectId = paramMap.get("project_id").toString();
+        Map<String,String> dataMap  = new HashMap<String, String>();
+		List<Map<String, Object>> cycDataList = this.bscProjectDao.getDimCycDataDS(projectId);
+		String cycDatas = getStringByOjbect(cycDataList);
+		List<Map<String, Object>> objDataList = this.bscProjectDao.getDimObjDataDS(projectId);
+		String objDatas = getStringByOjbect(objDataList);
+		dataMap.put("cycs",cycDatas);
+		dataMap.put("objs",objDatas);
+		return dataMap;
+	}
+
+
+
+	public static String getStringById(String id){
+		String [] ids = id.split(",");
+		String meaId = "";
+		for(String str :ids){
+			meaId += "'"+str+"'".concat(",");
+		}
+		meaId = meaId.lastIndexOf(",")>-1?meaId.substring(0,meaId.length() - 1):meaId;
+		return meaId;
+	}
+
+	public  String getStringByOjbect(List<Map<String, Object>> dataList){
+		String ids = "";
+		for(Map<String, Object> mp :dataList){
+			ids += getStringValue(mp, "KEY").concat(".");
+		}
+		ids = ids.lastIndexOf(".")>-1?ids.substring(0,ids.length() - 1):ids;
+		return ids;
+	}
+
 
 }

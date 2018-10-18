@@ -200,7 +200,6 @@ function beforeClose() {
 
 //表格下拉框
 gridSelector = function(obj) {
-//	debugger;
 	var expanded = false;
 	var anchor = obj.anchor?obj.anchor:'91%';
 	gridSelector.superclass.constructor.call(this,{
@@ -238,11 +237,7 @@ gridSelector = function(obj) {
 		dataIndex : 'display_field'
 	
 	}]);
-	
-	
-	
 
-	
 	var vStore = new Ext.data.JsonStore({
 		url : pathUrl + '/bscProject_common.action?method=listExecutedIndex',
 		root : 'results',

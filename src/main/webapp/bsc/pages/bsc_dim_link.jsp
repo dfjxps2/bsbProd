@@ -8,7 +8,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>数据源维度维护</title>
+		<title>维护</title>
 		
 		<!-- 清理缓存 -->
 	    <meta http-equiv="pragma" content="no-cache"> 

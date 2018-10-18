@@ -26,11 +26,7 @@ public class SelectorAction extends BaseDispatchAction {
 
 	/**
 	 * 总行部门列表
-	 * 
-	 * @param mapping
-	 * @param form
-	 * @param request
-	 * @param response
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -88,6 +84,7 @@ public class SelectorAction extends BaseDispatchAction {
 	 */
 	public String listMonth() throws Exception {
 		String cycleType = this.request.getParameter("cycle_type");
+		String projectId = this.request.getParameter("projectId");
 		List<Map<String, Object>> dataList = null;
 		if("00".equals(cycleType)){
 			dataList = this.selectorService.queryForList("select distinct statt_mon cycle_id from h51_st_kpi_csum_m order by cycle_id desc");
@@ -100,7 +97,10 @@ public class SelectorAction extends BaseDispatchAction {
 				row.put("cycle_name", cycleName);
 			}
 		}else if("02".equals(cycleType)){
-			dataList = this.selectorService.queryForList("select distinct statt_year cycle_id, statt_year || '年' cycle_name from h51_st_kpi_csum_y m order by statt_year desc ");
+//			dataList = this.selectorService.queryForList("select distinct statt_year cycle_id, statt_year || '年' cycle_name from h51_st_kpi_csum_y m order by statt_year desc ");
+
+			dataList = this.selectorService.queryForList("select cycle_id as cycle_id,cycle_name as cycle_name from bsc_proj_stat_cyc where project_id='"+projectId+"'  order by cycle_id desc");
+
 			//dataList = this.selectorService.queryForList("select distinct year_id cycle_id, year_id || '年' cycle_name from dmd_month m order by year_id desc ");
 		}
 		
@@ -157,7 +157,8 @@ public class SelectorAction extends BaseDispatchAction {
 	 * @throws Exception
 	 */
 	public String listProjCycleType() throws Exception {
-		List<Map<String, Object>> dataList = this.selectorService.queryForList("select * from bsc_proj_cycle_type ");
+//		List<Map<String, Object>> dataList = this.selectorService.queryForList("select * from bsc_proj_cycle_type ");
+		List<Map<String, Object>> dataList = this.selectorService.queryForList("select * from bsc_proj_cycle_type e where e.cycle_type_id='02'");
 		doJSONResponse(dataList);
 		return null;
 	}
