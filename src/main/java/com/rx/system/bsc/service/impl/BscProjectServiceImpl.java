@@ -117,24 +117,28 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 	public void addProjectStatOjbect(Map<String, Object> paramMap) throws Exception {
 		String objKey = paramMap.get("obj_link_id").toString();
 		paramMap = this.getSourceExpressionByLinkID(paramMap);
+		String sourceExpress = paramMap.get("sourceExp").toString();
+		String  project_id = paramMap.get("project_id").toString();
+		String  id_field = paramMap.get("id_field").toString();
+		String  label_field = paramMap.get("label_field").toString();
 		String statObj = paramMap.get(objKey).toString();
+		StringBuffer sb  = new StringBuffer ();
 		if(null != statObj && !"".equals(statObj)){
 			String objVal = getStringById(statObj);
-			String sourceExp = paramMap.get("sourceExp").toString();
+			String sourceExp = sourceExpress.concat(" WHERE ").concat(paramMap.get("id_field").toString());
 			String table = sourceExp.concat(" IN ("+objVal+")");
 			paramMap.put("table",table);
-			String  project_id = paramMap.get("project_id").toString();
-			String  id_field = paramMap.get("id_field").toString();
-			String  label_field = paramMap.get("label_field").toString();
-			StringBuffer sb  = new StringBuffer ();
-			sb.append(" SELECT  "+project_id+" , "+id_field+", "+label_field+" ");
+			sb.append(" SELECT  '"+project_id+"' , "+id_field+", "+label_field+" ");
 			sb.append(" FROM ( "+table+") ");
-			String where  = sb.toString();
-			paramMap.put("where",where);
-
-			//统计方案维度表
-			this.bscProjectDao.addProjectStatOjbect(paramMap);
+		}else{
+			sb.append(" SELECT  '"+project_id+"' , "+id_field+", "+label_field+" ");
+			sb.append(" FROM ( "+sourceExpress+") ");
 		}
+		String sql  = sb.toString();
+		paramMap.put("sql",sql);
+
+		//统计方案维度表
+		this.bscProjectDao.addProjectStatOjbect(paramMap);
 	}
 
 	/*
@@ -144,11 +148,9 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 		String objKey = paramMap.get("obj_link_id").toString();
 		List<Map<String, Object>> linkList = this.bscProjectDao.getSourceExpressionByLinkID(objKey);
 		Map<String, Object> dataMap = linkList.get(0);
-		String sourceExpress = dataMap.get("SOURCE_EXPRESSION").toString();
 		paramMap.put("label_field",dataMap.get("LABEL_FIELD"));
 		paramMap.put("id_field",dataMap.get("ID_FIELD"));
-		String sourceExp = sourceExpress.concat(" WHERE ").concat(dataMap.get("ID_FIELD").toString());
-		paramMap.put("sourceExp",sourceExp);
+		paramMap.put("sourceExp",dataMap.get("SOURCE_EXPRESSION"));
 		return paramMap;
 	}
 
@@ -160,13 +162,22 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 
 	public void addProjectStatCycle(Map<String, Object> paramMap) throws Exception {
 		String statCyc = paramMap.get("stat_cycle_cd").toString();
+		String  project_id = paramMap.get("project_id").toString();
+		StringBuffer sb  = new StringBuffer();
 		if(null != statCyc && !"".equals(statCyc)){
-			String cycVal = getStringById(statCyc);
-			paramMap.put("cycles",cycVal);
-			//统计方案周期表
-			this.bscProjectDao.addProjectStatCycle(paramMap);
+			String cycles = getStringById(statCyc);
+			sb.append(" SELECT STAT_CYCLE_CD AS cycle_id,STAT_CYCLE_DESC AS cycle_name ");
+			sb.append(" FROM BSC_STAT_CYCLE_YEAR ");
+			sb.append(" WHERE STAT_CYCLE_CD IN ("+cycles+") ");
+		}else{
+			sb.append(" SELECT STAT_CYCLE_CD AS cycle_id,STAT_CYCLE_DESC AS cycle_name ");
+			sb.append(" FROM BSC_STAT_CYCLE_YEAR ");
 		}
-
+		String subQuery = sb.toString();
+		String sql=" SELECT  '"+project_id+"' , a.cycle_id, a.cycle_name  FROM ( "+subQuery+") a ";
+		paramMap.put("sql",sql);
+		//统计方案周期表
+		this.bscProjectDao.addProjectStatCycle(paramMap);
 	}
 
 	
@@ -178,9 +189,7 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 	public void editProject(Map<String, Object> paramMap) throws Exception {
 		if(this.bscProjectDao.getProjectCountByName(paramMap) > 0)
 			throw new Exception("机构下存在同名方案,请修改方案名称!");
-		
 		this.bscProjectDao.editProject(paramMap);
-
 		//删除统计方案维度表
 		this.bscProjectDao.removeProjectStatOjbect(paramMap);
 		//删除统计方案周期表

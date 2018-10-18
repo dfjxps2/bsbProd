@@ -196,19 +196,14 @@
 	<insert id="addProjectStatOjbect" parameterType="map">
 	  insert into bsc_proj_stat_obj
     (project_id, obj_id, obj_name)
-      ${where}
+      ${sql}
 	</insert>
 
 	<!-- 统计方案周期表 -->
 	<insert id="addProjectStatCycle" parameterType="map">
 	   insert into bsc_proj_stat_cyc
      (project_id, cycle_id, cycle_name)
-     select #{project_id}, a.cycle_id, a.cycle_name
-       from (
-       		  SELECT STAT_CYCLE_CD AS cycle_id,STAT_CYCLE_DESC AS cycle_name
-       			FROM BSC_STAT_CYCLE_YEAR
-               WHERE STAT_CYCLE_CD IN (${cycles})
-             ) a
+         ${sql}
 	</insert>
 
 	<!-- 通過 link_id查詢数据源表达式-->
