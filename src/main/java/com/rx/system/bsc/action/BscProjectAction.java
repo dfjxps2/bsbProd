@@ -33,7 +33,7 @@ public class BscProjectAction extends BaseDispatchAction {
 		serviceMethodMapping.put("copyProject", "copyProject@BSC_0111");
 		serviceMethodMapping.put("listExeInfo", "listExeInfo@BSC_0112");
 		serviceMethodMapping.put("listExecutedIndex", "listExecutedIndex");
-		serviceMethodMapping.put("listPorjectObj", "listPorjectObj");
+		
 		
 	}
 	

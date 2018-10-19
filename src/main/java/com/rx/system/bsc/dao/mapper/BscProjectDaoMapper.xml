@@ -257,10 +257,4 @@
 		SELECT OBJ_ID AS KEY,OBJ_NAME  AS VALUE FROM BSC_PROJ_STAT_OBJ WHERE PROJECT_ID=#{project_id}
 	</select>
 
-	<!-- 统计方案维度列表 -->
-	<select id="listPorjectObj" parameterType="map" resultType="map">
-		select * from bsc_proj_stat_obj where project_id = #{project_id}
-		order by obj_id asc
-	</select>
-
 </mapper>

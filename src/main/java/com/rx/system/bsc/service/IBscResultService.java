@@ -100,33 +100,5 @@ public interface IBscResultService {
 	public List<Map<String, Object>> listSubMeasure(Map<String,Object> paramMap) throws Exception;
 	//通过指标编号查询指标信息
 	public List<Map<String, Object>> listProjectMeasureByIndexId(Map<String,Object> paramMap) throws Exception;
-	/**
-	 * 根据年份查询各考核对象的方案得分
-	 * @param paramMap
-	 * @return
-	 * @throws Exception
-	 */
-	public List<Map<String, Object>> listScoreResultByYear(Map<String, Object> paramMap) throws Exception;
-	/**
-	 * 根据年份查询全部积分结果
-	 * @param paramMap
-	 * @return
-	 * @throws Exception
-	 */
-	public List<Map<String, Object>> listScoreTotalResultByYear(Map<String, Object> paramMap) throws Exception;
-	/**
-	 * 根据维度查询全部积分结果
-	 * @param paramMap
-	 * @return
-	 * @throws Exception
-	 */
-	public List<Map<String, Object>> listScoreTotalResultByObj(Map<String, Object> paramMap) throws Exception;
-	/**
-	 * 查询各考核对象的方案得分总数
-	 * @param paramMap
-	 * @return
-	 * @throws Exception
-	 */
-	public String listScoreResultCountExt(Map<String, Object> paramMap) throws Exception;
-	public List<Map<String, Object>> listScoreSubResultExt(Map<String, Object> paramMap) throws Exception;
+	
 }
