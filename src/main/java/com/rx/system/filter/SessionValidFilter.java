@@ -43,10 +43,11 @@ public class SessionValidFilter implements Filter {
 		}
 		
 		if(session == null || session.getAttribute("currentUser") == null) {
-			((HttpServletResponse)response).sendRedirect(req.getContextPath()+"/login_doLogin.action");
+//			((HttpServletResponse)response).sendRedirect(req.getContextPath()+"/login_doLogin.action");
+//			return;
+//			((HttpServletResponse)response).sendRedirect(req.getContextPath()+"/login.jsp");
+			((HttpServletResponse)response).sendRedirect(RETURN_LOGIN);
 			return;
-			//((HttpServletResponse)response).sendRedirect(req.getContextPath()+"/login.jsp");
-			//return;
 		}
 		
 		chain.doFilter(request, response);
@@ -57,4 +58,5 @@ public class SessionValidFilter implements Filter {
 	}
 
 
+	public final static String RETURN_LOGIN ="http://10.10.10.42:8080/portal";
 }

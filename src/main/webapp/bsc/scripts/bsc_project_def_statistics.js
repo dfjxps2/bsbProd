@@ -454,7 +454,8 @@ function addProject() {
             id : 'cycleDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form'
+            layout : 'form',
+            anchor : '95%'
         }, {
 			xtype : 'combo',
 			store : dimensionStore,
@@ -465,7 +466,6 @@ function addProject() {
 			hiddenName : 'obj_link_id',
 			editable : false,
 			triggerAction : 'all',
-//			allowBlank : false,
 			fieldLabel : '统计维度<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
             listeners: {
                 select : function(combo, record, index){
@@ -483,7 +483,8 @@ function addProject() {
             id : 'objDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form'
+            layout : 'form',
+            anchor : '95%'
         },{
 			xtype : 'textarea',
 			name : 'project_desc',
@@ -639,7 +640,8 @@ function editProject(record) {
             id : 'cycleDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form'
+            layout : 'form',
+            anchor : '95%'
         }
         , {
         xtype : 'combo',
@@ -669,7 +671,8 @@ function editProject(record) {
             id : 'objDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form'
+            layout : 'form',
+            anchor : '95%'
         },
         {
         xtype : 'textarea',
