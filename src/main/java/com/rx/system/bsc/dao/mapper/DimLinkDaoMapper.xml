@@ -100,5 +100,17 @@
 	<select id="checkLink" parameterType="map" resultType="int">
 		select count(*) from bsc_dim_link t where upper(t.link_id) = upper(#{link_id})
 	</select>
+
+
+	<!--维度字段数据源-->
+	<select id="getObjectList" parameterType="map" resultType="map">
+		select link_id as link_id, link_name as link_name,is_tree as is_tree,parent_id_field as parent_id_field,
+		label_field as label_field,root_value as root_value from bsc_dim_link
+		where 1=1
+		<if test="link_id != null and link_id != '' ">
+			and upper(link_id) = upper(#{link_id})
+		</if>
+	</select>
+
 	
 </mapper>

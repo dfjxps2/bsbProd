@@ -169,4 +169,9 @@ public class DimLinkServiceImpl extends BaseService implements IDimLinkService {
 		return this.dimLinkDao.checkLink(paramMap);
 	}
 
+	@Override
+	public List<Map<String, Object>> getObjectList(Map<String, Object> paramMap) throws Exception {
+		return this.dimLinkDao.getObjectList(paramMap);
+	}
+
 }
