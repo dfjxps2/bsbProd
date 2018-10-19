@@ -108,5 +108,12 @@ public interface IBscProjectService {
 	 */
 	public List<Map<String, Object>> listExecutedIndex(Map<String, Object> paramMap) throws Exception;
 
-	
+	/**
+	 * 查询平衡计分卡方案维度
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception;
 }

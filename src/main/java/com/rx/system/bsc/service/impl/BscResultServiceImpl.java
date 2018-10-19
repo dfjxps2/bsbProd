@@ -169,7 +169,7 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 		}
 		paramMap.put("case_sql", case_sql);
 		return toLowerMapList(this.bscResultDao.listScoreTotalResult(paramMap));
-	}	
+	}
 
 	/**
 	 * 图表排名
@@ -225,5 +225,71 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 	public List<Map<String, Object>> listProjectMeasureByIndexId(
 			Map<String, Object> paramMap) throws Exception {
 		return this.toLowerMapList(bscResultDao.listProjectMeasureByIndexId(paramMap));
+	}
+	private void add_measure_case_sql(Map<String, Object> paramMap){
+		List<Map<String, Object>> measureList = (List<Map<String, Object>>)paramMap.get("measureList");
+		String case_sql = "";
+		for (int i = 0; i < measureList.size(); i++) {
+			Map<String, Object> map = measureList.get(i);
+			String measure_id = getStringValue(map,"measure_id");
+
+			case_sql += "sum(case when b.measure_id ='"+measure_id+"' then b.value else 0 end) as col_"+i;
+			if(i != measureList.size()-1)
+				case_sql += ",";
+		}
+		paramMap.put("case_sql", case_sql);
+	}
+	/**
+	 * 查询各考核对象的方案得分
+	 */
+	@Override
+	public List<Map<String, Object>> listScoreResultByYear(
+			Map<String, Object> paramMap) throws Exception {
+		add_measure_case_sql(paramMap);
+		return toLowerMapList(this.bscResultDao.listScoreResultByYear(paramMap));
+	}
+	@Override
+	public List<Map<String, Object>> listScoreTotalResultByObj(
+			Map<String, Object> paramMap) throws Exception {
+		add_measure_case_sql(paramMap);
+		return toLowerMapList(this.bscResultDao.listScoreTotalResultByObj(paramMap));
+	}
+	@Override
+	public List<Map<String, Object>> listScoreTotalResultByYear(
+			Map<String, Object> paramMap) throws Exception {
+		add_measure_case_sql(paramMap);
+		return toLowerMapList(this.bscResultDao.listScoreTotalResultByYear(paramMap));
+	}
+	/**
+	 * 查询各考核对象的方案得分总数
+	 */
+	@Override
+	public String listScoreResultCountExt(Map<String, Object> paramMap)
+			throws Exception {
+		String show_id = getStringValue(paramMap, "show_id");
+		if(show_id.equals("2"))
+			return this.bscResultDao.listScoreResultCountByYear(paramMap);
+		else
+			return this.bscResultDao.listScoreResultCount(paramMap);
+	}
+	@Override
+	public List<Map<String, Object>> listScoreSubResultExt(
+			Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> measureList = (List<Map<String, Object>>)paramMap.get("measureList");
+		String case_sql = "";
+		for (int i = 0; i < measureList.size(); i++) {
+			Map<String, Object> map = measureList.get(i);
+			String measure_id = getStringValue(map,"measure_id");
+
+			case_sql += "sum(case when b.measure_id ='"+measure_id+"' then b.value else 0 end) as col_"+i;
+			if(i != measureList.size()-1)
+				case_sql += ",";
+		}
+		paramMap.put("case_sql", case_sql);
+		String show_id = getStringValue(paramMap, "show_id");
+		if(show_id.equals("2"))
+			return this.toLowerMapList(bscResultDao.listScoreSubResultByYear(paramMap));
+		else
+			return this.toLowerMapList(bscResultDao.listScoreSubResult(paramMap));
 	}
 }

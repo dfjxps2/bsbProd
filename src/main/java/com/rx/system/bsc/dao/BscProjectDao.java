@@ -110,4 +110,12 @@ public interface BscProjectDao {
 	 */
 	public List<Map<String, Object>> listExecutedIndex(Map<String, Object> paramMap) throws Exception;
 
+	/**
+	 * 查询平衡计分卡方案已执行月份列表
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception;
 }

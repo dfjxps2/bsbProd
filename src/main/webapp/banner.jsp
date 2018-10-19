@@ -11,7 +11,7 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/font-awesome/css/font-awesome.min.css" />
 		<script type="text/javascript">
 			$(function(){
-				$('.container').width(screen.width);
+				//$('.container').width(screen.width);
 				$('.r_bg').width(screen.width-174-20);
 				$('.r_bg_r').width(screen.width-154-20-773);
 			});
