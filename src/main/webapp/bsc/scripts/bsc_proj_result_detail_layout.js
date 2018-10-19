@@ -51,7 +51,6 @@ Ext.onReady(function() {
 });
 
 function queryResult() {
-	debugger;
 	dhtmlGrid = new dhtmlXGridObject('measure_table');
 	dhtmlGrid.setImagePath(pathUrl + "/public/scripts/dhtmlx/imgs/");
 	dhtmlGrid.setSkin("bsc");

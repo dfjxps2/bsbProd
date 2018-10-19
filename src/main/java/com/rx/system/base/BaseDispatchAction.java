@@ -142,7 +142,7 @@ public class BaseDispatchAction extends ActionSupport implements ServletRequestA
 		}
 		//添加查询月首日日期 [历史表查询需用到]
 		String month_id = request.getParameter("month_id");
-		if(month_id != null && !"".endsWith(month_id)) {
+		if(month_id != null && !"".equals(month_id)) {
 			if(properties.get("year_id")==null){
 				properties.put("year_id", month_id.substring(0, 4));
 			}

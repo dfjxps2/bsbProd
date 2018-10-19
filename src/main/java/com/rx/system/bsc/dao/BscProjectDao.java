@@ -118,4 +118,32 @@ public interface BscProjectDao {
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception;
+
+
+
+	//删除统计方案维度表
+	public void	removeProjectStatOjbect(Map<String, Object> paramMap) throws Exception;
+
+	//删除统计方案周期表
+	public void	removeProjectStatCycle(Map<String, Object> paramMap) throws Exception;
+
+
+	//复制统计方案维度表数据
+	public void	 copyProjectStatOjbect(Map<String, Object> paramMap) throws Exception;
+
+	//复制统计方案周期表数据
+	public void copyProjectStatCycle(Map<String, Object> paramMap) throws Exception;
+
+	/*
+	   查询统计年份下拉框
+	 */
+	public List<Map<String, Object>>getDimCycDataDS(String project_id) throws Exception;
+
+
+	/*
+	   查询统计维度下拉框
+	 */
+	public List<Map<String, Object>>getDimObjDataDS(String project_id) throws Exception;
+
+
 }

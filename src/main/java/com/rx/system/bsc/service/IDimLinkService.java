@@ -90,4 +90,8 @@ public interface IDimLinkService {
 	 * 维护校验
 	 */
 	public int checkLink(Map<String,Object> paramMap) throws Exception;
+
+
+
+	public List<Map<String, Object>> getObjectList(Map<String,Object> paramMap) throws Exception;
 }

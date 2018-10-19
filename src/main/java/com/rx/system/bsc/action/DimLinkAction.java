@@ -190,4 +190,25 @@ public class DimLinkAction extends BaseDispatchAction {
 			
 		return null;
 	}
+
+
+	/**
+	 * 查询分组对象表达式明细
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@FunDesc(code="BSC_0038")
+	@UseLog
+	public String getObjectList() throws Exception {
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		try {
+			List<Map<String,Object>> dataList = this.dimLinkService.getObjectList(paramMap);
+			doJSONResponse(dataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

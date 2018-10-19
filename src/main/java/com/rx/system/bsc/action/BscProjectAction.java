@@ -77,7 +77,25 @@ public class BscProjectAction extends BaseDispatchAction {
 		}
 		return null;
 	}
-	
+
+
+	/*
+	   查询下拉框值
+
+	 */
+
+	public String setDimDataDS() throws Exception{
+		Map<String,Object>	paramMap = this.getRequestParam(request);
+		try {
+			Map<String,String> daMap = this.bscProjectService.getDimDataDS(paramMap);
+			doJSONResponse(daMap);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			doFailureInfoResponse("查询下拉框值失败");
+		}
+		return null;
+	}
+
 
 	public void setBscProjectService(IBscProjectService bscProjectService) {
 		this.bscProjectService = bscProjectService;

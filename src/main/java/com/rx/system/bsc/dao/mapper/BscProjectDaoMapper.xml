@@ -108,8 +108,8 @@
 		  (#{project_id},
 		   #{project_name},
 		   #{project_desc},
-		   #{cycle_type_id},
-		   #{obj_cate_id},
+		   '02',
+		   'BM',
 		   '01',
 		   #{obj_link_id},
 		   #{owner_id},
@@ -125,8 +125,6 @@
 		update bsc_project t
 		   set t.project_name     = #{project_name},
 		       t.project_desc     = #{project_desc},
-		       t.cycle_type_id    = #{cycle_type_id},
-		       t.obj_cate_id      = #{obj_cate_id},
 		       t.obj_link_id      = #{obj_link_id},
 		       t.update_user      = #{login_user_id},
 		       t.update_time      = sysdate
@@ -193,9 +191,76 @@
 		order by a.mea_order_id
 	</select>
 
+
+	<!--统计方案维度表-->
+	<insert id="addProjectStatOjbect" parameterType="map">
+	  insert into bsc_proj_stat_obj
+    (project_id, obj_id, obj_name)
+      ${sql}
+	</insert>
+
+	<!-- 统计方案周期表 -->
+	<insert id="addProjectStatCycle" parameterType="map">
+	   insert into bsc_proj_stat_cyc
+     (project_id, cycle_id, cycle_name)
+         ${sql}
+	</insert>
+
+	<!-- 通過 link_id查詢数据源表达式-->
+	<select id="getSourceExpressionByLinkID" parameterType="string" resultType="map">
+		select SOURCE_EXPRESSION as SOURCE_EXPRESSION,LABEL_FIELD as LABEL_FIELD,ID_FIELD as ID_FIELD from bsc_dim_link  where link_id=#{linkId}
+	</select>
+
+
+	<!-- 删除统计方案维度表 -->
+	<delete id="removeProjectStatOjbect" parameterType="map">
+		delete from bsc_proj_stat_obj where project_id = #{project_id}
+	</delete>
+
+	<!-- 删除统计方案周期表 -->
+	<delete id="removeProjectStatCycle" parameterType="map">
+		delete from bsc_proj_stat_cyc where project_id = #{project_id}
+	</delete>
+
+
+	<!--复制统计方案维度表数据-->
+	<insert id="copyProjectStatOjbect" parameterType="map">
+	  insert into bsc_proj_stat_obj
+	  	select #{new_project_id}, a.obj_id,a.obj_name
+		from (
+			select obj_id,obj_name from bsc_proj_stat_obj
+			where project_id= #{old_project_id}
+		)a
+
+	</insert>
+
+	<!-- 统计方案周期表 -->
+	<insert id="copyProjectStatCycle" parameterType="map">
+	   insert into bsc_proj_stat_cyc
+     (project_id, cycle_id, cycle_name)
+       select #{new_project_id}, a.cycle_id, a.cycle_name
+       from (select cycle_id,cycle_name
+               from bsc_proj_stat_cyc
+              where project_id= #{old_project_id}
+             ) a
+	</insert>
+
+
+
+	<!-- 查询统计年份下拉框-->
+	<select id="getDimCycDataDS" parameterType="string" resultType="map">
+		SELECT CYCLE_ID AS KEY,CYCLE_NAME AS VALUE FROM BSC_PROJ_STAT_CYC WHERE PROJECT_ID=#{project_id}
+	</select>
+
+	<!-- 查询统计维度下拉框-->
+	<select id="getDimObjDataDS" parameterType="string" resultType="map">
+		SELECT OBJ_ID AS KEY,OBJ_NAME  AS VALUE FROM BSC_PROJ_STAT_OBJ WHERE PROJECT_ID=#{project_id}
+	</select>
+
 	<!-- 统计方案维度列表 -->
 	<select id="listPorjectObj" parameterType="map" resultType="map">
 		select * from bsc_proj_stat_obj where project_id = #{project_id}
 		order by obj_id asc
 	</select>
+
 </mapper>

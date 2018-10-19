@@ -108,6 +108,11 @@ public interface IBscProjectService {
 	 */
 	public List<Map<String, Object>> listExecutedIndex(Map<String, Object> paramMap) throws Exception;
 
+	/*
+	   查询下拉框
+	 */
+	public Map<String,String> getDimDataDS(Map<String, Object> paramMap) throws Exception;
+
 	/**
 	 * 查询平衡计分卡方案维度
 	 *
