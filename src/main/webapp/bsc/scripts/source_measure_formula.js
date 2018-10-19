@@ -32,7 +32,6 @@ var valueFieldDS = new Ext.data.JsonStore({
     fields: ['column_name','mea_fullname','source_id']
 });
 valueFieldDS.on("load",function(){
-//	debugger
 	beforeClose();
 	if (valueFieldDS.getCount() > 0) {
 		var source_id = valueFieldDS.getAt(0).get('source_id');
@@ -69,7 +68,6 @@ var dimFieldDS = new Ext.data.Store({
 });
 
 dimFieldDS.on("load",function(){
-//	debugger;
 	for (var i = 0; i < dimFieldDS.getCount(); i++) {
 		var record = dimFieldDS.getAt(i);
 		var comp = getComponment(record);
@@ -184,37 +182,13 @@ var fwindow = new Ext.Window({
 				labelWidth : 70,
 				border : false,
 				bodyStyle : 'padding:5px 5px 5px 5px;',
-				items : [
-                   {
+				items : [{
 					xtype : 'fieldset',
 					title : '数据源与字段(必填项)',
 					anchor : '100%',
 					layout : 'form',
 					labelWidth : 70,
-                    items : [
-                        fileNameField = new Ext.form.TextField({
-                           id:'dsName',
-                           disabled:false,
-                           emptyText:"请正确输入数据源名称" ,
-                           fieldLabel:"数据源名称",
-                           inputType:'text',
-                           maxLength:30,
-						   width:175,
-						   listeners: {
-                               specialkey : function(field, e) {
-                                   var dsText=field.getValue();
-                                   if (e.getKey() == e.ENTER && dsText) {
-                                       dataSourceDS.reload({
-                                           params: {
-                                               source_name: dsText
-                                           }
-                                       })
-                                   }
-                               }
-							},
-                            anchor : '100%'
-                       }),
-						sourceComboBox = new Ext.form.ComboBox({
+					items : [sourceComboBox = new Ext.form.ComboBox({
 						store : dataSourceDS,
 						valueField : 'source_id',
 						displayField : 'source_name',
@@ -296,7 +270,7 @@ var fwindow = new Ext.Window({
 
 						if (condition != "")
 							condition += " && ";
-
+							
 						if(ary.length > 1) {
 							condition += fieldID + " in (" + ary + ")";
 						}else { 

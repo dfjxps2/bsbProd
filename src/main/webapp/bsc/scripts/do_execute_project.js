@@ -20,7 +20,7 @@ function doExecuteProject(cycleTypeId) {
 			Ext.getCmp("cycleSelector").setValue(val);
 		}
 	});
-	cycleDS.load({params:{cycle_type : cycleTypeId,projectId:projectId}});
+	cycleDS.load({params:{cycle_type : cycleTypeId}});
 	var cwin = new Ext.Window({
 		title : '方案执行',
 		width : 400,

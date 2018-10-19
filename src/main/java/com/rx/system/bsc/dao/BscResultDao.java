@@ -106,6 +106,28 @@ public interface BscResultDao {
 	
 	//通过指标编号查询指标信息
 	public List<Map<String, Object>> listProjectMeasureByIndexId(Map<String, Object> paramMap) throws Exception;
-	
-	
+
+	public String listScoreResultCountByYear(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 根据年份查询积分结果列表
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listScoreResultByYear(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 根据年份查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listScoreTotalResultByYear(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 根据维度查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listScoreTotalResultByObj(Map<String, Object> paramMap) throws Exception;
+	public List<Map<String, Object>> listScoreSubResultByYear(Map<String, Object> paramMap) throws Exception;
 }
