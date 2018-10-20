@@ -110,7 +110,14 @@ public interface BscProjectDao {
 	 */
 	public List<Map<String, Object>> listExecutedIndex(Map<String, Object> paramMap) throws Exception;
 
-
+	/**
+	 * 查询平衡计分卡方案已执行月份列表
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception;
 
 	//统计方案维度表
 	public void addProjectStatOjbect(Map<String, Object> paramMap) throws Exception;
@@ -122,13 +129,11 @@ public interface BscProjectDao {
 	public List<Map<String, Object>> getSourceExpressionByLinkID(String linkId) throws Exception;
 
 
-
 	//删除统计方案维度表
 	public void	removeProjectStatOjbect(Map<String, Object> paramMap) throws Exception;
 
 	//删除统计方案周期表
 	public void	removeProjectStatCycle(Map<String, Object> paramMap) throws Exception;
-
 
 	//复制统计方案维度表数据
 	public void	 copyProjectStatOjbect(Map<String, Object> paramMap) throws Exception;
@@ -146,5 +151,6 @@ public interface BscProjectDao {
 	   查询统计维度下拉框
 	 */
 	public List<Map<String, Object>>getDimObjDataDS(String project_id) throws Exception;
+
 
 }

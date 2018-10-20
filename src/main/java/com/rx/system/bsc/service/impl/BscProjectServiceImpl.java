@@ -331,5 +331,16 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 		return ids;
 	}
 
-
+	/**
+	 * 查询平衡计分卡方案维度
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.listPorjectObj(paramMap));
+		return dataList;
+	}
 }

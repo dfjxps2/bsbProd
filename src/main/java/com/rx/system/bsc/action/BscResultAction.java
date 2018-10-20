@@ -254,7 +254,7 @@ public class BscResultAction extends BaseDispatchAction {
 		
 		return ids;
 	}
-	
+
 	/**
 	 * 返回DHtml表格结果数据
 	 * @return
@@ -267,6 +267,13 @@ public class BscResultAction extends BaseDispatchAction {
 		List<Map<String, Object>> measureList = null;
 		try {
 			this.insertPageParamToMap(paramMap);//插入分页信息
+			//是否过滤维度
+			String oId = null;
+			String objId = paramMap.get("obj_id").toString();
+			if(null != objId && !"".equals(objId)){
+				oId = getStringById(objId);
+				paramMap.put("oId", oId);
+			}
 			//方案所有的指标
 			String meaId = null;
 			String measureId = paramMap.get("measure_id").toString();
@@ -650,8 +657,362 @@ public class BscResultAction extends BaseDispatchAction {
 			e.printStackTrace();
 		}
 		return "showchart";
-	}	
-	
+	}
+
+	/**
+	 * 返回DHtml表格结果数据
+	 * @return
+	 * @throws Exception
+	 */
+	@FunDesc(code="BSC_0023")
+	@UseLog
+	public String scoreDhtmlByCondExt() throws Exception {
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		String show_id = getStringValue(paramMap, "show_id");
+		List<Map<String, Object>> measureList;
+		List<Map<String, Object>> dataList;
+		try {
+			this.insertPageParamToMap(paramMap);//插入分页信息
+			//是否过滤维度
+			String oId = null;
+			String objId = getStringValue(paramMap, "obj_id");
+			if(null != objId && !"".equals(objId)){
+				oId = getStringById(objId);
+				paramMap.put("oId", oId);
+			}
+			//是否过滤时间
+			String tId = null;
+			String timId = getStringValue(paramMap, "time_id");
+			if(null != timId && !"".equals(timId)){
+				tId = getStringById(timId);
+				paramMap.put("tId", tId);
+			}
+			//方案所有的指标
+			String meaId = null;
+			String measureId = paramMap.get("measure_id").toString();
+			if(null != measureId && !"".equals(measureId)){
+				meaId = getStringById(measureId);
+				paramMap.put("meaId", meaId);
+				measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
+			}else{
+				measureList = this.bscResultService.listProjectMeasure(paramMap);
+			}
+			paramMap.put("measureList", measureList);
+
+			String ids = this.getStringById(measureList);
+			if(show_id.equals("2")){
+				dataList = this.bscResultService.listScoreResultByYear(paramMap);
+			}else{
+				dataList = this.bscResultService.listScoreResult(paramMap);
+			}
+
+			ITableTemplate template = new DhtmlTableTemplate();
+			String[] mapKey = new String[measureList.size()+2];
+			String header = "维度名称,年份,";
+			String columnAlign = "left,left,";
+			String columnType = "ro,ro,";
+			String columnWidth = "260,200,";
+			String formatType = "0,0,";
+			mapKey[0] = "object_name";
+			mapKey[1] = "month_name";
+			if(show_id.equals("2")){
+				header = "年份,维度名称,";
+				columnWidth = "200,260,";
+				mapKey[0] = "month_name";
+				mapKey[1] = "object_name";
+			}
+			for (int i = 0; i < measureList.size(); i++) {
+				Map<String,Object> map = measureList.get(i);
+				mapKey[i+2] = "col_"+i;
+				header += getStringValue(map, "mea_definition");
+				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				if(i != measureList.size()-1){
+					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
+				}
+				paramMap.put("measure_id", getStringValue(map, "measure_id"));
+
+				List<Map<String, Object>> subMeasureList = this.bscResultService.listSubMeasure(paramMap);
+				if(subMeasureList.size()>0){
+
+					String param = "project_id=" + getStringValue(paramMap, "project_id") +
+							"&month_id=" + getStringValue(paramMap, "month_id") +
+							"&measure_id=" + getStringValue(map, "measure_id") +
+							"&ids=" + ids +
+							"&cycle_type_id=" + getStringValue(paramMap, "cycle_type_id") +
+							"&obj_cate_id=" + getStringValue(paramMap, "obj_cate_id") +
+							"&obj_id=" + getStringValue(paramMap, "obj_id").replace(",",".") +
+							"&show_id=" + getStringValue(paramMap, "show_id") +
+							"&time_id=" + getStringValue(paramMap, "time_id").replace(",",".") +
+							"&monthName=" + URLDecoder.decode(getStringValue(paramMap, "monthName"), "utf-8") +
+							"&projectName=" + URLDecoder.decode(getStringValue(paramMap, "projectName"), "utf-8");
+					template.addHeaderHref(i+2, "bsc_proj_obj_index_score_ext_detail.jsp?"+param);
+				}
+			}
+			template.setHeader(new String[]{header});
+			template.setColumnAlign(columnAlign);
+			template.setColumnType(columnType);
+			template.setColumnWidth(columnWidth);
+			template.setColumnFormatType(formatType);
+			template.setDataMapKey(mapKey);
+			template.setData(dataList);
+			template.useSerialNumber(true);
+//			template.setUseCheck(true, 0);
+
+			response.setContentType("text/html;charset=utf-8");
+			response.getWriter().print(template.getTableString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	/**
+	 * 返回DHtml表格结果数据总数
+	 * @return
+	 * @throws Exception
+	 */
+	public String scoreDhtmlCountByCondExt() throws Exception {
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		try {
+			String totalCount = this.bscResultService.listScoreResultCountExt(paramMap);
+			doSuccessInfoResponse(totalCount + ",0");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@FunDesc(code="BSC_0024")
+	@UseLog
+	public String exportScoreByCondExt() throws Exception {
+		List<Map<String, Object>> measureList = null;
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		String show_id = getStringValue(paramMap, "show_id");
+		try {
+			String projcetName = getStringValue(paramMap, "project_name");
+			String month_id = getStringValue(paramMap, "month_id");
+			String month_name = month_id.substring(0, 4)+"年"+month_id.substring(4)+"月";
+			//是否过滤维度
+			String oId = null;
+			String objId = getStringValue(paramMap, "obj_id");
+			if(null != objId && !"".equals(objId)){
+				oId = getStringById(objId);
+				paramMap.put("oId", oId);
+			}
+			//是否过滤时间
+			String tId = null;
+			String timId = getStringValue(paramMap, "time_id");
+			if(null != timId && !"".equals(timId)){
+				tId = getStringById(timId);
+				paramMap.put("tId", tId);
+			}
+			//方案所有的指标
+			String meaId = null;
+			String measureId = paramMap.get("measure_id").toString();
+			if(null != measureId && !"".equals(measureId)){
+				meaId = getStringById(measureId);
+				paramMap.put("meaId", meaId);
+				measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
+			}else{
+				measureList = this.bscResultService.listProjectMeasure(paramMap);
+			}
+			paramMap.put("measureList", measureList);
+			List<Map<String, Object>> dataList;
+			if(show_id.equals("2")){
+				dataList = this.bscResultService.listScoreTotalResultByYear(paramMap);
+			}else{
+				dataList = this.bscResultService.listScoreTotalResultByObj(paramMap);
+			}
+
+			ITableTemplate template = new DhtmlTableTemplate();
+
+			String[] mapKey = new String[measureList.size()+2];
+			String header = "维度名称,年份,";
+			String columnAlign = "left,left,";
+			String columnType = "ro,ro,";
+			String columnWidth = "260,200,";
+			String formatType = "0,0,";
+			mapKey[0] = "object_name";
+			mapKey[1] = "month_name";
+			if(show_id.equals("2")){
+				header = "年份,维度名称,";
+				columnWidth = "200,260,";
+				mapKey[0] = "month_name";
+				mapKey[1] = "object_name";
+			}
+			for (int i = 0; i < measureList.size(); i++) {
+				Map<String,Object> map = measureList.get(i);
+				mapKey[i+2] = "col_"+i;
+				header += getStringValue(map, "mea_definition");
+				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				if(i != measureList.size()-1){
+					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
+				}
+			}
+
+			template.setHeader(new String[]{header});
+			template.setColumnAlign(columnAlign);
+			template.setColumnType(columnType);
+			template.setColumnWidth(columnWidth);
+			template.setColumnFormatType(formatType);
+			template.setDataMapKey(mapKey);
+			template.setData(dataList);
+
+			template.setTitle(paramMap.get("title").toString());
+			String []titiles = header.split(HEADER_SPLIT);
+			template.setExcelInfoRow(new String[][] {
+					{ "方案名称：", projcetName },
+					{ "月份：", month_name },
+					{ "指标名称：", titiles[1] }
+
+			});
+
+			String webBasePath = ServletActionContext.getServletContext().getRealPath("/");
+			String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
+			template.writeToFile(new File(localFileName));
+			return "excelDownload";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String exportScoreSubExt() throws Exception {
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		try {
+			String projcetName = getStringValue(paramMap, "project_name");
+			String month_id = getStringValue(paramMap, "month_id");
+			String month_name = month_id.substring(0, 4)+"年"+month_id.substring(4)+"月";
+			String show_id = getStringValue(paramMap, "show_id");
+			//方案所有的指标
+			List<Map<String, Object>> measureList = this.bscResultService.listSubMeasure(paramMap);
+			paramMap.put("measureList", measureList);
+			List<Map<String, Object>> dataList = this.bscResultService.listScoreSubResultExt(paramMap);
+			ITableTemplate template = new DhtmlTableTemplate();
+
+			String[] mapKey = new String[measureList.size()+1];
+
+			String meaFlag = paramMap.get("title").toString();
+			String header = "考核对象,";
+			if(MEASURE_FLAG.equals(meaFlag)){
+				header = "维度名称,";
+			}
+			String columnAlign = "left,";
+			String columnType = "ro,";
+			String columnWidth = "260,";
+			String formatType = "0,";
+			mapKey[0] = "object_name";
+			if(show_id.equals("2")){
+				header = "年份,";
+				columnWidth = "200,";
+				mapKey[0] = "month_name";
+			}
+			for (int i = 0; i < measureList.size(); i++) {
+				Map<String,Object> map = measureList.get(i);
+				mapKey[i+1] = "col_"+i;
+				header += getStringValue(map, "mea_definition");
+				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				if(i != measureList.size()-1){
+					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
+				}
+			}
+			template.setHeader(new String[]{header});
+			template.setColumnAlign(columnAlign);
+			template.setColumnType(columnType);
+			template.setColumnWidth(columnWidth);
+			template.setColumnFormatType(formatType);
+			template.setDataMapKey(mapKey);
+			template.setData(dataList);
+
+			template.setTitle(paramMap.get("title").toString());
+			template.setExcelInfoRow(new String[][] {
+					{ "方案名称：", projcetName },
+					{ "月份：", month_name } });
+
+			String webBasePath = ServletActionContext.getServletContext().getRealPath("/");
+			String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
+			template.writeToFile(new File(localFileName));
+			return "excelDownload";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
+	 * 钻取查询下级指标明细
+	 * @return
+	 * @throws Exception
+	 */
+	public String scoreDhtmlSubExt() throws Exception {
+		Map<String, Object> paramMap = this.getRequestParam(request);
+		try {
+			this.insertPageParamToMap(paramMap);//插入分页信息
+			String show_id = getStringValue(paramMap, "show_id");
+			//方案所有的指标
+			List<Map<String, Object>> measureList = this.bscResultService.listSubMeasure(paramMap);
+			paramMap.put("measureList", measureList);
+			List<Map<String, Object>> dataList = this.bscResultService.listScoreSubResultExt(paramMap);
+			ITableTemplate template = new DhtmlTableTemplate();
+
+			String[] mapKey = new String[measureList.size()+1];
+			String meaFlag = paramMap.get("title").toString();
+			String header = "考核对象,";
+			if(MEASURE_FLAG.equals(meaFlag)){
+				header = "维度名称,";
+			}
+			String columnAlign = "left,";
+			String columnType = "ro,";
+			String columnWidth = "260,";
+			String formatType = "0,";
+			mapKey[0] = "object_name";
+			if(show_id.equals("2")){
+				header = "年份,";
+				columnWidth = "200,";
+				mapKey[0] = "month_name";
+			}
+			for (int i = 0; i < measureList.size(); i++) {
+				Map<String,Object> map = measureList.get(i);
+				mapKey[i+1] = "col_"+i;
+				header += getStringValue(map, "mea_definition");
+				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				if(i != measureList.size()-1){
+					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
+				}
+				paramMap.put("measure_id", getStringValue(map, "measure_id"));
+				List<Map<String, Object>> subMeasureList = this.bscResultService.listSubMeasure(paramMap);
+				if(subMeasureList.size()>0){
+					String param = "project_id=" + getStringValue(paramMap, "project_id") +
+							"&month_id=" + getStringValue(paramMap, "month_id") +
+							"&measure_id=" + getStringValue(map, "measure_id") +
+							"&cycle_type_id=" + getStringValue(paramMap, "cycle_type_id") +
+							"&obj_cate_id=" + getStringValue(paramMap, "obj_cate_id") +
+							"&show_id=" + getStringValue(paramMap, "show_id") +
+							"&obj_id=" + getStringValue(paramMap, "obj_id") +
+							"&time_id=" + getStringValue(paramMap, "time_id") +
+							"&monthName=" + URLDecoder.decode(getStringValue(paramMap, "monthName"), "utf-8") +
+							"&projectName=" + URLDecoder.decode(getStringValue(paramMap, "projectName"), "utf-8");
+					template.addHeaderHref(i+1, "bsc_proj_obj_index_score_ext_detail.jsp?"+param);
+				}
+			}
+
+			template.setHeader(new String[]{header});
+			template.setColumnAlign(columnAlign);
+			template.setColumnType(columnType);
+			template.setColumnWidth(columnWidth);
+			template.setColumnFormatType(formatType);
+			template.setDataMapKey(mapKey);
+			template.setData(dataList);
+			template.useSerialNumber(true);
+//			template.setUseCheck(true, 0);
+
+			response.setContentType("text/html;charset=utf-8");
+			response.getWriter().print(template.getTableString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public void setBscResultService(IBscResultService bscResultService) {
 		this.bscResultService = bscResultService;
 	}
