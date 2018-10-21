@@ -61,7 +61,6 @@ Ext.onReady(function(){
 		singleSelect : true
 	});
 	var projectCM = new Ext.grid.ColumnModel([expander, {
-	var projectCM = new Ext.grid.ColumnModel([expander, {
 		header : '方案ID',
 		dataIndex : 'project_id',
 		hidden : true

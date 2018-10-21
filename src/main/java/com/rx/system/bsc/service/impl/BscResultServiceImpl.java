@@ -213,7 +213,8 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 
 	public List<Map<String, Object>> listProjectMeasure(
 			Map<String, Object> paramMap) throws Exception {
-		return this.toLowerMapList(bscResultDao.listProjectMeasure(paramMap));
+		List<Map<String, Object>> retList = bscResultDao.listProjectMeasure(paramMap);
+		return this.toLowerMapList(retList);
 	}
 
 	public List<Map<String, Object>> listSubMeasure(Map<String, Object> paramMap)
@@ -237,7 +238,36 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 			if(i != measureList.size()-1)
 				case_sql += ",";
 		}
+/*		String project_id = paramMap.get("project_id").toString();
+		String tId = paramMap.get("tId").toString();
+		String oId = paramMap.get("oId").toString();
+		StringBuffer sb = new StringBuffer();
+		sb.append(" select c.cycle_id as month_id,c.cycle_id||'年' as month_name,");
+		sb.append(" max(t.object_name) object_name,");
+		sb.append(" "+case_sql+"");
+		sb.append(" from bsc_proj_obj_h t inner join  bsc_proj_stat_cyc c ");
+		sb.append(" on t.project_id =c.project_id and t.year_id =c.cycle_id");
+		sb.append(" left join bsc_proj_mea_obj_val b  on  t.project_id =  b.project_id");
+		sb.append("and t.object_id = b.object_id and t.year_id=b.month_id");
+		if(null !=tId && !"".equals(tId)){
+			sb.append(" and b.month_id in ("+tId+")");
+		}
+
+		sb.append("where t.project_id ='"+project_id+"'");
+
+		if(oId !=oId && !"".equals(oId)){
+			sb.append(" and t.object_id in  ("+oId+")");
+		}
+		if(oId !=tId && !"".equals(tId)){
+			sb.append(" and t.year_id in   ("+tId+")");
+		}
+
+		sb.append(" group by c.cycle_id order by c.cycle_id  desc");
+		String sql = sb.toString();
+		System.out.println("sql="+sql);*/
+
 		paramMap.put("case_sql", case_sql);
+//		paramMap.put("sql", sql);
 	}
 	/**
 	 * 查询各考核对象的方案得分
@@ -267,7 +297,7 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 	public String listScoreResultCountExt(Map<String, Object> paramMap)
 			throws Exception {
 		String show_id = getStringValue(paramMap, "show_id");
-		if(show_id.equals("2"))
+		if(show_id.equals("1"))
 			return this.bscResultDao.listScoreResultCountByYear(paramMap);
 		else
 			return this.bscResultDao.listScoreResultCount(paramMap);
@@ -292,4 +322,5 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 		else
 			return this.toLowerMapList(bscResultDao.listScoreSubResult(paramMap));
 	}
+
 }

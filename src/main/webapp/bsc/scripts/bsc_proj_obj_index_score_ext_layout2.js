@@ -43,7 +43,7 @@ var menu = [{
 	tooltip : '导出查询结果',
 	iconCls : 'export',
 	handler : function() {
-		if (projectID == ''  || dhtmlGrid == null){
+		if (monthID == '' || projectID == ''  || dhtmlGrid == null){
 			Ext.MessageBox.alert("提示信息","请先查询出需要导出的数据");
 			return;
 		}
@@ -86,15 +86,15 @@ var monthDS = new Ext.data.JsonStore({
 	listeners : {
 		load : function(store, records, ptions) {
 			if (store.getCount() > 0) {
+				debugger
 				if (monthID == ''){
-                    debugger
 					if(showID == "1")
-						setMOCmp("monthSelector", store.getAt(0),'2');
+						setMOCmp("monthSelector", store.getAt(0));
 					else{
-						setMOCmp("monthSelector",store.getAt(0),'1');
+						setMOCmp("monthSelector",store.getAt(0));
 					}
 				}else{
-					setMOCmp("monthSelector",monthID,showID);
+					setMOCmp("monthSelector",monthID);
 				}
 
 				p = Ext.getCmp("projectSelector").getValue();
@@ -102,7 +102,7 @@ var monthDS = new Ext.data.JsonStore({
 					params: {month_id : monthID,project_id : p}
 				});
 			}else{
-				setMOCmp("monthSelector",'',showID);
+				setMOCmp("monthSelector",'');
 //				Ext.getCmp("indexSelector").setValue('');
 			}
 		}
@@ -163,7 +163,20 @@ var projectStore = new Ext.data.JsonStore({
  */
 var showDS = new Ext.data.SimpleStore({
 	fields : ['show_id', 'show_name'],
+//	data : [['1', '统计年份'],['2', '统计维度']],
     data : [['1', '维度分析'], ['2', '年份分析']],
+	/*listeners : {
+		load : function(store, records, options) {
+			if (store.getCount() > 0) {
+				if (showID == ''){
+					showID = store.getAt(0).getValue();
+				}
+				Ext.getCmp("showSelector").setValue(showID);
+			}else{
+				setMOCmp("objSelector",'');
+			}
+		}
+	}*/
 });
 /**
  * 统计维度Store
@@ -177,17 +190,14 @@ var objDS = new Ext.data.JsonStore({
 		load : function(store, records, options) {
 			if (store.getCount() > 0) {
 				if (objID == ''){
-
-                    if(showID == "2"){
-                        setMOCmp("objSelector", '','1');
-
-					}else{
-                        setMOCmp("objSelector",store.getAt(0),'2');
+					if(showID == "2")
+						setMOCmp("objSelector", store.getAt(0));
+					else{
+						setMOCmp("objSelector",'');
 					}
-
 				}
 			}else{
-				setMOCmp("objSelector",'',showID);
+				setMOCmp("objSelector",'');
 			}
 		}
 	},
@@ -365,6 +375,7 @@ gridSelector = function(obj) {
         this.menu.show(this.el, "tl-bl?");
         if(!expanded) {
         	expanded = true;
+//        	debugger;
         	Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowselect",function(sm,index,record){
         		var rowVal = Ext.getCmp(obj.id).getRawValue();
         		if(rowVal.indexOf(record.get('value_field')+",") == -1)
@@ -385,10 +396,6 @@ gridSelector = function(obj) {
 }
 Ext.extend(gridSelector,Ext.form.ComboBox);
 
-function getMOC2mpVal(id,num){
-    var sel = Ext.getCmp(id+num);
-    return sel;
-}
 function getMOCmp(id){
 	return Ext.getCmp(id+showID);
 }
@@ -398,8 +405,8 @@ function getMOCmpVal(id){
 		return select.code || '';
 	return select.getValue();
 }
-function setMOCmp(id, val,num){
-	var select = getMOC2mpVal(id,num);
+function setMOCmp(id, val){
+	var select = getMOCmp(id);
 	if(val === ''){
 		select.setValue('');
 		if(select.ismult)
@@ -457,6 +464,7 @@ Ext.onReady(function() {
 								store : projectStore,
 								triggerAction : 'all',
 								fieldLabel : '方案',
+//                                fieldLabel : '<span style="font-weight:bold;align:right;"  data-qtip="Required">方案</span>',
 								name : 'project_id',
 								listeners : {
 									select : function(combo,record,index){
@@ -467,6 +475,7 @@ Ext.onReady(function() {
 										objDS.load({params: {project_id : p}});
 										measure_id = '';
 										indexDS.reload({params: {project_id : p}});
+//							projectID = '';
 									}
 								},
 								editable : false,
@@ -495,9 +504,24 @@ Ext.onReady(function() {
 								anchor : '91%',
 								listeners : {
 									render : function(combo) {
+//                                        debugger
 										var r = combo.getStore();
 										showID = r.getAt(1).get('show_id');
 										combo.setValue(showID);
+ /*                                       if(showID == "1"){
+                                            Ext.getCmp("monthSelector1").show();
+                                            Ext.getCmp("objSelector1").show();
+                                            Ext.getCmp("monthBox2").hide();
+                                            Ext.getCmp("objBox2").hide();
+                                            setMOCmp("monthSelector", monthDS.getAt(0) || '');
+                                        }
+                                        else{
+                                            Ext.getCmp("monthSelector1").hide();
+                                            Ext.getCmp("objSelector1").hide();
+                                            Ext.getCmp("monthBox2").show();
+                                            Ext.getCmp("objBox2").show();
+                                            setMOCmp("objSelector", objDS.getAt(0) || '');
+                                        }*/
 									},
 									select : function(combo,record,index){
 										showID = combo.getValue();
@@ -506,15 +530,32 @@ Ext.onReady(function() {
                                             Ext.getCmp("objSelector1").hide();
                                             Ext.getCmp("monthBox2").show();
                                             Ext.getCmp("objBox2").show();
-                                            setMOCmp("objSelector", objDS.getAt(0) || '','2');
+                                            setMOCmp("objSelector", objDS.getAt(0) || '');
                                         }
                                         else{
                                             Ext.getCmp("monthSelector1").show();
                                             Ext.getCmp("objSelector1").show();
                                             Ext.getCmp("monthBox2").hide();
                                             Ext.getCmp("objBox2").hide();
-                                            setMOCmp("monthSelector", monthDS.getAt(0) || '','1');
+                                            setMOCmp("monthSelector", monthDS.getAt(0) || '');
                                         }
+
+
+									/*	if(showID == "1"){
+											Ext.getCmp("monthSelector1").show();
+											Ext.getCmp("objSelector1").show();
+											Ext.getCmp("monthBox2").hide();
+											Ext.getCmp("objBox2").hide();
+											setMOCmp("monthSelector", monthDS.getAt(0) || '');
+										}
+										else{
+											Ext.getCmp("monthSelector1").hide();
+											Ext.getCmp("objSelector1").hide();
+											Ext.getCmp("monthBox2").show();
+											Ext.getCmp("objBox2").show();
+											setMOCmp("objSelector", objDS.getAt(0) || '');
+										}*/
+
 									}
 								}
 							}]
@@ -676,6 +717,52 @@ Ext.onReady(function() {
 
 					]
 				},
+
+
+
+
+
+
+               /* {
+					xtype: 'container',
+					layout:'column',
+					anchor:'100%',
+					align:'right',
+					items:[
+						{
+							columnWidth : .55,
+							anchor : '100%',
+							html:'&nbsp;',
+						},
+						{
+							id : 'dimSet',
+							columnWidth : .25,
+							labelWidth : 60,
+							anchor : '100%',
+							layout : 'form'
+						},
+						{
+							columnWidth : .10,
+							layout : 'form',
+							labelWidth : 75,
+							labelAlign : 'right',
+							border : false,
+							items : [{
+								xtype : 'button',
+								iconCls : 'search',
+								width : 48,
+								text : '查  询',
+								handler : function() {
+									toVar();
+									queryResult();
+								}
+							},{
+								xtype : 'panel',
+								width : 20
+							}]
+						}
+					]
+				}*/
 			]
 		}, {
 			region : 'center',
@@ -739,6 +826,15 @@ function publishResult() {
 function queryResult() {
 	if(projectID == '')
 		return;
+/*	if (monthID == '' && timID ==''){
+		Ext.MessageBox.alert("提示信息","请选择统计年份");
+		return;
+	}
+    if (measure_id == '' && objID ==''){
+        Ext.MessageBox.alert("提示信息","请选择统计维度");
+        return;
+    }*/
+
 	if(showID =='1'){
         objID = Ext.getCmp("objSelector2").getValue();
         monthID = Ext.getCmp("monthSelector2").code || '';
@@ -746,6 +842,9 @@ function queryResult() {
         objID = Ext.getCmp("objSelector1").code || '';
         monthID = Ext.getCmp("monthSelector1").getValue();
 	}
+
+ //   alert("objID="+objID)
+ //   alert("monthID="+monthID)
     var param = "?project_id=" + projectID + "&month_id=" + monthID
 			+ "&cycle_type_id="+cycle_type_id
 			+ "&obj_cate_id=" + objCateId + "&monthName=" + encodeURI(encodeURI(monthName))

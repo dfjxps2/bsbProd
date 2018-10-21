@@ -255,6 +255,7 @@ public class BscResultAction extends BaseDispatchAction {
 		return ids;
 	}
 
+
 	/**
 	 * 返回DHtml表格结果数据
 	 * @return
@@ -267,22 +268,15 @@ public class BscResultAction extends BaseDispatchAction {
 		List<Map<String, Object>> measureList = null;
 		try {
 			this.insertPageParamToMap(paramMap);//插入分页信息
-			//是否过滤维度
-			String oId = null;
-			String objId = paramMap.get("obj_id").toString();
-			if(null != objId && !"".equals(objId)){
-				oId = getStringById(objId);
-				paramMap.put("oId", oId);
-			}
 			//方案所有的指标
 			String meaId = null;
 			String measureId = paramMap.get("measure_id").toString();
 			if(null != measureId && !"".equals(measureId)){
-				 meaId = getStringById(measureId);
-				 paramMap.put("meaId", meaId);
-				 measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
+				meaId = getStringById(measureId);
+				paramMap.put("meaId", meaId);
+				measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
 			}else{
-				 measureList = this.bscResultService.listProjectMeasure(paramMap);
+				measureList = this.bscResultService.listProjectMeasure(paramMap);
 			}
 			paramMap.put("measureList", measureList);
 			String ids = this.getStringById(measureList);
@@ -304,17 +298,17 @@ public class BscResultAction extends BaseDispatchAction {
 					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
 				}
 				paramMap.put("measure_id", getStringValue(map, "measure_id"));
-				
+
 				List<Map<String, Object>> subMeasureList = this.bscResultService.listSubMeasure(paramMap);
 				if(subMeasureList.size()>0){
 
-					String param = "project_id=" + getStringValue(paramMap, "project_id") + 
-							"&month_id=" + getStringValue(paramMap, "month_id") + 
+					String param = "project_id=" + getStringValue(paramMap, "project_id") +
+							"&month_id=" + getStringValue(paramMap, "month_id") +
 							"&measure_id=" + getStringValue(map, "measure_id") +
 							"&ids=" + ids +
-							"&cycle_type_id=" + getStringValue(paramMap, "cycle_type_id") + 
-							"&obj_cate_id=" + getStringValue(paramMap, "obj_cate_id") + 
-							"&monthName=" + URLDecoder.decode(getStringValue(paramMap, "monthName"), "utf-8") + 
+							"&cycle_type_id=" + getStringValue(paramMap, "cycle_type_id") +
+							"&obj_cate_id=" + getStringValue(paramMap, "obj_cate_id") +
+							"&monthName=" + URLDecoder.decode(getStringValue(paramMap, "monthName"), "utf-8") +
 							"&projectName=" + URLDecoder.decode(getStringValue(paramMap, "projectName"), "utf-8");
 					template.addHeaderHref(i+1, "bsc_proj_result_index_detail.jsp?"+param);
 				}
@@ -328,7 +322,7 @@ public class BscResultAction extends BaseDispatchAction {
 			template.setData(dataList);
 			template.useSerialNumber(true);
 //			template.setUseCheck(true, 0);
-			
+
 			response.setContentType("text/html;charset=utf-8");
 			response.getWriter().print(template.getTableString());
 		} catch (Exception e) {
@@ -336,9 +330,9 @@ public class BscResultAction extends BaseDispatchAction {
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 返回DHtml表格结果数据总数
 	 * @return
@@ -355,8 +349,8 @@ public class BscResultAction extends BaseDispatchAction {
 		}
 		return null;
 	}
-	
-	
+
+
 
 	@FunDesc(code="BSC_0024")
 	@UseLog
@@ -662,6 +656,10 @@ public class BscResultAction extends BaseDispatchAction {
 	/**
 	 * 返回DHtml表格结果数据
 	 * @return
+	 *
+	 * 统计年份 -》  统计年份（单） -》统计维度（多）-》指标（多）
+	 *
+	 * 统计维度-》统计维度（单）-》 统计年份（多）-》指标（多）
 	 * @throws Exception
 	 */
 	@FunDesc(code="BSC_0023")
@@ -687,7 +685,7 @@ public class BscResultAction extends BaseDispatchAction {
 				tId = getStringById(timId);
 				paramMap.put("tId", tId);
 			}
-			//方案所有的指标
+			//方案所有的指标  1, 多统计维度；2, 多统计年份
 			String meaId = null;
 			String measureId = paramMap.get("measure_id").toString();
 			if(null != measureId && !"".equals(measureId)){
@@ -700,7 +698,9 @@ public class BscResultAction extends BaseDispatchAction {
 			paramMap.put("measureList", measureList);
 
 			String ids = this.getStringById(measureList);
-			if(show_id.equals("2")){
+			//2统计年份 -》  统计年份（单） -》统计维度（多）-》指标（多）
+			//1统计维度-》统计维度（单）-》 统计年份（多）-》指标（多）
+			if(show_id.equals("1")){
 				dataList = this.bscResultService.listScoreResultByYear(paramMap);
 			}else{
 				dataList = this.bscResultService.listScoreResult(paramMap);

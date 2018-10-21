@@ -130,4 +130,6 @@ public interface BscResultDao {
 	 */
 	public List<Map<String, Object>> listScoreTotalResultByObj(Map<String, Object> paramMap) throws Exception;
 	public List<Map<String, Object>> listScoreSubResultByYear(Map<String, Object> paramMap) throws Exception;
+
+
 }

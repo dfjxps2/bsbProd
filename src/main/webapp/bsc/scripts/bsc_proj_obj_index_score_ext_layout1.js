@@ -1,5 +1,28 @@
 var mask = null;
 var path = '';
+//多选扩展
+function multstr(value, text){
+	var val = 'values.'+value, txt = text;
+	return '<tpl for="."><div class="x-combo-list-item"><span><input type="checkbox" {[values.check?"checked":""]}  value="{['+val+']}" /></span><span >{'+txt+'}</span></div></tpl>';
+}
+function multselect(record, index){
+	var txt = this.displayField, val = this.valueField;
+	if(this.fireEvent('beforeselect', this, record, index) !== false){
+		record.set('check',!record.get('check'));
+		var str=[];//页面显示的值
+		var strvalue=[];//传入后台的值
+		this.store.each(function(rc){
+			if(rc.get('check')){
+				str.push(rc.get(txt));
+				strvalue.push(rc.get(val));
+			}
+		});
+		this.setValue(str.join());
+		this.code=strvalue.join();
+		//this.collapse();
+		this.fireEvent('select', this, record, index);
+	}
+}
 
 // 显示分页条 pageSize-分页大小
 function showBbar(pageSize) {
@@ -30,10 +53,10 @@ var menu = [{
 		}else if(objCateId=="CBM"){
 			title = '市属部门方案';
 		}else {
-			title = '镇街方案';
+			title = '统计方案';
 		}
 		if(dhtmlGrid.serialize().length<=34) {
-			Ext.MessageBox.alert("提示信息","请选择...");
+			Ext.MessageBox.alert("提示信息","无数据");
 			return;		
 		}
 		document.excelForm.month_id.value = monthID;
@@ -42,13 +65,14 @@ var menu = [{
 		document.excelForm.project_name.value = projectName;
 		document.excelForm.month_name.value = monthName;
 		document.excelForm.measure_id.value = measure_id;
+		document.excelForm.show_id.value = showID;
+		document.excelForm.obj_id.value = objID;
+		document.excelForm.time_id.value = timID;
 		document.excelForm.file_name.value = '方案结果.xls';
 		document.excelForm.submit();
 		
 	}
 }]
-
-
 
 
 /**
@@ -63,15 +87,21 @@ var monthDS = new Ext.data.JsonStore({
 		load : function(store, records, options) {
 			if (store.getCount() > 0) {
 				if (monthID == ''){
-					monthID = store.getAt(0).get('month_id');
-					Ext.getCmp("monthSelector").setValue(monthID);
+					if(showID == "1")
+						setMOCmp("monthSelector", store.getAt(0));
+					else{
+						setMOCmp("monthSelector",'');
+					}
+				}else{
+					setMOCmp("monthSelector",monthID);
 				}
+
 				p = Ext.getCmp("projectSelector").getValue();
 				indexDS.reload({
 					params: {month_id : monthID,project_id : p}
 				});
 			}else{
-				Ext.getCmp("monthSelector").setValue('');
+				setMOCmp("monthSelector",'');
 //				Ext.getCmp("indexSelector").setValue('');
 			}
 		}
@@ -103,7 +133,9 @@ var projectStore = new Ext.data.JsonStore({
 				monthDS.load({
 					params: {project_id : projectID}
 				});
-				
+				objDS.load({
+					params: {project_id : projectID}
+				});
 				indexDS.reload({
 					params: {project_id : projectID}
 				});
@@ -111,6 +143,7 @@ var projectStore = new Ext.data.JsonStore({
 		},
 		beforeload : function(store, options) {
 			monthDS.removeAll();
+			objDS.removeAll();
 			store.baseParams = {
 				type : 'score',
 				is_template : 'N',
@@ -122,7 +155,50 @@ var projectStore = new Ext.data.JsonStore({
 	},
 	autoLoad : true
 });
-
+/**
+ * 显示维度Store
+ */
+var showDS = new Ext.data.SimpleStore({
+	fields : ['show_id', 'show_name'],
+	data : [['1', '统计维度'], ['2', '统计年份']],
+	/*listeners : {
+		load : function(store, records, options) {
+			if (store.getCount() > 0) {
+				if (showID == ''){
+					showID = store.getAt(0).getValue();
+				}
+				Ext.getCmp("showSelector").setValue(showID);
+			}else{
+				setMOCmp("objSelector",'');
+			}
+		}
+	}*/
+});
+/**
+ * 统计维度Store
+ */
+var objDS = new Ext.data.JsonStore({
+	url : pathUrl + '/bscProject_common.action?method=listPorjectObj',
+	root : 'results',
+	totalProperty : 'totalCount',
+	fields : ['obj_id', 'obj_name'],
+	listeners : {
+		load : function(store, records, options) {
+			if (store.getCount() > 0) {
+				if (objID == ''){
+					if(showID == "2")
+						setMOCmp("objSelector", store.getAt(0));
+					else{
+						setMOCmp("objSelector",'');
+					}
+				}
+			}else{
+				setMOCmp("objSelector",'');
+			}
+		}
+	},
+	autoLoad : false
+});
 /***-----------------------------------**/
 
 
@@ -182,9 +258,6 @@ var checkboxSelectionModel = new Ext.grid.CheckboxSelectionModel({
 	handleMouseDown : Ext.emptyFn
 });
 
-
-
-
 function beforeClose() {
 	for (var i = 0; i < indexDS.getCount(); i++) {
 		var record = indexDS.getAt(i);
@@ -200,6 +273,7 @@ function beforeClose() {
 
 //表格下拉框
 gridSelector = function(obj) {
+//	debugger;
 	var expanded = false;
 	var anchor = obj.anchor?obj.anchor:'91%';
 	gridSelector.superclass.constructor.call(this,{
@@ -235,9 +309,12 @@ gridSelector = function(obj) {
 		id : 'valueField',
 		header : '指标名称',	
 		dataIndex : 'display_field'
-	
 	}]);
+	
+	
+	
 
+	
 	var vStore = new Ext.data.JsonStore({
 		url : pathUrl + '/bscProject_common.action?method=listExecutedIndex',
 		root : 'results',
@@ -294,7 +371,7 @@ gridSelector = function(obj) {
         		rowVal = rowVal.replace(record.get('value_field')+",","");
         		Ext.getCmp(obj.id).setRawValue(rowVal)
         	});
-            m = Ext.getCmp("monthSelector").getValue();
+            m = getMOCmpVal("monthSelector");
 			p = Ext.getCmp("projectSelector").getValue();
 
         	vStore.load({params: {month_id : m,project_id : p}});
@@ -302,6 +379,35 @@ gridSelector = function(obj) {
     };
 }
 Ext.extend(gridSelector,Ext.form.ComboBox);
+
+function getMOCmp(id){
+	return Ext.getCmp(id+showID);
+}
+function getMOCmpVal(id){
+	var select = getMOCmp(id);
+	if(select.ismult)
+		return select.code || '';
+	return select.getValue();
+}
+function setMOCmp(id, val){
+	var select = getMOCmp(id);
+	if(val === ''){
+		select.setValue('');
+		if(select.ismult)
+			select.code = '';
+	}else if(typeof(val) == "string"){
+		select.setValue(val);
+	}else{
+		if(val == null) return;
+		var t = val.get(select.displayField), v = val.get(select.valueField);
+		if(select.ismult){
+			select.code = v;
+			select.setValue(t);
+		}else{
+			select.setValue(v);
+		}
+	}
+}
 /***-----------------------------------**/
 Ext.namespace("Ext.ux.form");
 var p,m;
@@ -309,113 +415,273 @@ var p,m;
 Ext.onReady(function() {
 	var viewport = new Ext.Viewport({
 		layout : 'border',
+		id:"viewport",
 		items : [{
 			region : 'north',
 			frame : true,
 			border : false,
-			height : 80,
-//			labelWidth : 33,
+			height : 110,
+			labelWidth : 33,
 //			buttonAlign : 'right',
 			layout : {
-				type : 'column'
+				type : 'form'
 			},	
 			bodyStyle : 'padding:15px',
 			title : '查询条件',
-			items : [{
-				columnWidth : .25,
-				layout : 'form',
-				labelWidth : 30,
-//				labelAlign : 'center',
-				border : false,
-				items : [{
-					xtype : 'combo',					
-					mode : 'local',
-                    labelWidth : 28,
-					displayField : 'project_name',
-					valueField : 'project_id',
-					store : projectStore,
-					triggerAction : 'all',
-					fieldLabel : '方案',
-					name : 'project_id',
-					listeners : {
-						select : function(combo,record,index){
+			items : [
+				{
+					xtype: 'container',
+					layout:'column',
+					anchor:'100%',
+					items:[
+						{
+							columnWidth : .35,
+							layout : 'form',
+							labelWidth : 50,
+							labelAlign : 'center',
+							border : false,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'project_name',
+								valueField : 'project_id',
+								store : projectStore,
+								triggerAction : 'all',
+								fieldLabel : '方案',
+								name : 'project_id',
+								listeners : {
+									select : function(combo,record,index){
 //							dhtmlGrid.clearAll();
-						    p = record.get("project_id");
-							monthID = '';
-							monthDS.load({params: {project_id : p}});
-							measure_id = '';
-							indexDS.reload({params: {project_id : p}});
+										p = record.get("project_id");
+										monthID = '';
+										monthDS.load({params: {project_id : p}});
+										objID = '';
+										objDS.load({params: {project_id : p}});
+										measure_id = '';
+										indexDS.reload({params: {project_id : p}});
 //							projectID = '';
+									}
+								},
+								editable : false,
+								id : "projectSelector",
+								anchor : '91%'
+							}]
+						},
+						{
+							columnWidth : .20,
+							layout : 'form',
+							labelWidth : 60,
+							labelAlign : 'left',
+							border : false,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'show_name',
+								valueField : 'show_id',
+								store : showDS,
+								editable : false,
+								triggerAction : 'all',
+								fieldLabel : '显示维度',
+								name : 'show_id',
+								emptyText : '无数据',
+								id : 'showSelector',
+								anchor : '91%',
+								listeners : {
+									render : function(combo) {
+										var r = combo.getStore();
+										showID = r.getAt(0).get('show_id');
+										combo.setValue(showID);
+									},
+									select : function(combo,record,index){
+										showID = combo.getValue();
+										if(showID == "1"){
+											Ext.getCmp("monthSelector1").show();
+											Ext.getCmp("objSelector1").show();
+											Ext.getCmp("monthBox2").hide();
+											Ext.getCmp("objBox2").hide();
+											setMOCmp("monthSelector", monthDS.getAt(0) || '');
+										}
+										else{
+											Ext.getCmp("monthSelector1").hide();
+											Ext.getCmp("objSelector1").hide();
+											Ext.getCmp("monthBox2").show();
+											Ext.getCmp("objBox2").show();
+											setMOCmp("objSelector", objDS.getAt(0) || '');
+										}
+
+									}
+								}
+							}]
+						},
+						{
+							columnWidth : .20,
+							layout : 'form',
+							labelWidth : 60,
+							labelAlign : 'left',
+							border : false,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'month_name',
+								valueField : 'month_id',
+								store : monthDS,
+								editable : false,
+								triggerAction : 'all',
+								fieldLabel : '统计年份',
+								name : 'month_id',
+								emptyText : '无数据',
+								id : 'monthSelector1',
+								anchor : '91%',
+								listeners : {
+									select : function(combo,record,index){
+										measure_id = '';
+										m = record.get("month_id");
+										indexDS.reload({params: {month_id : m,project_id : p}});
+										projectID = '';
+									}
+								}
+							}]
+						},
+						{
+							columnWidth : .20,
+							layout : 'form',
+							labelWidth : 60,
+							labelAlign : 'left',
+							border : false,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'obj_name',
+								valueField : 'obj_id',
+								store : objDS,
+								editable : false,
+								triggerAction : 'all',
+								fieldLabel : '统计维度',
+								name : 'obj_id',
+								emptyText:'请选择...',
+								id : 'objSelector1',
+								anchor : '91%',
+								tpl:multstr('obj_id','obj_name'),
+								triggerAction: 'all',
+								ismult : true,
+								onSelect : multselect,
+								listeners : {
+									select : function(combo,record,index){
+										objID = '';
+										projectID = '';
+									}
+								}
+							}]
+						},
+						{
+							columnWidth : .20,
+							layout : 'form',
+							labelWidth : 60,
+							labelAlign : 'left',
+							border : false,
+							id : "objBox2",
+							hidden : true,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'obj_name',
+								valueField : 'obj_id',
+								store : objDS,
+								editable : false,
+								triggerAction : 'all',
+								fieldLabel : '统计维度',
+								name : 'obj_id',
+								emptyText:'无数据...',
+								id : 'objSelector2',
+								anchor : '91%',
+								listeners : {
+									select : function(combo,record,index){
+										objID = '';
+										projectID = '';
+									}
+								}
+							}]
+						},
+						{
+							columnWidth : .20,
+							layout : 'form',
+							labelWidth : 60,
+							labelAlign : 'left',
+							border : false,
+							id : "monthBox2",
+							hidden : true,
+							items : [{
+								xtype : 'combo',
+								mode : 'local',
+								displayField : 'month_name',
+								valueField : 'month_id',
+								store : monthDS,
+								editable : false,
+								triggerAction : 'all',
+								fieldLabel : '统计年份',
+								name : 'month_id',
+								emptyText : '请选择...',
+								id : 'monthSelector2',
+								anchor : '91%',
+								tpl:multstr('month_id','month_name'),
+								triggerAction: 'all',
+								ismult : true,
+								onSelect : multselect,
+								listeners : {
+									select : function(combo,record,index){
+										measure_id = '';
+										m = record.get("month_id");
+										indexDS.reload({params: {month_id : m,project_id : p}});
+										projectID = '';
+									}
+								}
+							}]
 						}
-					},
-					editable : false,
-					id : "projectSelector",
-					anchor : '91%'
-				}]
-			},{
-				columnWidth : .15,
-				layout : 'form',
-				labelWidth : 50,
-				labelAlign : 'left',
-				border : false,
-				items : [{
-					xtype : 'combo',
-					mode : 'local',
-					displayField : 'month_name',
-					valueField : 'month_id',
-					store : monthDS,
-					editable : false,
-					triggerAction : 'all',
-					fieldLabel : '周期',
-					name : 'month_id',
-					emptyText : '请选择...',
-					id : 'monthSelector',
-					anchor : '91%',
-					listeners : {
-						select : function(combo,record,index){
-							measure_id = '';
-							 m = record.get("month_id");
-							indexDS.reload({params: {month_id : m,project_id : p}});
-							projectID = '';
+					]
+				},
+				{
+					xtype: 'container',
+					layout:'column',
+					anchor:'100%',
+					align:'right',
+					items:[
+						{
+							columnWidth : .55,
+							anchor : '100%',
+							html:'&nbsp;',
+						},
+						{
+							id : 'dimSet',
+							columnWidth : .25,
+							labelWidth : 60,
+//				xtype : 'fieldset',
+//				title : '过滤条件(选填项:需要过滤数据时选择)',
+							anchor : '100%',
+							layout : 'form'
+						},
+						{
+							columnWidth : .15,
+							layout : 'form',
+							labelWidth : 75,
+							labelAlign : 'right',
+							border : false,
+							items : [{
+								xtype : 'button',
+								iconCls : 'search',
+								width : 48,
+								text : '查  询',
+								handler : function() {
+									toVar();
+									queryResult();
+								}
+							},{
+								xtype : 'panel',
+								width : 20
+							}]
 						}
-					}
-				}]
-			},
-			
-			{
-				id : 'dimSet',
-				columnWidth : .30,
-                labelWidth : 55,
-				anchor : '100%',
-				layout : 'form'
-			},	
-			{
-				columnWidth : .15,
-				layout : 'form',
-				labelWidth : 50,
-				labelAlign : 'center',
-				border : false,
-				items : [{
-					xtype : 'button',
-					iconCls : 'search',
-					width : 48,
-					text : '查  询',
-					handler : function() {
-						measure_id=Ext.getCmp("index_type").getValue();
-						monthID = Ext.getCmp("monthSelector").getValue();
-						projectID = Ext.getCmp("projectSelector").getValue();
-//						measure_id=Ext.getCmp("indexSelector").getValue();
-						monthName=Ext.get("monthSelector").getValue();
-						projectName=Ext.get("projectSelector").getValue();
-//						indexName=Ext.get("indexSelector").getValue();
-						cycle_type_id = projectStore.getById(projectID).get("cycle_type_id");
-						queryResult();
-					}
-				},{
-					xtype : 'panel',
-					width : 20
-				}]
-			}]
+					]
+				}
+			]
 		}, {
 			region : 'center',
 			layout : 'border',
@@ -456,7 +722,7 @@ function publishResult() {
 	
 	var param = "?project_id=" + projectID + "&month_id=" + monthID+"&obj_cate_id="+objCateId;
 	Ext.Ajax.request({
-		url : pathUrl + '/bscresult_publishIndexResult.action' + param,
+		url : pathUrl + '/bscresult_publishResult.action' + param,
 		waitMsg : '正在处理,请稍候......',
 		method : 'POST',
 		timeout : 30000,
@@ -476,20 +742,26 @@ function publishResult() {
 }
 
 function queryResult() {
-	
-	if (monthID == '' || projectID == '')
+	if(projectID == '')
 		return;
-	Ext.getCmp("monthSelector").setValue(monthID);
+	if (monthID == ''){
+		Ext.MessageBox.alert("提示信息","请选择统计年份");
+		return;
+	}
+
 
 	var param = "?project_id=" + projectID + "&month_id=" + monthID
 			+ "&cycle_type_id="+cycle_type_id
 			+ "&obj_cate_id=" + objCateId + "&monthName=" + encodeURI(encodeURI(monthName))
-			+ "&measure_id=" + measure_id 
+			+ "&measure_id=" + measure_id
+			+ "&show_id=" + showID
+			+ "&obj_id=" + objID
+			+ "&time_id=" + timID
 			+ "&projectName=" + encodeURI(encodeURI(projectName));
 	mask.show();
-	path = pathUrl + '/bscresult_scoreDhtmlByCond.action' + param;
+	path = pathUrl + '/bscresult_scoreDhtmlByCondExt.action' + param;
 	Ext.Ajax.request({
-		url : pathUrl + '/bscresult_scoreDhtmlCountByCond.action' + param,
+		url : pathUrl + '/bscresult_scoreDhtmlCountByCondExt.action' + param,
 		waitMsg : '正在处理,请稍候......',
 		method : 'POST',
 		timeout : 30000,
@@ -532,3 +804,16 @@ function load(path) {
 	mask.hide();
 }
 
+function toVar(){
+	showID = Ext.getCmp("showSelector").getValue();
+	measure_id=Ext.getCmp("index_type").getValue();
+	monthID = Ext.getCmp("monthSelector1").getValue();
+	projectID = Ext.getCmp("projectSelector").getValue();
+//	measure_id=Ext.getCmp("indexSelector").getValue();
+	monthName=Ext.get("monthSelector1").getValue();
+	projectName=Ext.get("projectSelector").getValue();
+//	indexName=Ext.get("indexSelector").getValue();
+	cycle_type_id = projectStore.getById(projectID).get("cycle_type_id");
+	objID = getMOCmpVal("objSelector");
+	timID = Ext.getCmp("monthSelector2").code || '';
+}

@@ -84,8 +84,12 @@
 	
 	<!-- 查询方案已经执行的月份 -->
 	<select id="listExecutedMonth" parameterType="map" resultType="map">
-		select * from bsc_proj_exe_mth where project_id = #{project_id}
+		<!--select * from bsc_proj_exe_mth where project_id = #{project_id}
 		order by month_id desc
+		-->
+		 select cycle_id as month_id,cycle_name as month_name from bsc_proj_stat_cyc
+		 where project_id = #{project_id}
+		 order by cycle_id desc
 	</select>
 	
 	<!-- 添加平衡计分卡方案 -->

@@ -129,4 +129,7 @@ public interface IBscResultService {
 	 */
 	public String listScoreResultCountExt(Map<String, Object> paramMap) throws Exception;
 	public List<Map<String, Object>> listScoreSubResultExt(Map<String, Object> paramMap) throws Exception;
+
+
+
 }

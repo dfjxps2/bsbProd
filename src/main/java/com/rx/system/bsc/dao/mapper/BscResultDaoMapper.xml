@@ -148,14 +148,19 @@
 	</select>
 	
 	<select id="listProjectMeasure" parameterType="map" resultType="map">
-		select
-		    a.measure_id,
-		    a.mea_definition
-		from bsc_proj_mea_h a 
-		where a.year_id = #{year_id} 
-		and a.project_id = #{project_id} 
-		and #{query_date} between a.begin_date and a.end_date
-		order by a.mea_order_id
+<!--		select
+               distinct a.measure_id,
+                a.mea_definition
+            from bsc_proj_mea_h a
+            where  a.project_id = #{project_id}
+		<if test="year_id != null and year_id != ''">
+			and a.year_id = #{year_id}
+		</if>
+            order by a.measure_id-->
+
+ 		select  measure_id, mea_definition from bsc_proj_mea
+		where project_id  = #{project_id}
+		order by measure_id
 	</select>
 	
 	<select id="listSubMeasure" parameterType="map" resultType="map">
@@ -167,36 +172,51 @@
 			t.rely_measure_id = m.measure_id 
 			and t.year_id = m.year_id 
 			and t.project_id = m.project_id
-			and #{query_date} between m.begin_date and m.end_date 
-		where t.year_id = #{year_id} 
-		and t.project_id= #{project_id} 
-		and #{query_date} between t.begin_date and t.end_date 
-		and t.measure_id =#{measure_id} 
+		<if test="query_date != null and query_date != ''">
+			and #{query_date} between m.begin_date and m.end_date
+		</if>
+		where t.project_id= #{project_id}
+		<if test="year_id != null and year_id != ''">
+		and t.year_id = #{year_id}
+		</if>
+		<if test="query_date != null and query_date != ''">
+		and #{query_date} between t.begin_date and t.end_date
+		</if>
+		<if test="year_id != null and year_id != ''">
+		and t.measure_id =#{measure_id}
+		</if>
 	</select>
 	
 	<select id="listScoreResult" parameterType="map" resultType="map">
 		<include refid="pageDataHeader"/>
-			select t.object_id, 
-			       '['||t.object_id||']'||' '||max(t.object_name) as object_name, max(t.year_id)||'年' as month_name
-			       <if test="case_sql != null and case_sql != ''">
-			 		,${case_sql}
-				   </if>
-			from bsc_proj_obj_h t 
-			     left join bsc_proj_mea_obj_val b on 
-			        t.project_id =  b.project_id 
-			        and t.object_id = b.object_id 
-			        and b.month_id = #{month_id} 
-			where t.project_id = #{project_id} 
-			      and #{query_date} between t.begin_date and t.end_date
-			      and t.year_id= #{year_id}
-				  <if test="oId != null and oId != ''">
-				  and t.object_id in (${oId})
-				  </if>
-			group by t.object_id
+		select 	 j.obj_id,
+				'['||j.obj_id||']'||' '||(j.obj_name) as object_name,
+				max(t.year_id)||'年' as month_name
+				<if test="case_sql != null and case_sql != ''">
+				,${case_sql}
+				</if>
+		from bsc_proj_obj_h t
+		inner join  bsc_proj_stat_obj j
+		on t.project_id =j.project_id
+		and t.object_id =j.obj_id
+		left join bsc_proj_mea_obj_val b
+		on t.project_id =  b.project_id
+		and t.object_id = b.object_id
+		and t.year_id =  b.month_id
+		and b.month_id = #{year_id}
+		where t.project_id = #{project_id}
+		<if test="query_date != null and query_date != ''">
+			and #{query_date} between t.begin_date and t.end_date
+		</if>
+		<if test="oId != null and oId != ''">
+			and t.object_id in (${oId})
+		</if>
+		and t.year_id= #{year_id}
+		group by j.obj_id,j.obj_name
 		<include refid="pageDataEnd"/>
 	</select>
 	<select id="listScoreResultCount" parameterType="map" resultType="string">
-		<include refid="totalCountHeader"/>
+	<include refid="totalCountHeader"/>
 			select t.object_id, 
 			       '['||t.object_id||']'||' '||t.object_name as object_name
 			from bsc_proj_obj_h t 
@@ -204,7 +224,7 @@
 			      and t.year_id= #{year_id} 
 			group by t.object_id,t.object_name
 		<include refid="totalCountEnd"/>
-	</select>
+</select>
 	
 	<select id="listScoreSubResult" parameterType="map" resultType="map">
 			select t.object_id, 
@@ -340,25 +360,33 @@
 	<!--根据年份查询指标结果 -->
 	<select id="listScoreResultByYear" parameterType="map" resultType="map">
 		<include refid="pageDataHeader"/>
-		select t.year_id month_id,
-		t.year_id||'年' as month_name, max(t.object_name) object_name
-		<if test="case_sql != null and case_sql != ''">
-			,${case_sql}
-		</if>
+		select c.cycle_id as month_id,
+			c.cycle_id||'年' as month_name,
+			max(t.object_name) object_name,
+			${case_sql}
 		from bsc_proj_obj_h t
-		left join bsc_proj_mea_obj_val b on
-		t.project_id =  b.project_id
+		inner join  bsc_proj_stat_cyc c
+		on t.project_id =c.project_id
+		and t.year_id =c.cycle_id
+		left join bsc_proj_mea_obj_val b
+		on  t.project_id =  b.project_id
 		and t.object_id = b.object_id
 		and t.year_id=b.month_id
+		<if test="tId != null and tId != ''">
+		and b.month_id in (${tId})
+		</if>
 		where t.project_id = #{project_id}
+
 		<if test="oId != null and oId != ''">
 			and t.object_id in (${oId})
 		</if>
 		<if test="tId != null and tId != ''">
 			and t.year_id in (${tId})
 		</if>
-		group by t.year_id
+		group by c.cycle_id
+		order by c.cycle_id  desc
 		<include refid="pageDataEnd"/>
+
 	</select>
 	<!--根据维度查询指标结果 -->
 	<select id="listScoreTotalResultByObj" parameterType="map" resultType="map">
@@ -410,4 +438,5 @@
 		where t.project_id = #{project_id}
 		group by t.year_id
 	</select>
+
 </mapper>

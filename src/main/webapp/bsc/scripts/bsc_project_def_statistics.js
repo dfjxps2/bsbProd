@@ -15,19 +15,22 @@
 
 var cycleDimDS = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
-        url : pathUrl + '/dimLink_getObjectList.action?link_id=stat_cycle_cd'
+        url : pathUrl + '/datasourceconfig_sourceFieldList.action?source_id=s001_statistics_stat_cycle_year'
     }),
     reader: new Ext.data.JsonReader({
             root: 'results',
-            id:'LINK_ID'
+            id:'column_name'
         },
-        [{name: 'LINK_NAME'},
-            {name: 'LINK_ID'},
-            {name: 'IS_TREE'},
-            {name: 'LABEL_FIELD'},
-            {name: 'ID_FIELD'},
-            {name: 'ROOT_VALUE'},
-            {name: 'PARENT_ID_FIELD'}]),
+        [{name: 'column_name'},
+            {name: 'dim_fullname'},
+            {name: 'column_biz_name'},
+            {name: 'link_id'},
+            {name: 'data_type_id'},
+            {name: 'is_tree'},
+            {name: 'label_field'},
+            {name: 'id_field'},
+            {name: 'root_value'},
+            {name: 'parent_id_field'}]),
     remoteSort: false
 });
 
@@ -43,17 +46,17 @@ cycleDimDS.on("load",function(){
 });
 
 function getComponment(record) {
-    var is_tree = record.get('IS_TREE');
+    var is_tree = record.get('is_tree');
     var comp = null;
     comp = new gridSelector({
-        id : record.get('LINK_ID'),
-        displayFieldName : record.get('LABEL_FIELD'),
-        valueFieldName : record.get('ID_FIELD'),
-        fieldLabel : record.get('LINK_NAME'),
-        link_id : record.get('LINK_ID'),
+        id : record.get('link_id'),
+        displayFieldName : record.get('label_field'),
+        valueFieldName : record.get('id_field'),
+        fieldLabel : record.get('column_biz_name'),
+        link_id : record.get('link_id'),
         anchor : '100%'
     });
-    comp['linkId'] = record.get('LINK_ID');
+    comp['linkId'] = record.get('link_id');
 
     return comp;
 }
@@ -63,7 +66,7 @@ function getComponment(record) {
 function beforeClose() {
     for (var i = 0; i < cycleDimDS.getCount(); i++) {
         var record = cycleDimDS.getAt(i);
-        var id = record.get('LINK_ID');
+        var id = record.get('link_id');
         var comp = Ext.getCmp(id);
         if(comp != null){
             comp.destroy();
@@ -75,13 +78,13 @@ function beforeClose() {
 function beforeObjClose() {
     for (var i = 0; i < objDimDS.getCount(); i++) {
         var record = objDimDS.getAt(i);
-        var id = record.get('LINK_ID');
+        var id = record.get('link_id');
         var comp = Ext.getCmp(id);
         if(comp != null){
             comp.destroy();
         }
     }
-    Ext.getCmp("objDimSet").doLayout(true);
+    Ext.getCmp("cycleDimSet").doLayout(true);
 }
 
 
@@ -172,6 +175,7 @@ gridSelector = function(obj) {
         if(!expanded) {
             expanded = true;
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowselect",function(sm,index,record){
+               debugger;
                 var rowVal = Ext.getCmp(obj.id).getRawValue();
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
@@ -185,6 +189,7 @@ gridSelector = function(obj) {
                 Ext.getCmp(obj.id).setRawValue(rowVal)
             });
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowdeselect",function(sm,index,record){
+                debugger;
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
                         rowVal = rowVal;
@@ -214,20 +219,22 @@ Ext.extend(gridSelector,Ext.form.ComboBox);
 
 var objDimDS = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
-        url : pathUrl + '/dimLink_getObjectList.action'
+        url : pathUrl + '/datasourceconfig_sourceFieldList.action'
     }),
-
     reader: new Ext.data.JsonReader({
             root: 'results',
-            id:'LINK_ID'
+            id:'column_name'
         },
-        [{name: 'LINK_NAME'},
-            {name: 'LINK_ID'},
-            {name: 'IS_TREE'},
-            {name: 'LABEL_FIELD'},
-            {name: 'ID_FIELD'},
-            {name: 'ROOT_VALUE'},
-            {name: 'PARENT_ID_FIELD'}]),
+        [{name: 'column_name'},
+            {name: 'dim_fullname'},
+            {name: 'column_biz_name'},
+            {name: 'link_id'},
+            {name: 'data_type_id'},
+            {name: 'is_tree'},
+            {name: 'label_field'},
+            {name: 'id_field'},
+            {name: 'root_value'},
+            {name: 'parent_id_field'}]),
     remoteSort: false
 });
 
@@ -243,39 +250,25 @@ objDimDS.on("load",function(){
 });
 
 function getComponmentObj(record) {
-    var is_tree = record.get('IS_TREE');
+    var is_tree = record.get('is_tree');
     var comp = null;
-    if(is_tree == 'Y') {
-        var root = getCheckedNode(' ',' ',false,expandDimLinkTreeNode);
-        comp = new treeSelector({
-            id : record.get('LINK_ID'),
-            displayFieldName : record.get('LABEL_FIELD'),
-            valueFieldName : record.get('ID_FIELD'),
-            fieldLabel : record.get('LINK_NAME'),
-            root : root,
-            anchor : '100%'
-        });
-        comp['linkId'] = record.get('LINK_ID');
-    }else {
-        comp = new gridSelector({
-            id : record.get('LINK_ID'),
-            displayFieldName : record.get('LABEL_FIELD'),
-            valueFieldName : record.get('ID_FIELD'),
-            fieldLabel : record.get('LINK_NAME'),
-            link_id : record.get('LINK_ID'),
-            anchor : '100%'
-        });
-        comp['linkId'] = record.get('LINK_ID');
-    }
+    comp = new objGridSelector({
+        id : record.get('link_id'),
+        displayFieldName : record.get('label_field'),
+        valueFieldName : record.get('id_field'),
+        fieldLabel : record.get('column_biz_name'),
+        link_id : record.get('link_id'),
+        anchor : '100%'
+    });
+    comp['linkId'] = record.get('link_id');
+
     return comp;
 }
 
 
-
-
-
 //表格下拉框
 objGridSelector = function(obj) {
+//	debugger;
     var expanded = false;
     var anchor = obj.anchor?obj.anchor:'91%';
     objGridSelector.superclass.constructor.call(this,{
@@ -374,6 +367,7 @@ objGridSelector = function(obj) {
                 Ext.getCmp(obj.id).setRawValue(rowVal)
             });
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowdeselect",function(sm,index,record){
+                debugger
                 var rowVal = Ext.getCmp(obj.id).getRawValue();
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
@@ -447,6 +441,14 @@ function addProject() {
             disabled:true,
 			triggerAction : 'all',
 			fieldLabel : '统计周期<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
+         /*   listeners: {
+                select : function(combo, record, index){
+                    cycleDimDS.load({params : {
+                            link_id : record.get('link_id')
+                        }})
+                }
+            },*/
+
             name : 'cycle_type_id',
 			id : 'cycleTypeSelector',
 			anchor : '95%'
@@ -454,8 +456,7 @@ function addProject() {
             id : 'cycleDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form',
-            anchor : '95%'
+            layout : 'form'
         }, {
 			xtype : 'combo',
 			store : dimensionStore,
@@ -466,10 +467,10 @@ function addProject() {
 			hiddenName : 'obj_link_id',
 			editable : false,
 			triggerAction : 'all',
+//			allowBlank : false,
 			fieldLabel : '统计维度<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
             listeners: {
                 select : function(combo, record, index){
-  //                  beforeClose();
                     beforeObjClose();
                     objDimDS.reload({params : {
                             link_id : record.get('link_id')
@@ -483,8 +484,7 @@ function addProject() {
             id : 'objDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form',
-            anchor : '95%'
+            layout : 'form'
         },{
 			xtype : 'textarea',
 			name : 'project_desc',
@@ -524,6 +524,8 @@ function addProject() {
 						success : function(form, action) {
 //							Ext.Msg.alert("提示信息", action.result.info);
 							if (action.result.success) {
+ //                               addWindow.close();
+ //                               beforeClose();
 								Ext.getCmp("addWindow").destroy();
 								projectStore.reload();
 							}
@@ -540,8 +542,9 @@ function addProject() {
 			text : '取消',
 			handler : function() {
                 addWindow.close();
-//                beforeClose();
+                beforeClose();
 	//			Ext.getCmp("addWindow").destroy();
+
 			}
 		}]
 	});
@@ -549,21 +552,35 @@ function addProject() {
 	addWindow.show();
 
 	cycleTypeDS.on("load", function() {
-        if (cycleTypeDS.getCount() > 0) {
+/*        Ext.getCmp('objCateSelector').readOnly = true;
+        Ext.getCmp('objCateSelector').addClass('readOnlyColor');*/
+		if (cycleTypeDS.getCount() > 0) {
 			if (cycleTypeId == '')
 				cycleTypeId = cycleTypeDS.getAt(0).get('cycle_type_id');
 				Ext.getCmp("cycleTypeSelector").setValue(cycleTypeId);
 
-
 		}
-
 	});
+
     cycleDimDS.load();
 	cycleTypeDS.load();
 
 
+
+
+/*	objCateDS.on("load", function() {
+		if (objCateDS.getCount() > 0) {
+			if (objCateId == '') {
+				objCateId = objCateDS.getAt(0).get('obj_cate_id');
+			}
+			Ext.getCmp("objCateSelector").setValue(objCateId)
+		}
+	});
+	objCateDS.load();*/
+	
 	//对象维度
 	dimensionStore.on("load", function() {
+//	    debugger
 		if (dimensionStore.getCount() > 0) {
 			if (dimensionId == '') {
 				dimensionId = dimensionStore.getAt(0).get('link_id');
@@ -572,7 +589,8 @@ function addProject() {
             objDimDS.reload({params: {link_id : dimensionId}});
 		}
 	});
-
+//	dimensionStore.load();
+	
 /*	if (ownerOrgId != '8888') {
 		Ext.getCmp('isTemplate').setDisabled(true);
 		Ext.getCmp('isTemplate').setVisible(false);
@@ -640,8 +658,7 @@ function editProject(record) {
             id : 'cycleDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form',
-            anchor : '95%'
+            layout : 'form'
         }
         , {
         xtype : 'combo',
@@ -671,8 +688,7 @@ function editProject(record) {
             id : 'objDimSet',
             columnWidth : .35,
             anchor : '100%',
-            layout : 'form',
-            anchor : '95%'
+            layout : 'form'
         },
         {
         xtype : 'textarea',
@@ -801,6 +817,7 @@ function dropProject() {
 //				Ext.MessageBox.alert("提示信息", json.info);
 				projectStore.reload();
 				projectId = '';
+			
 //				resultRankStore.reload();
 		} else {
 			Ext.MessageBox.alert("提示信息", json.info);
@@ -1135,9 +1152,9 @@ function deleteResultRank(rankIds) {
 		callback : function(options, success, response) {
 			var json = Ext.util.JSON.decode(response.responseText);
 			if (success) {
-				Ext.MessageBox.alert("提示信息", json.info);
-				resultRankStore.reload();
-//			} else {
+//				Ext.MessageBox.alert("提示信息", json.info);
+//				resultRankStore.reload();
+			} else {
 				Ext.MessageBox.alert("提示信息", json.info);
 			}
 		}
@@ -1195,240 +1212,3 @@ function appTypeId(val) {
 	else
 		return val
 };*/
-
-
-//树形下拉框
-treeSelector = function(obj) {
-    var expanded = false;
-    var anchor = obj.anchor?obj.anchor:'91%';
-    treeSelector.superclass.constructor.call(this,{
-        tbar : [{
-            text : '全选',
-            iconCls : "add",
-            handler : function() {
-                var tt = Ext.getCmp(obj.id + "Tree");
-                checkAllTree(tt);
-                var nodeArray = tt.getChecked();
-                var val = '';
-                for (var i = 0; i < nodeArray.length; i++) {
-                    val += nodeArray[i].id + ",";
-                }
-                Ext.getCmp(obj.id).setRawValue(val);
-            }
-        }, {
-            text : '清空',
-            iconCls : "delete",
-            handler : function() {
-                unCheckTree(Ext.getCmp(obj.id + "Tree"));
-                Ext.getCmp(obj.id).setRawValue('');
-            }
-        }],
-        id: obj.id,
-        autoSelect:false,
-        blankText : '如需过滤数据请选择',
-        mode: 'local',
-        triggerAction : "all",
-        linkId : obj.link_id,
-        editable: false,
-        fieldLabel : obj.fieldLabel,
-        store: {
-            xtype:'arraystore',
-            fields : [obj.valueFieldName,obj.displayFieldName],
-            data:[['','']]
-        },
-        anchor : anchor
-    });
-    var showMenu = new Ext.menu.Menu({
-        items : [new Ext.tree.TreePanel({
-            tbar : [{
-                text : '全选',
-                iconCls : "add",
-                handler : function(){
-                    var tt = Ext.getCmp(obj.id+"Tree");
-                    checkAllTree(tt);
-                    var nodeArray = tt.getChecked();
-                    var val = '';
-                    for (var i = 0; i < nodeArray.length; i++) {
-                        val += nodeArray[i].id+",";
-                    }
-                    Ext.getCmp(obj.id).setRawValue(val);
-                }
-            },{
-                text : '清空',
-                iconCls : "delete",
-                handler : function(){
-                    unCheckTree(Ext.getCmp(obj.id+"Tree"));
-                    Ext.getCmp(obj.id).setRawValue('');
-                }
-            }],
-            loader : new Ext.tree.TreeLoader(),
-            lines : false,
-            border : false,
-            id : obj.id + 'Tree',
-            autoScroll : true,
-            width : 300,
-            height : 280,
-            bodyStyle : 'padding:2px;',
-            rootVisible : false,
-            root : obj.root
-        })]
-    });
-    this.expand=function(){
-        if(this.menu == null)
-            this.menu = showMenu;
-        this.menu.show(this.el, "tl-bl?");
-        if(!expanded) {
-            expanded = true;
-            var tt = Ext.getCmp(obj.id+'Tree');
-            tt['linkId'] = Ext.getCmp(obj.id).linkId;
-            rootName(tt);
-        }
-    };
-}
-Ext.extend(treeSelector,Ext.form.ComboBox);
-
-function getCheckedNode(id,text,checked,fn){
-    var root = new Ext.tree.AsyncTreeNode({
-        id:id,
-        text:text,
-        checked:checked,
-        children:[{
-            text:'loading',
-            cls: 'x-tree-node-loading',
-            leaf:true
-        }]
-    });
-
-    if(fn!=undefined)
-        root.on('expand',fn);
-
-    return root;
-}
-
-/**
- * 通过rootValue查询rootNode的名称
- * @param {} linkId
- */
-function rootName(tree) {
-    Ext.Ajax.request({
-        method : 'POST',
-        url : pathUrl + '/dimLink_findRootName.action',
-        params : {
-            linkId : tree.linkId
-        },
-        callback : function(options, success, response) {
-            var json = Ext.util.JSON.decode(response.responseText);
-            if (success) {
-                var node = getCheckedNode(json.results[0].id, json.results[0].text,false,expandDimLinkTreeNode);
-                tree.setRootNode(node);
-                node.on('checkchange', function(node, b) {
-                    var comboId = node.getOwnerTree().id.replace('Tree', '');
-                    var combo = Ext.getCmp(comboId);
-                    var rawValue = combo.getRawValue();
-                    rawValue = rawValue.replace(node.id + ",", '');
-                    if (b) {
-                        rawValue += node.id + ",";
-                    }
-                    combo.setRawValue(rawValue);
-                });
-            } else {
-            }
-        }
-    });
-}
-
-/**
- * 维度字段数据源显示树形结构
- * @param {} node
- * selectLinkId:维度链接ID
- */
-function expandDimLinkTreeNode(node) {
-    if (node.firstChild.text == 'loading') {
-        Ext.Ajax.request({
-            url : pathUrl + '/dimLink_expandDimLinkTree.action',
-            waitMsg : '正在处理,请稍候......',
-            method : 'POST',
-            params : {
-                parentNodeID : node.id,
-                linkId :node.getOwnerTree().linkId
-            },
-
-            callback : function(options, success, response) {
-                var json = Ext.util.JSON.decode(response.responseText);
-                var tl = json.results;
-                if (tl) {
-                    for (var i = 0; i < tl.length; i++) {
-                        var cnode = new Ext.tree.AsyncTreeNode({
-                            id : tl[i].id,
-                            text : '[' + tl[i].id + ']' + tl[i].name,
-                            leaf : tl[i].leaf,
-                            checked : false,
-                            children : [{
-                                text : 'loading',
-                                cls : 'x-tree-node-loading',
-                                leaf : true
-                            }]
-                        });
-                        cnode.on('expand', expandDimLinkTreeNode);
-                        cnode.on('checkchange',function(node, b){
-                            var comboId = node.getOwnerTree().id.replace('Tree','');
-                            var combo = Ext.getCmp(comboId);
-                            var rawValue = combo.getRawValue();
-                            rawValue = rawValue.replace(node.id+",",'');
-                            if(b) {
-                                rawValue += node.id+",";
-                            }
-                            combo.setRawValue(rawValue);
-                        });
-                        node.appendChild(cnode);
-
-                        if(node.id == cnode.getOwnerTree().getRootNode().id) {
-                            cnode.expand();
-                        }
-                    }
-                } else {
-//					Ext.MessageBox.alert('错误', json.info);
-                }
-                node.firstChild.remove();
-            },
-
-            failure : function(response, options) {
-                Ext.MessageBox.alert('错误', response.responseText);
-            },
-
-            success : function(response, options) {
-            }
-        });
-    }
-}
-
-
-/**
- * 设置全不选中
- * @param {} treePanel
- */
-var unCheckTree = function(treePanel){
-    var startNode = treePanel.getRootNode();
-    var f = function(){
-        if(this.getUI().checkbox!=null){
-            this.attributes.checked= false;
-            this.ui.checkbox.checked= false;
-        }
-    };
-    startNode.cascade(f);
-};
-
-/**
- * 设置全选中
- * @param {} treePanel
- */
-var checkAllTree = function(treePanel){
-    var startNode = treePanel.getRootNode();
-    var f = function(){
-        if(this.getUI().checkbox!=null){
-            this.attributes.checked= true;
-            this.ui.checkbox.checked= true;
-        }
-    };
-    startNode.cascade(f);
-};
