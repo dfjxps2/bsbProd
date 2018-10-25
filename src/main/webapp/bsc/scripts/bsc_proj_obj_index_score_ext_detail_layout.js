@@ -1,3 +1,4 @@
+
 var mask = null;
 var dhtmlGrid = null;
 Ext.onReady(function() {

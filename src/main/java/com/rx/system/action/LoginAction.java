@@ -78,8 +78,8 @@ public class LoginAction extends BaseDispatchAction {
 			doFailureInfoResponse(e.getMessage());
 		}
 
-//		return "main";
-		return null;
+		return "main";
+//		return null;
 	}
 
 

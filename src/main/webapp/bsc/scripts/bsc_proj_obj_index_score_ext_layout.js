@@ -1,3 +1,14 @@
+/**
+ *
+ 1统计维度-》统计维度（单）-》 统计年份（多）-》指标（多）
+ 2统计年份 -》  统计年份（单） -》统计维度（多）-》指标（多）
+ showID
+ 年份单选monthSelector1   多monthSelector2（monthBox2）
+ 统计维度单选 objSelector2 （objBox2）      多objSelector1
+ *
+ * @type {null}
+ */
+
 var mask = null;
 var path = '';
 //多选扩展
@@ -87,9 +98,8 @@ var monthDS = new Ext.data.JsonStore({
 		load : function(store, records, ptions) {
 			if (store.getCount() > 0) {
 				if (monthID == ''){
-                    debugger
 					if(showID == "1")
-						setMOCmp("monthSelector", store.getAt(0),'2');
+						setMOCmp("monthSelector", '','2');
 					else{
 						setMOCmp("monthSelector",store.getAt(0),'1');
 					}
@@ -399,6 +409,7 @@ function getMOCmpVal(id){
 	return select.getValue();
 }
 function setMOCmp(id, val,num){
+	debugger;
 	var select = getMOC2mpVal(id,num);
 	if(val === ''){
 		select.setValue('');
@@ -507,6 +518,7 @@ Ext.onReady(function() {
                                             Ext.getCmp("monthBox2").show();
                                             Ext.getCmp("objBox2").show();
                                             setMOCmp("objSelector", objDS.getAt(0) || '','2');
+ //                                           setMOCmp("objSelector",'','2');
                                         }
                                         else{
                                             Ext.getCmp("monthSelector1").show();
@@ -514,6 +526,7 @@ Ext.onReady(function() {
                                             Ext.getCmp("monthBox2").hide();
                                             Ext.getCmp("objBox2").hide();
                                             setMOCmp("monthSelector", monthDS.getAt(0) || '','1');
+//                                            setMOCmp("monthSelector", '','1');
                                         }
 									}
 								}

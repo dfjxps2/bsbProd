@@ -295,7 +295,6 @@ public class CalculateProcedure extends Thread implements Procedure{
 		//3. 开始解析
 		//3.1 查找数据源属性
 		IDataSource dataSource = this.getDataSource(measure.getSourceId());
-		
 		String v_objectColumn	=	dataSource.getObjColumnName();
 		String v_sourceExpr		=	dataSource.getExpression();
 		

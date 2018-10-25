@@ -86,7 +86,6 @@ var monthDS = new Ext.data.JsonStore({
 	listeners : {
 		load : function(store, records, ptions) {
 			if (store.getCount() > 0) {
-				debugger
 				if (monthID == ''){
 					if(showID == "1")
 						setMOCmp("monthSelector", store.getAt(0));
@@ -289,7 +288,6 @@ function beforeClose() {
 
 //表格下拉框
 gridSelector = function(obj) {
-//	debugger;
 	var expanded = false;
 	var anchor = obj.anchor?obj.anchor:'91%';
 	gridSelector.superclass.constructor.call(this,{
@@ -375,7 +373,6 @@ gridSelector = function(obj) {
         this.menu.show(this.el, "tl-bl?");
         if(!expanded) {
         	expanded = true;
-//        	debugger;
         	Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowselect",function(sm,index,record){
         		var rowVal = Ext.getCmp(obj.id).getRawValue();
         		if(rowVal.indexOf(record.get('value_field')+",") == -1)
@@ -504,7 +501,6 @@ Ext.onReady(function() {
 								anchor : '91%',
 								listeners : {
 									render : function(combo) {
-//                                        debugger
 										var r = combo.getStore();
 										showID = r.getAt(1).get('show_id');
 										combo.setValue(showID);

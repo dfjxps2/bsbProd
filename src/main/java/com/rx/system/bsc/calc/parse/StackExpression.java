@@ -574,14 +574,20 @@ public class StackExpression implements IExpression {
 	public static void main(String[] args) throws Exception{
 		//
 		//IIF(a+1>3||!POWER(2,1/3) = 0, - abc + 1, IIF (bcd + IIF(1<2.23, 1, 2.23)>9+10, bcd + LN(-1), ABs(bcd-1) ) )
-		//
+		//  {ppcs_ztf_popu_prop}
 		//IIF(abc>bcd, abc+1, IIF (bcd > 0, bcd, abs(bcd) ) ) + 10
-		//
+		//{est_dev_corp_ast_total_amt?corp_reg_rgst_type_cd in ('0000','1000','2000','3000')}
 		//IIF([@M_010001]>= 50 && [@M_020001] < [@M_020002] , [@M_020001] + 100, [@M_020001]+power(2,5))
 		
-		String exprStr = 
-			"IIF(a in (1,2,3), (b- -1),     ('#$%^&*('))";
-		
+		/*String exprStr =
+			"IIF(a in (1,2,3), (b- -1),     ('#$%^&*('))";*/
+		String exprStr ="{raly_mlg?zone_cd in ('1101A0000000','1101B0000000') && 1=1}";
+//		String exprStr ="{raly_mlg?zone_cd ='1101A0000000'}";
+//		String exprStr ="zone_cd in ('1101A0000000','1101B0000000')";
+//		String exprStr ="est_dev_corp_ast_total_amt?corp_reg_rgst_type_cd in ('0000','1000','2000','3000')";
+//		String exprStr ="{est_dev_corp_ast_total_amt?corp_oper_situ_cd in ('1000','2000','3000') && corp_reg_rgst_type_cd in ('1010','1011') && ctr_locl_subj_cd = '0001'}";
+//		String exprStr ="{est_dev_corp_ast_total_amt?corp_oper_situ_cd in ('1000','2000') && corp_reg_rgst_type_cd = '1000'}";
+//		String exprStr ="{ppcs_ztf_popu_prop}";
 		IExpression expr = new StackExpression(exprStr);
 
 		System.out.println("原始表达式：" + expr.getExpression());

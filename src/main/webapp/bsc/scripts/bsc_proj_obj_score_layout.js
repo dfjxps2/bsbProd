@@ -110,7 +110,6 @@ var projectStore = new Ext.data.JsonStore({
 });
 
 Ext.onReady(function() {
-	debugger
 	var viewport = new Ext.Viewport({
 		layout : 'border',
 		items : [{
