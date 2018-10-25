@@ -175,7 +175,6 @@ gridSelector = function(obj) {
         if(!expanded) {
             expanded = true;
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowselect",function(sm,index,record){
-               debugger;
                 var rowVal = Ext.getCmp(obj.id).getRawValue();
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
@@ -189,7 +188,6 @@ gridSelector = function(obj) {
                 Ext.getCmp(obj.id).setRawValue(rowVal)
             });
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowdeselect",function(sm,index,record){
-                debugger;
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
                         rowVal = rowVal;
@@ -268,7 +266,6 @@ function getComponmentObj(record) {
 
 //表格下拉框
 objGridSelector = function(obj) {
-//	debugger;
     var expanded = false;
     var anchor = obj.anchor?obj.anchor:'91%';
     objGridSelector.superclass.constructor.call(this,{
@@ -367,7 +364,6 @@ objGridSelector = function(obj) {
                 Ext.getCmp(obj.id).setRawValue(rowVal)
             });
             Ext.getCmp(obj.id + "Grid").getSelectionModel().on("rowdeselect",function(sm,index,record){
-                debugger
                 var rowVal = Ext.getCmp(obj.id).getRawValue();
                 if(rowVal !=null && rowVal.length >0){
                     if(rowVal.endsWith(",")==true){
@@ -441,21 +437,13 @@ function addProject() {
             disabled:true,
 			triggerAction : 'all',
 			fieldLabel : '统计周期<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
-         /*   listeners: {
-                select : function(combo, record, index){
-                    cycleDimDS.load({params : {
-                            link_id : record.get('link_id')
-                        }})
-                }
-            },*/
-
             name : 'cycle_type_id',
 			id : 'cycleTypeSelector',
 			anchor : '95%'
 		}, {
             id : 'cycleDimSet',
             columnWidth : .35,
-            anchor : '100%',
+            anchor : '95%',
             layout : 'form'
         }, {
 			xtype : 'combo',
@@ -463,11 +451,9 @@ function addProject() {
 			valueField : 'link_id',
 			displayField : 'link_name',
 			mode : 'local',
-//			forceSelection : true,
 			hiddenName : 'obj_link_id',
 			editable : false,
 			triggerAction : 'all',
-//			allowBlank : false,
 			fieldLabel : '统计维度<span style="color:red;font-weight:bold" data-qtip="Required">*</span>',
             listeners: {
                 select : function(combo, record, index){
@@ -483,7 +469,7 @@ function addProject() {
 		},{
             id : 'objDimSet',
             columnWidth : .35,
-            anchor : '100%',
+            anchor : '95%',
             layout : 'form'
         },{
 			xtype : 'textarea',
@@ -506,7 +492,6 @@ function addProject() {
 		borer : false,
 		listeners : {
 			close : function() {
-  //              addWindow.close();
                 beforeClose();
 				Ext.getCmp("addWindow").destroy();
 
@@ -564,23 +549,8 @@ function addProject() {
 
     cycleDimDS.load();
 	cycleTypeDS.load();
-
-
-
-
-/*	objCateDS.on("load", function() {
-		if (objCateDS.getCount() > 0) {
-			if (objCateId == '') {
-				objCateId = objCateDS.getAt(0).get('obj_cate_id');
-			}
-			Ext.getCmp("objCateSelector").setValue(objCateId)
-		}
-	});
-	objCateDS.load();*/
-	
 	//对象维度
 	dimensionStore.on("load", function() {
-//	    debugger
 		if (dimensionStore.getCount() > 0) {
 			if (dimensionId == '') {
 				dimensionId = dimensionStore.getAt(0).get('link_id');
@@ -657,7 +627,7 @@ function editProject(record) {
         {
             id : 'cycleDimSet',
             columnWidth : .35,
-            anchor : '100%',
+            anchor : '95%',
             layout : 'form'
         }
         , {
@@ -687,7 +657,7 @@ function editProject(record) {
         {
             id : 'objDimSet',
             columnWidth : .35,
-            anchor : '100%',
+            anchor : '95%',
             layout : 'form'
         },
         {
