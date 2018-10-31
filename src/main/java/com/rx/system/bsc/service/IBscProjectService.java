@@ -121,4 +121,68 @@ public interface IBscProjectService {
 	 * @throws Exception
 	 */
 	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception;
+
+
+	/**
+	 * 查询地区代码信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getZoneInfo(Map<String, Object> paramMap) throws Exception;
+
+	/**
+	 * 查询项目信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getProjectInfo(Map<String, Object> paramMap) throws Exception;
+
+
+	/**
+	 * 查询项目时间信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getProjectMonth(Map<String, Object> paramMap) throws Exception;
+
+
+
+	/**
+	 * 查询项目维度信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getPorjectObjInfo(Map<String, Object> paramMap) throws Exception;
+
+
+
+	/**
+	 * 查询项目指标信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getProjectIndex(Map<String, Object> paramMap) throws Exception;
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

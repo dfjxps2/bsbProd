@@ -100,12 +100,12 @@ public class DimLinkServiceImpl extends BaseService implements IDimLinkService {
 		String parentIdField = (String) map.get("parent_id_field");
 		String idField = (String) map.get("id_field");
 		String labelField = (String) map.get("label_field");
-
 		String sql = "";
 		if (sourceExpression.indexOf("where") == -1) {
 			sql = sourceExpression + " " + " where " + parentIdField + " = '"
 					+ rootValue + "' order by " + idField;
-		} else {
+		}
+		else {
 			sql = sourceExpression + " " + " and " + parentIdField + " = '"
 					+ rootValue + "' order by " + idField;
 		}
@@ -146,7 +146,8 @@ public class DimLinkServiceImpl extends BaseService implements IDimLinkService {
 		if (sourceExpression.indexOf("where") == -1) {
 			sql = sourceExpression + " " + " where " + parent_id_field + " = '"
 					+ rootValue + "' ";
-		} else {
+		}
+		else {
 			sql = sourceExpression + " " + " and " + parent_id_field + " = '"
 					+ rootValue + "'";
 		}
@@ -171,7 +172,7 @@ public class DimLinkServiceImpl extends BaseService implements IDimLinkService {
 
 	@Override
 	public List<Map<String, Object>> getObjectList(Map<String, Object> paramMap) throws Exception {
-		return this.dimLinkDao.getObjectList(paramMap);
+		return	this.toLowerMapList(this.dimLinkDao.getObjectList(paramMap));
 	}
 
 }

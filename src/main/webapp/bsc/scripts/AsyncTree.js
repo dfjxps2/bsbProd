@@ -9,7 +9,6 @@
 			leaf : true
 		}]
 	});
-
 	if (fn != undefined)
 		root.on('expand', fn);
 

@@ -335,12 +335,77 @@ public class BscProjectServiceImpl extends BaseService implements IBscProjectSer
 	 * 查询平衡计分卡方案维度
 	 *
 	 * @param paramMap
-	 * @return
+	 * @returnlistExecutedIndex
 	 * @throws Exception
 	 */
 	@Override
 	public List<Map<String, Object>> listPorjectObj(Map<String, Object> paramMap) throws Exception {
 		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.listPorjectObj(paramMap));
+		return dataList;
+	}
+
+	/**
+	 * /
+	 * 	查询地区代码信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+
+	@Override
+	public List<Map<String, Object>> getZoneInfo(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.getZoneInfo(paramMap));
+		return dataList;
+	}
+
+	/**
+	 * 查询项目信息
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Map<String, Object>> getProjectInfo(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.getProjectInfo(paramMap));
+		return dataList;
+	}
+
+	/**
+	 * 查询项目时间信息
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Map<String, Object>> getProjectMonth(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.getProjectMonth(paramMap));
+		return dataList;
+	}
+
+	/**
+	 * 查询项目维度信息
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Map<String, Object>> getPorjectObjInfo(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.getPorjectObjInfo(paramMap));
+		return dataList;
+	}
+
+
+	/**
+	 * 查询项目指标信息
+	 *
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public List<Map<String, Object>> getProjectIndex(Map<String, Object> paramMap) throws Exception {
+		List<Map<String, Object>> dataList = toLowerMapList(this.bscProjectDao.getProjectIndex(paramMap));
 		return dataList;
 	}
 }

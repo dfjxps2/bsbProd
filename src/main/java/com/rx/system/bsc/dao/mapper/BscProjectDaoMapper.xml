@@ -187,12 +187,20 @@
 		select
 		    a.measure_id as value_field,
 		    a.mea_definition as display_field
-		from bsc_proj_mea_h a 
-		where a.project_id = #{project_id} 
+		from bsc_proj_mea a
+		where a.project_id = #{project_id}
+		order by a.mea_order_id
+		<!--
+		select
+		a.measure_id as value_field,
+		a.mea_definition as display_field
+		from bsc_proj_mea_h a
+		where a.project_id = #{project_id}
 		<if test="month_id != null and month_id != ''">
-			and a.year_id = #{month_id} 
+			and a.year_id = #{month_id}
 		</if>
 		order by a.mea_order_id
+		-->
 	</select>
 
 
@@ -265,6 +273,52 @@
 	<select id="listPorjectObj" parameterType="map" resultType="map">
 		select * from bsc_proj_stat_obj where project_id = #{project_id}
 		order by obj_id asc
+	</select>
+
+
+	<!-- 查询地区代码信息列表 -->
+	<select id="getZoneInfo" parameterType="map" resultType="map">
+		select E.Dim_Cd AS zone_id,E.Dim_Cd_Desc AS zone_name from B04_DATA_COL_ADIM_SCOPE E   WHERE  E.Data_Col_Id =#{project_id}
+			AND  E.DIM_TYPE_ID IN (SELECT L.Region_Cd FROM B04_DATA_COL L WHERE  L.Data_Col_Id =#{project_id} )
+		ORDER BY E.Dim_Cd
+	</select>
+
+
+
+
+	<!-- 查询项目信息信息列表 -->
+	<select id="getProjectInfo" parameterType="map" resultType="map">
+		select DATA_COL_ID AS project_id,DATA_COL_NM AS project_name from  B04_DATA_COL  ORDER BY DATA_COL_ID
+	</select>
+
+	<!-- 查询项目时间信息列表 -->
+	<select id="getProjectMonth" parameterType="map" resultType="map">
+		select e1.sts_cycle_scope_cd as month_id,e1.sts_cycle_scope_desc as month_name
+		from  B04_DATA_COL_TM_SCOPE e1
+		where e1.Data_Col_Id =#{project_id}
+		order by e1.sts_cycle_scope_cd desc
+	</select>
+
+
+
+	<!-- 查询项目维度信息 -->
+	<select id="getPorjectObjInfo" parameterType="map" resultType="map">
+		select Dim_Cd AS obj_id,Dim_Cd_Desc AS obj_name from B04_DATA_COL_ADIM_SCOPE E   WHERE  E.Data_Col_Id =#{project_id}
+			AND  E.DIM_TYPE_ID IN (SELECT Dim_Type_Cd FROM B04_DATA_COL  WHERE  Data_Col_Id =#{project_id} )
+		ORDER BY Dim_Cd
+	</select>
+
+
+
+
+	<select id="getProjectIndex" parameterType="map" resultType="map">
+		select
+		    i.measure_id  as value_field,
+		    i.measure_name as display_field
+		from bsc_measure i inner join B04_DATA_COL_IND_RELA a
+		on i.measure_id =a.ind_id
+		where a.Data_Col_Id  = #{project_id}
+		order by i.measure_id
 	</select>
 
 </mapper>

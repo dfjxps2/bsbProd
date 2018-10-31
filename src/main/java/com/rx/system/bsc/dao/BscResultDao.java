@@ -132,4 +132,52 @@ public interface BscResultDao {
 	public List<Map<String, Object>> listScoreSubResultByYear(Map<String, Object> paramMap) throws Exception;
 
 
+
+	public List<Map<String, Object>> getResultDhtmlYearByParam(Map<String, Object> paramMap) throws Exception;
+
+
+	/**
+	 * 根据维度查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getResultDhtmlOjbectByParam(Map<String, Object> paramMap) throws Exception;
+
+
+
+
+	public String getResultDhtmlYearCountByCondExt(Map<String, Object> paramMap) throws Exception;
+
+
+	public String getResultDhtmlObjCountByCondExt(Map<String, Object> paramMap) throws Exception;
+
+
+	public List<Map<String, Object>> getZoneNameByZoneID(Map<String, Object> paramMap) throws Exception;
+
+
+
+
+	public List<Map<String, Object>> getResultDhtmlYearByParamInfo(Map<String, Object> paramMap) throws Exception;
+
+
+	public List<Map<String, Object>> getResultDhtmlOjbectByParamInfo(Map<String, Object> paramMap) throws Exception;
+
+
+	public List<Map<String, Object>> getProjectResultMeasure(Map<String,Object> paramMap) throws Exception;
+
+	//通过指标编号查询指标信息
+	public List<Map<String, Object>> getProjectResultMeasureByIndexId(Map<String,Object> paramMap) throws Exception;
+
+
+
+
+
+
+
+
+
+
+
+
 }

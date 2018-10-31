@@ -31,6 +31,12 @@
 		)
 	</sql>
 
+
+	<sql id="totalResultCountHeader">
+		select cnt from (
+	</sql>
+
+
 	<!-- 发布平衡计分卡结果 -->
 	<update id="publishBscResult" parameterType="map">
 		update bsc_proj_exe_mth set is_published = 'Y'
@@ -439,4 +445,75 @@
 		group by t.year_id
 	</select>
 
+
+
+	<!-- 根据年份查询全部积分结果 -->
+	<select id="getResultDhtmlYearByParam" parameterType="map" resultType="map">
+		<include refid="pageDataHeader"/>
+		${sql}
+		<include refid="pageDataEnd"/>
+	</select>
+
+
+	<!-- 根据维度查询全部积分结果 -->
+	<select id="getResultDhtmlOjbectByParam" parameterType="map" resultType="map">
+		<include refid="pageDataHeader"/>
+			${sql}
+		<include refid="pageDataEnd"/>
+	</select>
+
+
+	<select id="getResultDhtmlYearCountByCondExt" parameterType="map" resultType="string">
+		<include refid="totalCountHeader"/>
+		${case_sql}
+		<include refid="totalCountEnd"/>
+	</select>
+
+
+	<select id="getResultDhtmlObjCountByCondExt" parameterType="map" resultType="string">
+		<include refid="totalCountHeader"/>
+		${case_sql}
+		<include refid="totalCountEnd"/>
+	</select>
+
+	<select id="getZoneNameByZoneID" parameterType="map" resultType="map">
+		select zone_cd_desc as measure_id from B99_Zone_Cd where 1=1
+		<if test="zId != null and zId != ''">
+			and zone_cd in (${zId})
+		</if>
+	</select>
+
+
+	<!-- 根据年份查询全部积分结果 -->
+	<select id="getResultDhtmlYearByParamInfo" parameterType="map" resultType="map">
+		${sql}
+	</select>
+
+
+	<!-- 根据维度查询全部积分结果 -->
+	<select id="getResultDhtmlOjbectByParamInfo" parameterType="map" resultType="map">
+		${sql}
+	</select>
+
+
+
+	<select id="getProjectResultMeasure" parameterType="map" resultType="map">
+		select
+		    i.measure_id  as measure_id,
+		    i.measure_name as mea_definition
+		from bsc_measure i inner join B04_DATA_COL_IND_RELA a
+		on i.measure_id =a.ind_id
+		where a.Data_Col_Id =#{project_id}
+		order by i.measure_id
+	</select>
+
+	<!-- 通过指标编号查询指标信息 -->
+	<select id="getProjectResultMeasureByIndexId" parameterType="map" resultType="map">
+		select
+		    ind_id  as measure_id,
+		    ind_nm as mea_definition
+		from B04_IND
+		where ind_id in (${meaId})
+		order by ind_id
+	</select>
 </mapper>

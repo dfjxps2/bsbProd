@@ -34,7 +34,13 @@ public class BscProjectAction extends BaseDispatchAction {
 		serviceMethodMapping.put("listExeInfo", "listExeInfo@BSC_0112");
 		serviceMethodMapping.put("listExecutedIndex", "listExecutedIndex");
 		serviceMethodMapping.put("listPorjectObj", "listPorjectObj");
-		
+		serviceMethodMapping.put("getZoneInfo", "getZoneInfo");
+		serviceMethodMapping.put("getProjectInfo", "getProjectInfo");
+		serviceMethodMapping.put("getProjectMonth", "getProjectMonth");
+		serviceMethodMapping.put("getPorjectObjInfo", "getPorjectObjInfo");
+		serviceMethodMapping.put("getProjectIndex", "getProjectIndex");
+
+
 	}
 	
 	/**

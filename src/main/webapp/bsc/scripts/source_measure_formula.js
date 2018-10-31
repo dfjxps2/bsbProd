@@ -434,9 +434,12 @@ var unCheckTree = function(treePanel){
  * @param {} treePanel
  */
 var checkAllTree = function(treePanel){
+    debugger
         var startNode = treePanel.getRootNode();
         var f = function(){
-             if(this.getUI().checkbox!=null){              
+
+            if(this.getUI().checkbox!=null){
+ //           	this.expand();
                  this.attributes.checked= true;
                  this.ui.checkbox.checked= true;
              }
@@ -630,6 +633,7 @@ function getCheckedNode(id,text,checked,fn){
 	var root = new Ext.tree.AsyncTreeNode({
 		id:id,
 		text:text,
+        expanded:true,  //节点展开
 		checked:checked,
 		children:[{
 			text:'loading',
@@ -658,6 +662,7 @@ function rootName(tree) {
 		callback : function(options, success, response) {
 			var json = Ext.util.JSON.decode(response.responseText);
 			if (success) {
+				debugger
 				var node = getCheckedNode(json.results[0].id, json.results[0].text,false,expandDimLinkTreeNode);
 				tree.setRootNode(node);
 				node.on('checkchange', function(node, b) {
@@ -702,6 +707,7 @@ function expandDimLinkTreeNode(node) {
 							text : '[' + tl[i].id + ']' + tl[i].name,
 							leaf : tl[i].leaf,
 							checked : false,
+                            expanded:true,  //节点展开
 							children : [{
 								text : 'loading',
 								cls : 'x-tree-node-loading',
@@ -710,7 +716,10 @@ function expandDimLinkTreeNode(node) {
 						});
 						cnode.on('expand', expandDimLinkTreeNode);
 						cnode.on('checkchange',function(node, b){
-							var comboId = node.getOwnerTree().id.replace('Tree','');
+
+//                            getAllChild(node,true);
+//                            getALLParent(node,b);
+                            var comboId = node.getOwnerTree().id.replace('Tree','');
 							var combo = Ext.getCmp(comboId);
 							var rawValue = combo.getRawValue();
 							rawValue = rawValue.replace(node.id+",",'');
@@ -740,3 +749,34 @@ function expandDimLinkTreeNode(node) {
 		});
 	}
 }
+
+
+
+//这个方法是选择父节点,自动选中所有的子节点
+function getAllChild(node,checked){
+	debugger
+    checked?node.expand():node.collapse();
+    if(node.hasChildNodes()){
+        node.eachChild(function(child) {
+            child.attributes.checked = checked;
+            var cb = child.ui.checkbox;
+            if(cb) cb.checked = checked;
+            getAllChild(child,checked);
+        });
+    }
+}
+//这个方法是选择子节点,自动选中父节点的父节点
+function getALLParent(node,checked){
+    if(checked){
+        node.expand();
+        var parentNode = node.parentNode;
+        if(parentNode!=undefined){
+            parentNode.attributes.checked = checked;
+            var cb = parentNode.ui.checkbox;
+            if(cb) cb.checked = checked;
+            b(parentNode,checked);
+        }
+    }
+}
+//这两个方法要在treepanel的checkchange里调用.
+

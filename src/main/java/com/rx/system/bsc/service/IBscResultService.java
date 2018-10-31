@@ -96,10 +96,18 @@ public interface IBscResultService {
 	public List<Map<String,Object>> getCompareDetailProjectScore(Map<String, Object> paramMap) throws Exception;
 	
 	public List<Map<String, Object>> listProjectMeasure(Map<String,Object> paramMap) throws Exception;
+
+	public List<Map<String, Object>> getProjectResultMeasure(Map<String,Object> paramMap) throws Exception;
+
 	
 	public List<Map<String, Object>> listSubMeasure(Map<String,Object> paramMap) throws Exception;
 	//通过指标编号查询指标信息
 	public List<Map<String, Object>> listProjectMeasureByIndexId(Map<String,Object> paramMap) throws Exception;
+
+	//通过指标编号查询指标信息
+	public List<Map<String, Object>> getProjectResultMeasureByIndexId(Map<String,Object> paramMap) throws Exception;
+
+
 	/**
 	 * 根据年份查询各考核对象的方案得分
 	 * @param paramMap
@@ -130,6 +138,45 @@ public interface IBscResultService {
 	public String listScoreResultCountExt(Map<String, Object> paramMap) throws Exception;
 	public List<Map<String, Object>> listScoreSubResultExt(Map<String, Object> paramMap) throws Exception;
 
+
+	/**
+	 * 根据年份查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getResultDhtmlYearByParam(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 根据维度查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getResultDhtmlOjbectByParam(Map<String, Object> paramMap) throws Exception;
+
+
+
+	public String getResultDhtmlCountByCondExt(Map<String, Object> paramMap) throws Exception;
+
+
+	public List<Map<String, Object>> getZoneNameByZoneID(Map<String, Object> paramMap) throws Exception;
+
+
+
+	/**
+	 * 根据年份查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getResultDhtmlYearByParamInfo(Map<String, Object> paramMap) throws Exception;
+	/**
+	 * 根据维度查询全部积分结果
+	 * @param paramMap
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Map<String, Object>> getResultDhtmlOjbectByParamInfo(Map<String, Object> paramMap) throws Exception;
 
 
 }
