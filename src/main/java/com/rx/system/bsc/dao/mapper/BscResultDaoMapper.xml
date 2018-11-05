@@ -400,12 +400,15 @@
 		'['||t.object_id||']'||' '||max(t.object_name) as object_name, max(t.year_id)||'年' as month_name,
 		${case_sql}
 		from bsc_proj_obj_h t
+		inner join  bsc_proj_stat_obj j
+		on t.project_id =j.project_id
+		and t.object_id =j.obj_id
 		left join bsc_proj_mea_obj_val b on
 		t.project_id =  b.project_id
 		and t.object_id = b.object_id
+		and t.year_id =  b.month_id
 		and b.month_id = #{month_id}
 		where t.project_id = #{project_id}
-		and #{query_date} between t.begin_date and t.end_date
 		and t.year_id= #{year_id}
 		<if test="oId != null and oId != ''">
 			and t.object_id in (${oId})
@@ -418,6 +421,9 @@
 		t.year_id||'年' as month_name, max(t.object_name) object_name,
 		${case_sql}
 		from bsc_proj_obj_h t
+		inner join  bsc_proj_stat_cyc c
+		on t.project_id =c.project_id
+		and t.year_id =c.cycle_id
 		left join bsc_proj_mea_obj_val b on
 		t.project_id =  b.project_id
 		and t.object_id = b.object_id
@@ -430,6 +436,7 @@
 			and t.year_id in (${tId})
 		</if>
 		group by t.year_id
+		order by t.year_id desc
 	</select>
 	<select id="listScoreSubResultByYear" parameterType="map" resultType="map">
 		select t.year_id as month_id,
@@ -516,4 +523,16 @@
 		where ind_id in (${meaId})
 		order by ind_id
 	</select>
+
+	<select id="getObectNameByObjId" parameterType="map" resultType="map">
+		    select obj_name from bsc_proj_stat_obj where project_id =#{project_id} and obj_id in (${oId})
+	</select>
+
+
+	<select id="getObectNameByDimId" parameterType="map" resultType="map">
+		    select dim_cd_desc from b04_data_col_adim_scope e where e.data_col_id =#{project_id} and dim_cd in (${oId})
+	</select>
+
+
+
 </mapper>

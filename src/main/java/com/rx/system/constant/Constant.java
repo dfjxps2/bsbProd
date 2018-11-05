@@ -1,7 +1,5 @@
 package com.rx.system.constant;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 系统常量类

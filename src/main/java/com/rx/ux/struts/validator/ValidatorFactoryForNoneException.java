@@ -15,19 +15,6 @@
  */
 package com.rx.ux.struts.validator;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ObjectFactory;
-import com.opensymphony.xwork2.XWorkException;
-import com.opensymphony.xwork2.inject.Inject;
-import com.opensymphony.xwork2.util.ClassLoaderUtil;
-import com.opensymphony.xwork2.util.logging.Logger;
-import com.opensymphony.xwork2.util.logging.LoggerFactory;
-import com.opensymphony.xwork2.validator.ShortCircuitableValidator;
-import com.opensymphony.xwork2.validator.Validator;
-import com.opensymphony.xwork2.validator.ValidatorConfig;
-import com.opensymphony.xwork2.validator.ValidatorFactory;
-import com.opensymphony.xwork2.validator.ValidatorFileParser;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -42,6 +29,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ObjectFactory;
+import com.opensymphony.xwork2.XWorkException;
+import com.opensymphony.xwork2.inject.Inject;
+import com.opensymphony.xwork2.util.ClassLoaderUtil;
+import com.opensymphony.xwork2.util.logging.Logger;
+import com.opensymphony.xwork2.util.logging.LoggerFactory;
+import com.opensymphony.xwork2.validator.ShortCircuitableValidator;
+import com.opensymphony.xwork2.validator.Validator;
+import com.opensymphony.xwork2.validator.ValidatorConfig;
+import com.opensymphony.xwork2.validator.ValidatorFactory;
+import com.opensymphony.xwork2.validator.ValidatorFileParser;
 
 public class ValidatorFactoryForNoneException implements ValidatorFactory {
 

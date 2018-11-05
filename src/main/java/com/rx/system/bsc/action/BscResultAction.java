@@ -1,14 +1,16 @@
 package com.rx.system.bsc.action;
 
+import static com.rx.system.util.CommonUtil.getCurrentDateString;
+
 import java.awt.Dimension;
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URLDecoder;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.struts2.ServletActionContext;
 
 import com.rx.framework.jdbc.JdbcManager;
@@ -21,9 +23,12 @@ import com.rx.system.fusionchart.DashBord;
 import com.rx.system.fusionchart.FusionChart;
 import com.rx.system.fusionchart.IChart;
 import com.rx.system.fusionchart.TargetLine;
+import com.rx.system.model.excel.utils.ExcelField;
+import com.rx.system.model.excel.utils.ExcelUtil;
 import com.rx.system.service.ISelectorService;
 import com.rx.system.table.DhtmlTableTemplate;
 import com.rx.system.table.ITableTemplate;
+
 /**
  * 平衡计分卡考核结果Action
  * @author chenxd
@@ -31,6 +36,8 @@ import com.rx.system.table.ITableTemplate;
  */
 @SuppressWarnings("serial")
 public class BscResultAction extends BaseDispatchAction {
+
+	public static final int ROW_ACCESS_WINDOW_SIZE = 100;
 	
 	private IBscResultService bscResultService = null;
 	private ISelectorService selectorService = null;
@@ -239,7 +246,7 @@ public class BscResultAction extends BaseDispatchAction {
 		String meaId = "";
 		if(ids.length >0){
 			for(String str :ids){
-				meaId += "'"+str+"'".concat(",");
+				meaId += "'"+str.trim()+"'".concat(",");
 			}
 		}else{
 			meaId ="'"+id+"'";
@@ -726,15 +733,15 @@ public class BscResultAction extends BaseDispatchAction {
 			ITableTemplate template = new DhtmlTableTemplate();
 			String[] mapKey = new String[measureList.size()+2];
 			String header = "维度名称,年份,";
-			String columnAlign = "left,left,";
+			String columnAlign = "center,center,";
 			String columnType = "ro,ro,";
-			String columnWidth = "260,200,";
+			String columnWidth = "150,140,";
 			String formatType = "0,0,";
 			mapKey[0] = "object_name";
 			mapKey[1] = "month_name";
 			if(show_id.equals("2")){
 				header = "年份,维度名称,";
-				columnWidth = "200,260,";
+				columnWidth = "140,150,";
 				mapKey[0] = "month_name";
 				mapKey[1] = "object_name";
 			}
@@ -742,7 +749,7 @@ public class BscResultAction extends BaseDispatchAction {
 				Map<String,Object> map = measureList.get(i);
 				mapKey[i+2] = "col_"+i;
 				header += getStringValue(map, "mea_definition");
-				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				columnAlign += "center";columnType += "ro";columnWidth += "120";formatType += "2";
 				if(i != measureList.size()-1){
 					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
 				}
@@ -804,19 +811,26 @@ public class BscResultAction extends BaseDispatchAction {
 	@UseLog
 	public String exportScoreByCondExt() throws Exception {
 		List<Map<String, Object>> measureList = null;
+
 		Map<String, Object> paramMap = this.getRequestParam(request);
 		String show_id = getStringValue(paramMap, "show_id");
 		try {
 			String projcetName = getStringValue(paramMap, "project_name");
 			String month_id = getStringValue(paramMap, "month_id");
-			String month_name = month_id.substring(0, 4)+"年"+month_id.substring(4)+"月";
+			String month_name = "";
+			if(null !=month_id && !"".equals(month_id)){
+				month_name = month_id.substring(0, 4)+"年"+month_id.substring(4)+"月";
+			}
+
 			//是否过滤维度
 			String oId = null;
 			String objId = getStringValue(paramMap, "obj_id");
 			if(null != objId && !"".equals(objId)){
 				oId = getStringById(objId);
 				paramMap.put("oId", oId);
+
 			}
+
 			//是否过滤时间
 			String tId = null;
 			String timId = getStringValue(paramMap, "time_id");
@@ -835,26 +849,31 @@ public class BscResultAction extends BaseDispatchAction {
 				measureList = this.bscResultService.listProjectMeasure(paramMap);
 			}
 			paramMap.put("measureList", measureList);
-			List<Map<String, Object>> dataList;
+			//2统计年份 -》  统计年份（单） -》统计维度（多）-》指标（多）
+			//1统计维度-》统计维度（单）-》 统计年份（多）-》指标（多）
+			List<Map<String, Object>> dataList = null;
 			if(show_id.equals("2")){
-				dataList = this.bscResultService.listScoreTotalResultByYear(paramMap);
-			}else{
 				dataList = this.bscResultService.listScoreTotalResultByObj(paramMap);
+//				dataList = this.bscResultService.listScoreResultByYear(paramMap);
+			}else{
+//				dataList = this.bscResultService.listScoreTotalResultByObj(paramMap);
+				dataList = this.bscResultService.listScoreTotalResultByYear(paramMap);
 			}
+
 
 			ITableTemplate template = new DhtmlTableTemplate();
 
 			String[] mapKey = new String[measureList.size()+2];
 			String header = "维度名称,年份,";
-			String columnAlign = "left,left,";
+			String columnAlign = "center,center,";
 			String columnType = "ro,ro,";
-			String columnWidth = "260,200,";
+			String columnWidth = "150,140,";
 			String formatType = "0,0,";
 			mapKey[0] = "object_name";
 			mapKey[1] = "month_name";
 			if(show_id.equals("2")){
 				header = "年份,维度名称,";
-				columnWidth = "200,260,";
+				columnWidth = "140,150,";
 				mapKey[0] = "month_name";
 				mapKey[1] = "object_name";
 			}
@@ -862,7 +881,7 @@ public class BscResultAction extends BaseDispatchAction {
 				Map<String,Object> map = measureList.get(i);
 				mapKey[i+2] = "col_"+i;
 				header += getStringValue(map, "mea_definition");
-				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				columnAlign += "center";columnType += "ro";columnWidth += "120";formatType += "2";
 				if(i != measureList.size()-1){
 					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
 				}
@@ -875,15 +894,29 @@ public class BscResultAction extends BaseDispatchAction {
 			template.setColumnFormatType(formatType);
 			template.setDataMapKey(mapKey);
 			template.setData(dataList);
-
 			template.setTitle(paramMap.get("title").toString());
 			String []titiles = header.split(HEADER_SPLIT);
-			template.setExcelInfoRow(new String[][] {
-					{ "方案名称：", projcetName },
-					{ "月份：", month_name },
-					{ "指标名称：", titiles[1] }
+			String objName = "";
+			if(show_id.equals("2")){
+				template.setExcelInfoRow(new String[][] {
+						{ "方案名称：", projcetName },
+						{ "统计年份：", month_name }
+//						{ "指标名称：", titiles[1] }
 
-			});
+				});
+			}else{
+				List<Map<String, Object>> objectList  = this.bscResultService.getObectNameByObjId(paramMap);
+				if(null !=objectList && objectList.size()>0){
+					Map<String, Object> mp = objectList.get(0);
+					objName = mp.get("obj_name").toString();
+				}
+				template.setExcelInfoRow(new String[][] {
+						{ "方案名称：", projcetName },
+						{ "统计维度：", objName }
+//						{ "指标名称：", titiles[1] }
+
+				});
+			}
 
 			String webBasePath = ServletActionContext.getServletContext().getRealPath("/");
 			String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
@@ -1078,7 +1111,7 @@ public class BscResultAction extends BaseDispatchAction {
 			String measureId = paramMap.get("measure_id").toString();
 			if(null != measureId && !"".equals(measureId)){
 				meaId = getStringById(measureId);
-//				paramMap.put("meaId", meaId);
+				paramMap.put("meaId", meaId);
 //				measureList = this.bscResultService.getProjectResultMeasureByIndexId(paramMap);
 				measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
 			}else{
@@ -1100,16 +1133,16 @@ public class BscResultAction extends BaseDispatchAction {
 			ITableTemplate template = new DhtmlTableTemplate();
 			String[] mapKey = new String[measureList.size()+3];
 			String header = "地区名称,维度名称,年份,";
-			String columnAlign = "left,left,left,";
+			String columnAlign = "center,center,center,";
 			String columnType = "ro,ro,ro,";
-			String columnWidth = "260,200,200,";
+			String columnWidth = "260,150,140,";
 			String formatType = "0,0,0,";
 			mapKey[0] = "zone_cd_desc";
 			mapKey[1] = "object_name";
 			mapKey[2] = "month_name";
 			if(show_id.equals("2")){
 				header = "地区名称,年份,维度名称,";
-				columnWidth = "200,200,260,";
+				columnWidth = "200,140,150,";
 				mapKey[0] = "zone_cd_desc";
 				mapKey[1] = "month_name";
 				mapKey[2] = "object_name";
@@ -1118,7 +1151,7 @@ public class BscResultAction extends BaseDispatchAction {
 				Map<String,Object> map = measureList.get(i);
 				mapKey[i+3] = "col_"+i;
 				header += getStringValue(map, "mea_definition");
-				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				columnAlign += "left";columnType += "ro";columnWidth += "120";formatType += "2";
 				if(i != measureList.size()-1){
 					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
 				}
@@ -1241,11 +1274,9 @@ public class BscResultAction extends BaseDispatchAction {
 			if(null != measureId && !"".equals(measureId)){
 				meaId = getStringById(measureId);
 				paramMap.put("meaId", meaId);
-//				measureList = this.bscResultService.getProjectResultMeasureByIndexId(paramMap);
 				measureList = this.bscResultService.listProjectMeasureByIndexId(paramMap);
 			}else{
 				measureList = this.bscResultService.getProjectResultMeasure(paramMap);
-//				measureList = this.bscResultService.listProjectMeasure(paramMap);
 			}
 			paramMap.put("measureList", measureList);
 
@@ -1254,7 +1285,7 @@ public class BscResultAction extends BaseDispatchAction {
 			List<Map<String, Object>> dataList = null;
 			//增加地区代码： 2统计年份 -》  统计年份（单） -》统计维度（多）-》指标（多）
 			//增加地区代码： 1统计维度-》统计维度（单）-》 统计年份（多）-》指标（多）
-			if(show_id.equals("1")){
+			if(SHOW_FLAG.equals(show_id)){
 				dataList = this.bscResultService.getResultDhtmlYearByParamInfo(paramMap);
 			}else{
 				dataList = this.bscResultService.getResultDhtmlOjbectByParamInfo(paramMap);
@@ -1262,16 +1293,16 @@ public class BscResultAction extends BaseDispatchAction {
 			ITableTemplate template = new DhtmlTableTemplate();
 			String[] mapKey = new String[measureList.size()+3];
 			String header = "地区名称,维度名称,年份,";
-			String columnAlign = "left,left,left,";
+			String columnAlign = "center,center,center,";
 			String columnType = "ro,ro,ro,";
-			String columnWidth = "260,200,200,";
+			String columnWidth = "260,150,140,";
 			String formatType = "0,0,0,";
 			mapKey[0] = "zone_cd_desc";
 			mapKey[1] = "object_name";
 			mapKey[2] = "month_name";
 			if(show_id.equals("2")){
 				header = "地区名称,年份,维度名称,";
-				columnWidth = "200,200,260,";
+				columnWidth = "200,140,150,";
 				mapKey[0] = "zone_cd_desc";
 				mapKey[1] = "month_name";
 				mapKey[2] = "object_name";
@@ -1280,7 +1311,7 @@ public class BscResultAction extends BaseDispatchAction {
 				Map<String,Object> map = measureList.get(i);
 				mapKey[i+3] = "col_"+i;
 				header += getStringValue(map, "mea_definition");
-				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
+				columnAlign += "center";columnType += "ro";columnWidth += "120";formatType += "2";
 				if(i != measureList.size()-1){
 					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
 				}
@@ -1305,28 +1336,67 @@ public class BscResultAction extends BaseDispatchAction {
 			 * 			统计维度单选 objSelector2 （objBox2）      多objSelector1
 			 */
 
+			String objName = "";
 			if(show_id.equals("2")){
 				template.setExcelInfoRow(new String[][] {
 						{ "方案名称：", projcetName },
-						{ "地区代码：", zoneNm },
-//						{ "统计年份：", month_name },
-						{ "指标名称：", titiles[1] }
-
+						{ "统计年份：", month_name }
 				});
 			}else{
+				List<Map<String, Object>> objectList  = this.bscResultService.getObectNameByDimId(paramMap);
+				if(null !=objectList && objectList.size()>0){
+					Map<String, Object> mp = objectList.get(0);
+					objName = mp.get("dim_cd_desc").toString();
+				}
 				template.setExcelInfoRow(new String[][] {
 						{ "方案名称：", projcetName },
-						{ "地区代码：", zoneNm },
-//						{ "统计维度：", month_name },
-						{ "指标名称：", titiles[1] }
-
+						{ "统计维度：", objName }
 				});
 			}
-
-
 			String webBasePath = ServletActionContext.getServletContext().getRealPath("/");
-			String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
-			template.writeToFile(new File(localFileName));
+
+			if(measureList.size() < 250){
+				String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
+				template.writeToFile(new File(localFileName));
+			}else{
+				String exportHeader = "";
+				if(show_id.equals("2")){
+					exportHeader = "方案名称:"+projcetName+",统计年份:"+month_name;
+				}else{
+					exportHeader = "方案名称:"+projcetName+",统计维度:"+objName;
+				}
+				String [] titles  = header.split(",");			
+				List<ExcelField>  excelFields = getExcelFields(show_id,titles);
+
+				String title= projcetName;
+				SXSSFWorkbook wb = new SXSSFWorkbook(ROW_ACCESS_WINDOW_SIZE);
+				ExcelUtil excelUtil = new ExcelUtil(wb,excelFields,title,exportHeader);
+				int startNum = 0;
+				excelUtil.exportXLSX(wb,dataList,startNum);
+				String fileName = projcetName+".xlsx";
+				response.reset();
+
+				response.setContentType("application/x-download");
+				response.setCharacterEncoding("UTF-8");
+				fileName = new String(fileName.getBytes(),"iso-8859-1");
+				response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+				OutputStream out = response.getOutputStream();
+				try {				
+					wb.write(out);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {				
+					if (out != null) {
+						try {
+							out.flush();
+							out.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					wb.dispose();
+				}
+			}
 			return "excelDownload";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1334,67 +1404,28 @@ public class BscResultAction extends BaseDispatchAction {
 		return null;
 	}
 
-/*	public String exportScoreSubExt() throws Exception {
-		Map<String, Object> paramMap = this.getRequestParam(request);
-		try {
-			String projcetName = getStringValue(paramMap, "project_name");
-			String month_id = getStringValue(paramMap, "month_id");
-			String month_name = month_id.substring(0, 4)+"年"+month_id.substring(4)+"月";
-			String show_id = getStringValue(paramMap, "show_id");
-			//方案所有的指标
-			List<Map<String, Object>> measureList = this.bscResultService.listSubMeasure(paramMap);
-			paramMap.put("measureList", measureList);
-			List<Map<String, Object>> dataList = this.bscResultService.listScoreSubResultExt(paramMap);
-			ITableTemplate template = new DhtmlTableTemplate();
+	
+    private List<ExcelField> getExcelFields(String showID,String [] titles) {   			
+        List<ExcelField> excelFields = new ArrayList();          
+        if(SHOW_FLAG.equals(showID)){
+        	   excelFields.add(new ExcelField("地区名称", "zone_cd_desc"));
+               excelFields.add(new ExcelField("维度名称", "object_name"));
+               excelFields.add(new ExcelField("年份", "month_name"));
+        }else{
+        	  excelFields.add(new ExcelField("地区名称", "zone_cd_desc")); 
+              excelFields.add(new ExcelField("年份", "month_name"));
+              excelFields.add(new ExcelField("维度名称", "object_name"));
+        }       
+        int j = 3;
+        String k = "";
+        for(int i=3;i<titles.length;i++){
+        	 j = i-3;
+        	 k = String.valueOf(j);
+        	 excelFields.add(new ExcelField(titles[i], "col_"+k));
+        }   
+        return excelFields;
+    }
 
-			String[] mapKey = new String[measureList.size()+1];
-
-			String meaFlag = paramMap.get("title").toString();
-			String header = "考核对象,";
-			if(MEASURE_FLAG.equals(meaFlag)){
-				header = "维度名称,";
-			}
-			String columnAlign = "left,";
-			String columnType = "ro,";
-			String columnWidth = "260,";
-			String formatType = "0,";
-			mapKey[0] = "object_name";
-			if(show_id.equals("2")){
-				header = "年份,";
-				columnWidth = "200,";
-				mapKey[0] = "month_name";
-			}
-			for (int i = 0; i < measureList.size(); i++) {
-				Map<String,Object> map = measureList.get(i);
-				mapKey[i+1] = "col_"+i;
-				header += getStringValue(map, "mea_definition");
-				columnAlign += "right";columnType += "ro";columnWidth += "120";formatType += "2";
-				if(i != measureList.size()-1){
-					header += ",";columnAlign += ",";columnType += ",";columnWidth += ",";formatType += ",";
-				}
-			}
-			template.setHeader(new String[]{header});
-			template.setColumnAlign(columnAlign);
-			template.setColumnType(columnType);
-			template.setColumnWidth(columnWidth);
-			template.setColumnFormatType(formatType);
-			template.setDataMapKey(mapKey);
-			template.setData(dataList);
-
-			template.setTitle(paramMap.get("title").toString());
-			template.setExcelInfoRow(new String[][] {
-					{ "方案名称：", projcetName },
-					{ "月份：", month_name } });
-
-			String webBasePath = ServletActionContext.getServletContext().getRealPath("/");
-			String localFileName = webBasePath + Constant.FILE_DOWNLOAD_DIR + this.getCurrentUser().getUser_id()+".xls";
-			template.writeToFile(new File(localFileName));
-			return "excelDownload";
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}*/
 	public void setBscResultService(IBscResultService bscResultService) {
 		this.bscResultService = bscResultService;
 	}
@@ -1412,5 +1443,9 @@ public class BscResultAction extends BaseDispatchAction {
 	
 	
 	private final static String  MEASURE_FLAG ="1";
+	
+	private final static String  SHOW_FLAG ="1";
+
+
 	
 }

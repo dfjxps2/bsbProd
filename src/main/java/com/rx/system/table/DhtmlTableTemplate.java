@@ -177,6 +177,7 @@ public class DhtmlTableTemplate extends AbstractTableTemplate {
 		}
 		exporter.writeWorkBook();
 	}
+
 	
 	/**
 	 * 写普通表格

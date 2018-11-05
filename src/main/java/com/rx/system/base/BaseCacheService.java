@@ -1,9 +1,9 @@
 package com.rx.system.base;
 
-import org.apache.log4j.Logger;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+
+import org.apache.log4j.Logger;
 
 /**
  * 支持缓存的Service抽象类

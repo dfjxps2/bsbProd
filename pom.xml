@@ -282,13 +282,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/ojdbc-5.jar</systemPath>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>bsbProd</groupId>
             <artifactId>poi-2.5.1-final</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/poi-2.5.1-final-20040804.jar</systemPath>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>bsbProd</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -443,9 +443,57 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/xwork-core-2.3.8.jar</systemPath>
         </dependency>
-
-
-    </dependencies>
+        
+          <dependency>
+            <groupId>bsbProd</groupId>
+            <artifactId>org.apache.poi</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-3.9.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>bsbProd</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-ooxml-schemas-3.9.jar</systemPath>
+        </dependency>
+        
+         <dependency>
+            <groupId>bsbProd</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/poi-ooxml-3.9.jar</systemPath>
+        </dependency>
+        
+         <dependency>
+            <groupId>bsbProd</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/xmlbeans-2.6.0.jar</systemPath>
+        </dependency>
+    
+          <!-- 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+            <version>3.9</version>
+        </dependency>
+     -->
+     </dependencies>
 
     <profiles>
         <!--本地开发环境-->

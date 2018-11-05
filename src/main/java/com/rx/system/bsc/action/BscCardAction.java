@@ -18,7 +18,6 @@ import com.rx.system.constant.Constant;
 import com.rx.system.service.ISelectorService;
 import com.rx.system.table.DhtmlTableTemplate;
 import com.rx.system.table.ITableTemplate;
-import com.rx.util.tree.Tree;
 import com.rx.util.tree.TreeStore;
 
 /**

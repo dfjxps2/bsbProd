@@ -1,9 +1,7 @@
 package com.rx.system.bsc.service;
 
-import java.util.Map;
-
-
 import java.util.List;
+import java.util.Map;
 
 /**
  * 平衡积分卡考核结果查询Service接口
@@ -178,5 +176,7 @@ public interface IBscResultService {
 	 */
 	public List<Map<String, Object>> getResultDhtmlOjbectByParamInfo(Map<String, Object> paramMap) throws Exception;
 
+	public List<Map<String, Object>> getObectNameByObjId(Map<String, Object> paramMap) throws Exception;
 
+	public List<Map<String, Object>> getObectNameByDimId(Map<String, Object> paramMap) throws Exception;
 }

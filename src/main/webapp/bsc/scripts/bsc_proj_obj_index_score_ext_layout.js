@@ -320,7 +320,8 @@ gridSelector = function(obj) {
 	var dimValueColumnModel = new Ext.grid.ColumnModel([checkboxSelectionModel, {
 		id : 'valueField',
 		header : '指标编号',	
-		dataIndex : 'value_field'
+		dataIndex : 'value_field',
+        hidden:true
 	}, {
 		id : 'valueField',
 		header : '指标名称',	
@@ -457,7 +458,7 @@ Ext.onReady(function() {
 						{
 							columnWidth : .20,
 							layout : 'form',
-							labelWidth : 28,
+							labelWidth : 32,
                //             labelAlign : 'left',
                             border : false,
 							items : [{

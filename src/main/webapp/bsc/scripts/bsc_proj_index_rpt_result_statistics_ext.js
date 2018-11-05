@@ -124,9 +124,7 @@ var monthDS = new Ext.data.JsonStore({
 				}
 
 				p = Ext.getCmp("projectSelector").getValue();
-/*				indexDS.reload({
-					params: {month_id : monthID,project_id : p}
-				});*/
+
                 indexDS.reload();
 			}else{
 				setMOCmp("monthSelector",'',showID);
@@ -150,6 +148,7 @@ var projectStore = new Ext.data.JsonStore({
 			if (store.getCount() > 0) {
 				if (projectID == ''){
 					projectID = store.getAt(0).get('project_id');
+
 					cycle_type_id = store.getAt(0).get('cycle_type_id');
 				}
 				Ext.getCmp("projectSelector").setValue(projectID);
@@ -163,10 +162,7 @@ var projectStore = new Ext.data.JsonStore({
 				objDS.load({
 					params: {project_id : projectID}
 				});
-	/*			indexDS.reload({
-					params: {project_id : projectID}
-				});*/
- //               zoneDS.load();
+
                 indexDS.reload();
 			}
 		},
@@ -348,7 +344,8 @@ gridSelector = function(obj) {
 	var dimValueColumnModel = new Ext.grid.ColumnModel([checkboxSelectionModel, {
 		id : 'valueField',
 		header : '指标编号',	
-		dataIndex : 'value_field'
+		dataIndex : 'value_field',
+        hidden:true
 	}, {
 		id : 'valueField',
 		header : '指标名称',	
@@ -480,7 +477,7 @@ Ext.onReady(function() {
 						{
 							columnWidth : .25,
 							layout : 'form',
-							labelWidth : 28,
+							labelWidth : 32,
                //             labelAlign : 'left',
                             border : false,
 							items : [{
@@ -503,6 +500,9 @@ Ext.onReady(function() {
 										objID = '';
 										objDS.load({params: {project_id : p}});
 										measure_id = '';
+                                        zoneDS.load({
+                                            params: {project_id : p}
+                                        });
 //										indexDS.reload({params: {project_id : p}});
                                         indexDS.reload();
 									}

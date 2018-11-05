@@ -1,16 +1,11 @@
 package com.rx.system.model.excel.service;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import com.rx.system.model.excel.ModelExportUtil;
 
 
 public class ModelExportToExcelService extends HttpServlet {
@@ -22,7 +17,7 @@ public class ModelExportToExcelService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html;charset=UTF-8");
+		/*response.setContentType("text/html;charset=UTF-8");
 		//System.out.println(request.getCharacterEncoding());
 		//页面取�??
         String tableHeader=request.getParameter("tableHeader");
@@ -73,7 +68,7 @@ public class ModelExportToExcelService extends HttpServlet {
 				}
 			}
 		}
-
+*/
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

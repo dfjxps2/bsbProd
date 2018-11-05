@@ -169,14 +169,10 @@ public interface BscResultDao {
 	//通过指标编号查询指标信息
 	public List<Map<String, Object>> getProjectResultMeasureByIndexId(Map<String,Object> paramMap) throws Exception;
 
+	public List<Map<String, Object>> getObectNameByObjId(Map<String, Object> paramMap) throws Exception;
 
 
-
-
-
-
-
-
+	public List<Map<String, Object>> getObectNameByDimId(Map<String, Object> paramMap) throws Exception;
 
 
 

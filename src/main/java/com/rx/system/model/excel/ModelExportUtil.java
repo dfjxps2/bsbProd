@@ -96,7 +96,7 @@ public class ModelExportUtil {
 			//创建新的Excel 工作�?
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet();//在Excel工作簿中建一工作表，其名为缺省�??
-			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持	
+//			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
 			
 			//设置列宽
 			for(int i=0;i<tableInitCellWidthArray.length;i++){			
@@ -132,7 +132,7 @@ public class ModelExportUtil {
 			//单元格类�?
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			//设置为中文字�?,应该放在setCellValue方法之前
-			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
+//			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
 			//给单元格赋�??
 			cell.setCellValue(tableTitle);
 			//cell.setCellValue(new Date());
@@ -158,7 +158,7 @@ public class ModelExportUtil {
 				
 				headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 				headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-				headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//				headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 				headerCell2.setCellValue(getHelpMap().get(tableHelp[i]).toString());//赋�??		 
 				
 			}
@@ -187,7 +187,7 @@ public class ModelExportUtil {
 					
 					headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 					headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 					headerCell2.setCellValue(tableHeaderArray[i][j]);//赋�??		 
 				}
 				
@@ -323,7 +323,7 @@ public class ModelExportUtil {
 						
 						dataCell.setCellStyle(dataCs);//挷定样式到单元格
 						dataCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 						dataCell.setCellValue(cellValue);//赋�??	
 					}else if(getCellAlign(tableColumnAlignArray[j])==HSSFCellStyle.ALIGN_RIGHT){
 						dataCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
@@ -692,7 +692,7 @@ public class ModelExportUtil {
 			//创建新的Excel 工作�?
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet();//在Excel工作簿中建一工作表，其名为缺省�??
-			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持	
+//			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
 			
 			//设置列宽
 			for(int i=0;i<tableInitCellWidthArray.length;i++){			
@@ -728,7 +728,7 @@ public class ModelExportUtil {
 			//单元格类�?
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			//设置为中文字�?,应该放在setCellValue方法之前
-			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
+//			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
 			//给单元格赋�??
 			cell.setCellValue(tableTitle);
 			//cell.setCellValue(new Date());
@@ -751,7 +751,7 @@ public class ModelExportUtil {
 				
 				headerCell.setCellStyle(headerCs);//挷定样式到单元格
 				headerCell.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-				headerCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前	
+//				headerCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 				headerCell.setCellValue(i%2==0 ? headerTextArray[i]+"�?" : headerTextArray[i]);//赋�??
 			}
 			
@@ -778,7 +778,7 @@ public class ModelExportUtil {
 					
 					headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 					headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 					headerCell2.setCellValue(tableHeaderArray[i][j]);//赋�??						
 				}
 				
@@ -845,7 +845,7 @@ public class ModelExportUtil {
 					if(dataCs.getAlignment()==HSSFCellStyle.ALIGN_LEFT||dataCs.getAlignment()==HSSFCellStyle.ALIGN_CENTER){
 						dataCell.setCellStyle(dataCs);//挷定样式到单元格
 						dataCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 						dataCell.setCellValue(cellValue);//赋�??	
 					}else if(dataCs.getAlignment()==HSSFCellStyle.ALIGN_RIGHT){
 						dataCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
@@ -886,7 +886,7 @@ public class ModelExportUtil {
 	 * @param tableHeader
 	 * @param tableColumnAlign
 	 * @param tableInitCellWidth
-	 * @param tableData
+	 * @param
 	 * @param tableTitle
 	 * @param tableTitleHelp
 	 * @return
@@ -928,7 +928,7 @@ public class ModelExportUtil {
 				sheet.setVerticallyCenter(true); // 设置打印页面为垂直居中			
 				sheet.getPrintSetup().setLandscape(true);//设置横向打印
 				//workbook.setSheetName(counter, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
-				workbook.setSheetName(counter, sheetName,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
+//				workbook.setSheetName(counter, sheetName,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
 				//获取表单相应的表格数据
 				List dataCellTextList = getDataCellTextList((String)sheetData.get(sheetName));
 				
@@ -965,7 +965,7 @@ public class ModelExportUtil {
 				//单元格类�?
 				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 				//设置为中文字�?,应该放在setCellValue方法之前
-				cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
+//				cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
 				//给单元格赋�??
 				cell.setCellValue(tableTitle);
 				//cell.setCellValue(new Date());
@@ -991,7 +991,7 @@ public class ModelExportUtil {
 					
 					headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 					headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 					headerCell2.setCellValue(getHelpMap().get(tableHelp[i]).toString());//赋�??		 
 					
 				}
@@ -1020,7 +1020,7 @@ public class ModelExportUtil {
 						
 						headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 						headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-						headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//						headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 						headerCell2.setCellValue(tableHeaderArray[i][j]);//赋�??		 
 					}
 					
@@ -1164,7 +1164,7 @@ public class ModelExportUtil {
 									
 									dataCell.setCellStyle(dataCs);//挷定样式到单元格
 									dataCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-									dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//									dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 									dataCell.setCellValue(cellValue);//赋�??	
 								}
 							}else{
@@ -1173,7 +1173,7 @@ public class ModelExportUtil {
 								
 								dataCell.setCellStyle(dataCs);//挷定样式到单元格
 								dataCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-								dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//								dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 								dataCell.setCellValue(cellValue);//赋�??	
 							}
 						}else if(getCellAlign(tableColumnAlignArray[j])==HSSFCellStyle.ALIGN_RIGHT){
@@ -1356,7 +1356,7 @@ public class ModelExportUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+		String tableHeader ="";
 	}
 	
 	@SuppressWarnings("unused")
@@ -1378,7 +1378,7 @@ public class ModelExportUtil {
 			//创建新的Excel 工作�?
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet();//在Excel工作簿中建一工作表，其名为缺省�??
-			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持	
+//			workbook.setSheetName(0, tableTitle,HSSFWorkbook.ENCODING_UTF_16);//设置中文支持
 			
 			//设置列宽
 			for(int i=0;i<tableInitCellWidthArray.length;i++){			
@@ -1414,7 +1414,7 @@ public class ModelExportUtil {
 			//单元格类�?
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			//设置为中文字�?,应该放在setCellValue方法之前
-			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
+//			cell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);
 			//给单元格赋�??
 			cell.setCellValue(tableTitle);
 			//cell.setCellValue(new Date());
@@ -1473,7 +1473,7 @@ public class ModelExportUtil {
 					
 					headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 					headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//					headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 					headerCell2.setCellValue(tableHeaderArray[i][j]);//赋�??		 
 				}
 				
@@ -1606,7 +1606,7 @@ public class ModelExportUtil {
 						
 						dataCell.setCellStyle(dataCs);//挷定样式到单元格
 						dataCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//						dataCell.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 						dataCell.setCellValue(cellValue);//赋�??	
 					}else if(getCellAlign(tableColumnAlignArray[j])==HSSFCellStyle.ALIGN_RIGHT){
 						dataCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
@@ -1693,7 +1693,7 @@ public class ModelExportUtil {
 				
 				headerCell2.setCellStyle(headerCs2);//挷定样式到单元格	
 				headerCell2.setCellType(HSSFCell.CELL_TYPE_STRING);//单元格类�?
-				headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
+//				headerCell2.setEncoding(HSSFWorkbook.ENCODING_UTF_16);//设置为中文字�?,应该放在setCellValue方法之前
 				if(j==0)
 					headerCell2.setCellValue(exportFixs[i]);//赋�值	
 				else

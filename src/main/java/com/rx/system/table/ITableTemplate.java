@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+
 import com.rx.util.tree.Tree;
 
 /**
@@ -73,7 +75,7 @@ public interface ITableTemplate {
 	
 	//写入文件
 	public void writeToFile(File file) throws Exception;
-	
+
 	//是否过滤空行
 	public void isFilterBlank(boolean b) throws Exception;
 	

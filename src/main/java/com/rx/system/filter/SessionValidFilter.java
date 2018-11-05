@@ -1,8 +1,5 @@
 package com.rx.system.filter;
 
-import com.rx.system.domain.SysUser;
-import com.rx.system.service.impl.DataStore;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -14,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.rx.system.service.impl.DataStore;
 
 public class SessionValidFilter implements Filter {
 	private DataStore store = null;

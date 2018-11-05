@@ -3,7 +3,9 @@ package com.rx.system.util;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
 
 public class CommonUtil
 {
