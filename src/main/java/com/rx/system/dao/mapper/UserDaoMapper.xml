@@ -355,13 +355,94 @@
 		where
 			a.user_id = #{user_id}
 		and	exists(
-				select 
+				select
 					0
 				from
 					bsc_role_info b
-				where	
+				where
 					a.role_id = b.role_id
 				and	b.bank_org_id = #{bank_id}
 				)
 	</delete>
+
+
+
+	<delete id="deleteUserDataTemp" >
+		delete from bsc_user_info_temp
+	</delete>
+
+
+	<insert id="insertBatchUserDataTemp" parameterType="java.util.List">
+		insert into bsc_user_info_temp (user_id,user_name,user_status,user_address,user_mobile)
+			<foreach collection ="retList" item="item" index="index" separator="union">
+				(
+				select
+					#{item.user_name}, #{item.user_real_name}, #{item.user_state},
+					#{item.user_addr}, #{item.user_tel}
+				from dual
+				)
+
+		</foreach>
+	</insert>
+
+
+	<insert id="insertBatchUserRoleRealData" >
+		insert into bsc_user_role_rela
+		select o.user_id,'Normal' from bsc_user_info o where not exists (
+		select 1 from bsc_user_role_rela a where a.user_id=o.user_id
+		)
+	</insert>
+
+
+
+
+
+
+<update id="mergeUserDataTemp" parameterType="map">
+		MERGE INTO BSC_USER_INFO T1
+		USING (SELECT USER_ID, PASSWORD, USER_NAME, BANK_ORG_ID, OWNER_ORG_ID, BUSI_LINE_ID, JOB_TYPE_ID, CERT_ID, GENDER_CODE, USER_MOBILE, USER_EMAIL, USER_ADDRESS, USER_POST, USER_STATUS, BEGIN_DATE, END_DATE
+				 FROM BSC_USER_INFO_TEMP T2) T2
+		ON (T1.USER_ID = T2.USER_ID)
+		WHEN MATCHED THEN
+		  UPDATE
+			 SET T1.USER_NAME    = T2.USER_NAME,
+				 T1.USER_STATUS  = T2.USER_STATUS,
+				 T1.USER_ADDRESS = T2.USER_ADDRESS,
+				 T1.USER_MOBILE  = T2.USER_MOBILE,
+				 T1.BANK_ORG_ID  = T2.BANK_ORG_ID,
+				 T1.OWNER_ORG_ID = T2.OWNER_ORG_ID,
+				 T1.BEGIN_DATE   = T2.BEGIN_DATE,
+				 T1.END_DATE     = T2.END_DATE,
+				 T1.BUSI_LINE_ID = T2.BUSI_LINE_ID,
+				 T1.GENDER_CODE  = T2.GENDER_CODE,
+				 T1.PASSWORD     = T2.PASSWORD
+		WHEN NOT MATCHED THEN
+		  INSERT
+			(T1.USER_ID,
+			 T1.PASSWORD,
+			 T1.USER_NAME,
+			 T1.BANK_ORG_ID,
+			 T1.OWNER_ORG_ID,
+			 T1.USER_MOBILE,
+			 T1.USER_ADDRESS,
+			 T1.BEGIN_DATE,
+			 T1.END_DATE,
+			 T1.BUSI_LINE_ID,
+			 T1.GENDER_CODE,
+			 T1.USER_STATUS)
+		  VALUES
+			(T2.USER_ID,
+			 T2.PASSWORD,
+			 T2.USER_NAME,
+			 T2.BANK_ORG_ID,
+			 T2.OWNER_ORG_ID,
+			 T2.USER_MOBILE,
+			 T2.USER_ADDRESS,
+			 T2.BEGIN_DATE,
+			 T2.END_DATE,
+			 T2.BUSI_LINE_ID,
+			 T2.GENDER_CODE,
+			 T2.USER_STATUS)
+</update>
+
 </mapper>

@@ -694,7 +694,4 @@ public class BscResultServiceImpl extends BaseService implements IBscResultServi
 		return  sql;
 	}
 
-
-
-
 }

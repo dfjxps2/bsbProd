@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.rx.system.domain.Resource;
 import com.rx.system.domain.SysUser;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 用户操作Dao接口
@@ -72,4 +73,14 @@ public interface UserDao {
 	public void deleteRoleByUserIdAndBankOrgId(Map<String, Object> paramMap) throws Exception;
 	
 	public void deleteInitPage(String userID) throws Exception;
+
+
+	public void deleteUserDataTemp() throws Exception;
+
+	public void insertBatchUserDataTemp(@Param("retList") List<Map<String, Object>> retList) throws Exception;
+	//merge data
+	public void mergeUserDataTemp() throws Exception;
+	//insert
+	public void insertBatchUserRoleRealData() throws Exception;
+
 }

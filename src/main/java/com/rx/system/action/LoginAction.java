@@ -12,6 +12,8 @@ import com.rx.log.SessionLogWriter;
 import com.rx.log.annotation.FunDesc;
 import com.rx.log.annotation.UseLog;
 import com.rx.system.base.BaseDispatchAction;
+import com.rx.system.bsc.synchrodata.CookieUtil;
+import com.rx.system.bsc.synchrodata.SynchronizedDataConstants;
 import com.rx.system.domain.SysUser;
 import com.rx.system.service.IUserService;
 import com.rx.system.service.impl.DataStore;
@@ -41,6 +43,9 @@ public class LoginAction extends BaseDispatchAction {
 		//获取前端登陆参数
 		//String user_id = request.getParameter("user_id");
 		//String password = request.getParameter("password");
+		String casUserId = CookieUtil.getValue(request, SynchronizedDataConstants.CAS_LOGIN_USER);
+		System.out.println("----------------cas--------="+casUserId);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&cas--------="+casUserId);
 		//CAS
 		String user_id = "00000";
 		String password = "1";
@@ -218,5 +223,7 @@ public class LoginAction extends BaseDispatchAction {
 	public void setLogWriter(SessionLogWriter logWriter) {
 		this.logWriter = logWriter;
 	}
+
+
 
 }

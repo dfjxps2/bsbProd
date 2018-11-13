@@ -70,6 +70,43 @@ Ext.onReady(function() {
 		}
 	});
 
+	//批量同步
+    function synchronizedUser(stat) {
+        if (stat == 'one' ){
+            var userID = Ext.getCmp("user_id").getValue();
+            if(userID ==null || userID =='' ||userID.length == 0){
+				Ext.MessageBox.alert("提示信息", "请输入要同步用户ID");
+				return;
+			}
+		}
+
+        var param = "?property="+stat+"&userID=" + userID ;
+        Ext.Ajax.request({
+            url : pathUrl + '/sys/user_synchronizedUserData.action' + param,
+            waitMsg : '正在处理,请稍候......',
+            method : 'POST',
+            timeout : 30000,
+            callback : function(options, success, response) {
+                var json = Ext.util.JSON.decode(response.responseText);
+                Ext.MessageBox.alert("提示信息",json.info);
+            },
+            failure : function(response, options) {
+                Ext.MessageBox.hide();
+                Ext.MessageBox.alert(response.responseText);
+            },
+            success : function(response, options) {
+                Ext.MessageBox.hide();
+                store.load({
+                    params : {
+                        start : 0,
+                        limit : 30
+                    }
+                });
+            }
+        });
+
+    }
+
 	var viewport = new Ext.Viewport({
 		layout : 'fit',
 		items : [{
@@ -78,8 +115,8 @@ Ext.onReady(function() {
 			border : false,
 			items : [{
 				xtype : 'form',
-				height : 72,
-				style : 'padding:4px 4px 4px 4px;',
+				height : 70,
+				style : 'padding:4px 4px 4px 2px;',
 				frame : true,
 				layout : 'column',
 				title : '查询条件',
@@ -129,7 +166,27 @@ Ext.onReady(function() {
 							}
 						});
 					}
-				}]
+				},
+				{
+					columnWidth : 0.06,
+					xtype : 'button',
+					height : 23,
+					text : '批量同步用户',
+					handler : function() {
+                        //synchronizedUser('batch');
+                        syncUser(store);
+					}
+				},
+				{
+					columnWidth : 0.06,
+					xtype : 'button',
+					height : 23,
+					text : '同步单个用户',
+					handler : function() {
+                        synchronizedUser('one')
+					}
+				}
+				]
 			}, {
 				xtype : 'grid',
 				id : 'gridPanel',
@@ -202,3 +259,4 @@ Ext.onReady(function() {
 		modifyUser(ownerOrgId, bankOrgId, userId, store);
 	});
 });
+

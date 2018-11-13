@@ -180,6 +180,132 @@ function addUser(store){
 	manageOrgSelector.initUI();	
 }
 
+
+
+/**
+ * 同步用户
+ */
+function syncUser(store) {
+    var syncUserPanel = new Ext.FormPanel({
+        frame: true,
+        url: pathUrl + '/sys/user_synchronizedUserData.action?property=batch',
+        layout: 'form',
+        border: false,
+        split: false,
+        labelAlign: 'left',
+        bodyStyle: 'padding: 5px',
+        labelWidth: 80,
+        items: [{
+            xtype: 'datefield',
+            name: 'startDt',
+            format: 'Y-m-d',
+            id: 'startDt',
+            fieldLabel: '开始时间',
+            anchor: '91%'
+        }, {
+            xtype: 'datefield',
+            name: 'endDt',
+            id: 'endDt',
+            format: 'Y-m-d',
+            fieldLabel: '结束时间',
+            anchor: '91%'
+        }]
+    });
+
+    var syncUserWindow = new Ext.Window({
+        title: '用户批量同步',
+        width: 300,
+        height: 180,
+        id: 'syncUserWindow',
+        layout: 'fit',
+        modal: true,
+        borer: false,
+        listeners: {
+            close: function () {
+                Ext.getCmp("syncUserWindow").destroy();
+            }
+        },
+        buttonAlign: 'center',
+        items: [syncUserPanel],
+        buttons: [{
+            text: '确定',
+            id: 'syncUser',
+            handler: function () {
+                if (syncUserPanel.form.isValid()) {
+                    var st = Ext.getCmp("startDt").value;
+                    var et = Ext.getCmp("endDt").value;
+                    syncUserPanel.form.submit({
+                        params : {
+                            startDt : st,
+                            endDt : et,
+                        },
+                        waitMsg: '正在处理,请稍后......',
+                        success: function (form, action) {
+                            if (action.result.success) {
+                                Ext.getCmp("syncUserWindow").destroy();
+                                store.reload();
+                                Ext.Msg.alert("提示信息", action.result.info);
+                            }
+                        },
+                        failure: function (form, action) {
+                            Ext.Msg.alert("提示信息", action.result.info);
+                        }
+                    });
+                } else {
+                    Ext.Msg.alert('提示信息', '请输入完整信息');
+                }
+            }
+        }, {
+            text: '取消',
+            handler: function () {
+                Ext.getCmp("syncUserWindow").destroy();
+            }
+        }]
+    });
+
+    syncUserWindow.show();
+}
+
+
+//批量同步
+function synchronizedUser(stat) {
+    if (stat == 'one' ){
+        var userID = Ext.getCmp("user_id").getValue();
+        if(userID ==null || userID =='' ||userID.length == 0){
+            Ext.MessageBox.alert("提示信息", "请输入要同步用户ID");
+            return;
+        }
+    }
+
+    var param = "?property="+stat+"&userID=" + userID ;
+    Ext.Ajax.request({
+        url : pathUrl + '/sys/user_synchronizedUserData.action' + param,
+        waitMsg : '正在处理,请稍候......',
+        method : 'POST',
+        timeout : 30000,
+        callback : function(options, success, response) {
+            var json = Ext.util.JSON.decode(response.responseText);
+            Ext.MessageBox.alert("提示信息",json.info);
+        },
+        failure : function(response, options) {
+            Ext.MessageBox.hide();
+            Ext.MessageBox.alert(response.responseText);
+        },
+        success : function(response, options) {
+            Ext.MessageBox.hide();
+            store.load({
+                params : {
+                    start : 0,
+                    limit : 30
+                }
+            });
+        }
+    });
+
+}
+
+
+
 function modifyUser(ownerOrgId, bankOrgId, userId, store){
 	var oldParam = "?oldOwerOrgId="+ownerOrgId+"&oldBankOrgId="+bankOrgId;
 	if(addWindow != null || editWindow != null)
@@ -745,25 +871,25 @@ var checkChildren = function(tree,id,state){
 		return ;
 	}
 }
-	
+
 //特殊授权
-function speciallyAuthorize(){
-	var record=Ext.getCmp("gridPanel").getSelectionModel().getSelected();
-	if(record==null){
-			Ext.MessageBox.alert('提示信息', '请选择一个用户！');
-			return ;
+function speciallyAuthorize() {
+    var record = Ext.getCmp("gridPanel").getSelectionModel().getSelected();
+    if (record == null) {
+        Ext.MessageBox.alert('提示信息', '请选择一个用户！');
+        return;
+    }
+    special_user_id = record.get('user_id');
+    special_user_name = record.get('user_name');
+
+    //弹出框之前机构定位总是当前用户机构
+    var comboStore = Ext.getCmp('myCombo').getStore();
+    comboStore.removeAll();
+    comboStore.insert(0, new Ext.data.Record({bank_org_id: bank_org_id, bank_org_name: bank_org_name}));
+    Ext.getCmp('myCombo').setValue("[" + bank_org_id + "]" + bank_org_name);
+    //加载特殊授权的菜单树
+    setResTree(special_user_id, bank_org_id);
+
+    Ext.getCmp('addWindow').show();
+    Ext.getCmp('addWindow').setTitle('为 <span style="color:red;"> ' + special_user_name + ' </span>分配特殊授权');
 	}
-	special_user_id=record.get('user_id');
-	special_user_name=record.get('user_name');
-	
-	//弹出框之前机构定位总是当前用户机构
-	var comboStore = Ext.getCmp('myCombo').getStore();
-	comboStore.removeAll();
-	comboStore.insert(0,new Ext.data.Record({bank_org_id:bank_org_id,bank_org_name:bank_org_name}));
-	Ext.getCmp('myCombo').setValue("["+bank_org_id+"]"+bank_org_name);
-	//加载特殊授权的菜单树
-	setResTree(special_user_id,bank_org_id);
-	
-	Ext.getCmp('addWindow').show();
-	Ext.getCmp('addWindow').setTitle('为 <span style="color:red;"> '+special_user_name+' </span>分配特殊授权');
-}

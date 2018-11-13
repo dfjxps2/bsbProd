@@ -8,6 +8,9 @@ import java.util.Map;
 import com.rx.log.annotation.FunDesc;
 import com.rx.log.annotation.UseLog;
 import com.rx.system.base.BaseDispatchAction;
+import com.rx.system.bsc.synchrodata.CookieUtil;
+import com.rx.system.bsc.synchrodata.SynchronizedDataConstants;
+import com.rx.system.bsc.synchrodata.WebClient;
 import com.rx.system.constant.Constant;
 import com.rx.system.domain.SysUser;
 import com.rx.system.service.IUserService;
@@ -201,6 +204,9 @@ public class UserAction extends BaseDispatchAction {
 	@FunDesc(code="SYS_0023")
 	@SuppressWarnings("unchecked")
 	public String getResourceTree(){
+		String casUserId = CookieUtil.getValue(request,SynchronizedDataConstants.CAS_LOGIN_USER);
+		System.out.println("----------------cas--------="+casUserId);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&cas--------="+casUserId);
 		try {
 			Map<String, Object> paramMap = getRequestParam(request);
 			paramMap.put("current_user_id", this.getCurrentUser().getUser_id());
@@ -268,8 +274,56 @@ public class UserAction extends BaseDispatchAction {
 		}
 		return null;
 	}
-	
-	
+
+
+
+	/**
+	 * 同步用户数据
+	 * @return
+	 * @throws Exception
+	 */
+	@FunDesc(code="SYS_0014")
+	@UseLog
+	public String synchronizedUserData()throws Exception {
+		List<Map<String,Object>> retList = null;
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		String propertyStat = request.getParameter("property");
+		String operationName = null;
+		if(SynchronizedDataConstants.SYNC_USER_PROPERTY.equals(propertyStat)){
+			String userID = request.getParameter("userID");
+			paramMap.put(SynchronizedDataConstants.GET_ONEUSER_START_PARAM_KEY,SynchronizedDataConstants.SYS_APP_ID);
+			paramMap.put(SynchronizedDataConstants.GET_ONEUSER_END_PARAM_KEY,userID);
+			operationName = SynchronizedDataConstants.GET_ONEUSER_WSDL_OPERATION_NAME;
+			retList = WebClient.getResultByDom4j(paramMap,operationName);
+		}else{
+			String startDt = request.getParameter("startDt");
+			if(null == startDt || "null".equals(startDt) ){
+				startDt = "";
+			}
+			String endDt = request.getParameter("endDt");
+			if(null == endDt || "null".equals(endDt) ){
+				endDt = "";
+			}
+			paramMap.put(SynchronizedDataConstants.GET_BATCHUSER_START_PARAM_KEY,SynchronizedDataConstants.SYS_APP_ID);
+			paramMap.put(SynchronizedDataConstants.GET_BATCHUSER_MIDDLE_PARAM_KEY,startDt);
+			paramMap.put(SynchronizedDataConstants.GET_BATCHUSER_END_PARAM_KEY,endDt);
+			operationName =SynchronizedDataConstants.GET_BATCHUSER_WSDL_OPERATION_NAME;
+			retList = WebClient.getResultByDom4j(paramMap,operationName);
+		}
+		if(null == retList || retList.size() ==0){
+			doSuccessInfoResponse("没有同步数据,请查询同步接口！");
+			return null;
+		}
+		try {
+			userService.synchronizedUserData(retList);
+			doSuccessInfoResponse("同步用户成功,同步用户数:"+retList.size());
+		} catch (Exception e) {
+			e.printStackTrace();
+			doFailureInfoResponse("同步用户失败:"+e.getMessage());
+		}
+		return null;
+	}
+
 	public void setUserService(IUserService userService) {
 		this.userService = userService;
 	}

@@ -75,5 +75,12 @@ public interface IUserService {
 	 * 删除某用户在某权限机构下的角色
 	 * */
 	public void deleteRoleByUserIdAndBankOrgId(Map<String, Object> paramMap) throws Exception;
+
+
+	/**
+	 *
+		同步用户数据
+	 */
+	public void synchronizedUserData(List<Map<String,Object>> retList) throws Exception;
 	
 }

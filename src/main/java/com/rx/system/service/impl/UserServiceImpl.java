@@ -199,8 +199,47 @@ public class UserServiceImpl extends BaseService implements IUserService {
 	public void deleteRoleByUserIdAndBankOrgId(Map<String, Object> paramMap) throws Exception{
 		
 	}
-	
-	
+
+	/**
+	 * 同步用户数据
+	 *   step0:delete data temp
+	 *   stet1:insert data temp
+	 *   step2:merge data
+	 * @param retList
+	 * @throws Exception
+	 */
+	@Override
+	@Transactional
+	public void synchronizedUserData(List<Map<String, Object>> retList) throws Exception {
+		//删除临时用户表数据
+		this.userDao.deleteUserDataTemp();
+		this.userDao.insertBatchUserDataTemp(retList);
+		//merge data
+		this.userDao.mergeUserDataTemp();
+		//insert UserRoleReal
+		this.userDao.insertBatchUserRoleRealData();
+
+	}
+
+
+	public void insertBatchUserDataTemp(List<Map<String, Object>> retList) throws Exception{
+		int listSize = retList.size();
+		int toIndex = 10000;
+		int keyToken = 0;
+		for(int i = 0;i<retList.size();i+=toIndex){
+			if(i+toIndex>listSize){        //作用为toIndex最后没有900条数据则剩余几条newList中就装几条
+				toIndex=listSize-i;
+			}
+			List dataList = retList.subList(i,i+toIndex);
+			insertBatchUserDataTemp(dataList);
+			keyToken++;
+		}
+
+
+	}
+
+
+
 	public void setUserDao(UserDao userDao) {
 		this.userDao = userDao;
 	}
