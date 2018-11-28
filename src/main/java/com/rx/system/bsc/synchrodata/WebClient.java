@@ -30,10 +30,12 @@ public class WebClient{
 		  OMFactory fac = OMAbstractFactory.getOMFactory();
 		  OMNamespace omNs = fac.createOMNamespace(SynchronizedDataConstants.SOAP_TARGET_NAMESPACE, ""); //http://tempuri.org/是命名空间
 		  String val ="";
-		  OMElement data = fac.createOMElement(operationName, omNs);      //获得要调用的方法名
+		  OMElement data = fac.createOMElement(operationName, omNs);
+		  //获得要调用的方法名
 		  for (Map.Entry<String, Object> entry : mp.entrySet()) {
 			 OMElement inner = fac.createOMElement(new QName(entry.getKey()));      //获得该方法名要调用的参数名
 			 val = entry.getValue() ==null ||"".equals(entry.getValue())? "":entry.getValue().toString();
+			 
 			 inner.setText(val);             //输入参数
 			 data.addChild(inner);             //将该参数加入要调用的方法节点
 		  }
@@ -112,7 +114,7 @@ public class WebClient{
 		 String operationName = SynchronizedDataConstants.GET_ONEUSER_WSDL_OPERATION_NAME;
 		 */
 
-		 mp.put("arg0","S0500");
+		 mp.put("arg0","S0101");
 		 mp.put("arg1","2018-01-01");
 		 mp.put("arg2","2018-12-01");
 		 String operationName = SynchronizedDataConstants.GET_BATCHUSER_WSDL_OPERATION_NAME;

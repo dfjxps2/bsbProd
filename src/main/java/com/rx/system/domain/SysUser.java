@@ -139,5 +139,4 @@ public class SysUser implements Serializable{
 		this.end_date = end_date;
 	}
 	
-	
 }

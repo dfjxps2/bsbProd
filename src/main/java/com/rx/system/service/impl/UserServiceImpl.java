@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rx.system.base.BaseService;
+import com.rx.system.dao.RoleDao;
 import com.rx.system.dao.UserDao;
 import com.rx.system.domain.Resource;
 import com.rx.system.domain.SysUser;
@@ -21,6 +22,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
 	private static String totalNum = "0";
 	
 	private UserDao userDao = null;//用户数据库查询接口
+	private RoleDao roleDao = null;//用户数据库查询接口
 	
 	//通过查询条件,查询出用户列表
 	public List<Map<String, Object>> listUsers(Map<String, Object> paramMap)throws Exception{
@@ -30,6 +32,11 @@ public class UserServiceImpl extends BaseService implements IUserService {
 		return toLowerMapList(userDao.listUsers(paramMap));
 	}
 	
+	//通过查询条件,查询出用户列表
+		public List<Map<String, Object>> userById()throws Exception{
+			return userDao.userById();
+		}
+	
 	//添加用户
 	public void addUser(SysUser user)throws Exception{
 		List<SysUser> userList = userDao.findUserById(user.getUser_id());
@@ -37,6 +44,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
 			throw new Exception("用户ID为【"+user.getUser_id()+"】的用户已存在。");
 		}
 		userDao.addUser(user);
+		roleDao.addUserRole(user.getUser_id(),"Excutive");
 	}
 	
 	//删除用户(删除用户、删除用户角色、删除用户特殊授权)
@@ -49,6 +57,11 @@ public class UserServiceImpl extends BaseService implements IUserService {
 		map.put("user_id", userID);
 		userDao.deleteSpeciallyAuthorize(map);
 		userDao.deleteInitPage(userID);
+	}
+	
+	//通过查询条件,查询出用户列表
+	public void updataUser(SysUser user)throws Exception{
+		userDao.modifyUser(user);
 	}
 	
 	//修改用户信息

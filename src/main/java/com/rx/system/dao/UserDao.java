@@ -17,11 +17,15 @@ public interface UserDao {
 	//通过查询条件,查询出用户列表
 	public List<Map<String, Object>> listUsers(Map<String, Object> paramMap)throws Exception;
 	
+	//通过查询条件,查询出用户列表
+	public List<Map<String, Object>> userById()throws Exception;
+	
 	//查询用户列表数量
 	public String getUsersCount(Map<String, Object> paramMap)throws Exception;
 	
 	//添加用户
 	public void addUser(SysUser user)throws Exception;
+	
 	
 	//删除用户
 	public void removeUser(String userID)throws Exception;

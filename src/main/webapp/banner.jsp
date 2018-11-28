@@ -21,35 +21,39 @@
 			    new parent.MyModifyWindowUi().show(window.top);
 			}
 			function logout() {
-				$.ajax({
+				window.close();
+				/* $.ajax({
 					url : pathUrl + '/login_doLogout.action',
 					type : 'POST',
 					data : {},
 					success : function(data) {
-						window.top.location.href = "${pageContext.request.contextPath}";
+						window.close();
 					}
-				});
+				}); */
 			}
 			function switchOrg(){
 				window.top.doSwitchOrg()
 			}
 		</script>
+		<style>
+		
+		</style>
 	</head>
 <body>
-	<div class="container" style="background-color: #2b5ca9;height:60px;">
+	<div class="container">
 		<div class="opt_item mpsws" style="height: 100%;line-height:100%;float:left;width:180px;" onclick="modifyPassword()">
-			<p style="text-align: center;color:#fff;font-size:20px;">指标管理系统</p>
+			<div id = "logo"></div><p id = "tit">指标管理系统</p>
 		</div>
-		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:60px;">
-		<div id = "log_out"></div>
+		<div class="opt_item mpsws" style="color:#fff;font-size:14px;height: 100%;float: right;width:100px;">
+		<div id = "log_out" onclick = "logout()" style="float: left"></div><p style="float: left;line-height: 26px;margin-left: 12px;">退出</p>
 		</div>
-		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;width:124px;" onclick="modifyPassword()">
+		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;padding-right: 44px;" onclick="modifyPassword()">
 			<div id = "up_prd" style="width: 20px;height: inherit;float: left;"></div>
-			<p style="text-align: left;margin: auto 5px;float: left;font-size:14px;height: 60px;line-height: 60px;">修改密码</p>
+			<p style="text-align: left;margin: auto 12px;float: left;font-size:14px;height: 54px;line-height: 54px;">修改密码</p>
 		</div>	
-		<div class="logininfo" style="height: 100%;line-height: 100%;float: right">
-		<p style="height: 60px;line-height: 60px;margin: auto 5px;">
-			当前用户:${currentUser.user_name}&nbsp;&nbsp;
+		<div class="logininfo" style="height: 100%;line-height: 100%;float: right;padding-right: 44px;">
+		<p style="height: 54px;line-height: 54px;margin: auto 5px;">
+			当前用户：&nbsp;${currentUser.user_name}
 		</p>
 		</div>
 	</div>

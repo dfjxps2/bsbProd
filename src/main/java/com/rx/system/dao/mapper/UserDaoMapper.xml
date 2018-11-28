@@ -47,6 +47,12 @@
 		<include refid="pageDataEnd"/>
 	</select>
 	
+	<!-- 通过查询条件,查询出用户列表 -->
+	<select id="userById" parameterType="map" resultType="hashmap">
+		select *
+		  from bsc_user_info
+	</select>
+	
 	<!-- 通过查询条件,查询出用户列表总记录数 -->
 	<select id="getUsersCount" parameterType="map" resultType="string">
 		<include refid="totalCountHeader"/>
@@ -67,6 +73,7 @@
 			order by a.user_id
 		<include refid="totalCountEnd"/>
 	</select>
+	
 	
 	<!-- 添加用户 -->
 	<insert id="addUser" parameterType="SysUser">
@@ -148,8 +155,8 @@
 			user_address=#{user_address},
 			user_post=#{user_post},
 			user_status=#{user_status},
-			begin_date=to_date(#{begin_date},'yyyy-mm-dd'),
-			end_date=to_date(#{end_date},'yyyy-mm-dd'),
+			<!-- begin_date=to_date(#{begin_date},'yyyy-mm-dd'),
+			end_date=to_date(#{end_date},'yyyy-mm-dd'), -->
 			busi_line_id = #{busi_line_id},
 			job_type_id = #{job_type_id}
 		where user_id=#{user_id}

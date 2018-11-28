@@ -4,10 +4,19 @@
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 		 version="3.0">
 
-<context-param>
+	<context-param>
 		<param-name>webAppRootKey</param-name>
 		<param-value>bscDemo.root</param-value>
 	</context-param>
+	
+	<!-- <context-param>
+		<param-name>portalLoginUrl1</param-name>
+		<param-value>https://127.0.0.1:8443/cas/login?locale=zh_CN&service=http%3A%2F%2F127.0.0.1%3A8080%2Fportal%2Fcallback%3Fclient_name%3DCasClient</param-value>
+	</context-param>
+	<context-param>
+		<param-name>serverName1</param-name>
+		<param-value>指标管理平台</param-value>
+	</context-param> -->
 	
 	<!-- spring 配置文件路径 -->
 	<context-param>
@@ -25,11 +34,8 @@
 		<param-value>60000</param-value>
 	</context-param>
 	
-	<!-- 登陆验证过滤器 -->
-	<filter>
-		<filter-name>sessionValidFilter</filter-name>
-		<filter-class>com.rx.system.filter.SessionValidFilter</filter-class>
-	</filter>
+	
+
 	
 	<!-- 主页数据加载过滤器 -->
 	<filter>
@@ -40,6 +46,12 @@
 			<param-value>false</param-value>
 		</init-param>
 	</filter>
+	
+	<!-- 主页监听器拦截配置 -->
+	<filter-mapping>
+		<filter-name>mainPageFilter</filter-name>
+		<url-pattern>/main.jsp</url-pattern>
+	</filter-mapping>
 	
 	<!-- 编码监听器 -->
 	<filter>
@@ -75,6 +87,96 @@
 	<listener>
 		<listener-class>com.rx.system.util.SystemSessionListener</listener-class>
 	</listener>
+	
+	<!--cas单点登录 -->
+	<filter>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://127.0.0.1:8443/cas/logout</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+	</listener>
+
+	<filter>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<!--<filter-class>org.jasig.cas.client.authentication.Saml11AuthenticationFilter</filter-class> -->
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<param-value>https://127.0.0.1:8443/cas/login</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://127.0.0.1:8088/bsbProd/</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<!--<filter-class>org.jasig.cas.client.validation.Saml11TicketValidationFilter</filter-class> -->
+		<filter-class>org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://127.0.0.1:8443/cas</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://127.0.0.1:8088/bsbProd/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>redirectAfterValidation</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>useSession</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>authn_method</param-name>
+			<param-value>mfa-duo</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS Authentication Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!--cas单点登录end -->
+		
+	
+	
+	
+	
+	<!-- 登陆验证过滤器 -->
+	<!-- <filter>
+		<filter-name>sessionValidFilter</filter-name>
+		<filter-class>com.rx.system.filter.SessionValidFilter</filter-class>
+	</filter> -->
 	
 	<!-- 系统初始化Servlet -->
 	<servlet>
@@ -117,7 +219,7 @@
 	
 	<filter-mapping>
 		<filter-name>sessionValidFilter</filter-name>
-		<url-pattern>*.action</url-pattern>
+		<url-pattern>*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sessionValidFilter</filter-name>
@@ -137,11 +239,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
-	<!-- 主页监听器拦截配置 -->
-	<filter-mapping>
-		<filter-name>mainPageFilter</filter-name>
-		<url-pattern>/main.jsp</url-pattern>
-	</filter-mapping>
 	
 	<!-- struts2标签 -->
 	<filter>
@@ -153,83 +250,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<!-- CAS融合 配置 Start -->
-	<filter>
-		<filter-name>CAS Single Sign Out Filter</filter-name>
-		<filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
-		<init-param>
-			<param-name>casServerUrlPrefix</param-name>
-			<param-value>https://cas4.example.org:8443/cas</param-value>
-		</init-param>
-	</filter>
-
-	<listener>
-		<listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
-	</listener>
-
-	<!--<filter>-->
-		<!--<filter-name>CAS Authentication Filter</filter-name>-->
-		<!--<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>-->
-		<!--<init-param>-->
-			<!--<param-name>casServerLoginUrl</param-name>-->
-			<!--<param-value>https://cas4.example.org:8443/cas/login?locale=zh_CN</param-value>-->
-		<!--</init-param>-->
-		<!--<init-param>-->
-			<!--<param-name>serverName</param-name>-->
-			<!--<param-value>http://localhost:8080/bsbProd/main.jsp</param-value>-->
-		<!--</init-param>-->
-	<!--</filter>-->
-
-	<!--<filter>-->
-		<!--<filter-name>CAS Validation Filter</filter-name>-->
-		<!--<filter-class>org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter</filter-class>-->
-		<!--<init-param>-->
-			<!--<param-name>casServerUrlPrefix</param-name>-->
-			<!--<param-value>https://cas4.example.org:8443/cas</param-value>-->
-		<!--</init-param>-->
-		<!--<init-param>-->
-			<!--<param-name>serverName</param-name>-->
-			<!--<param-value>http://portal-server:8080/bsbProd/main.jsp</param-value>-->
-		<!--</init-param>-->
-		<!--<init-param>-->
-			<!--<param-name>redirectAfterValidation</param-name>-->
-			<!--<param-value>true</param-value>-->
-		<!--</init-param>-->
-		<!--<init-param>-->
-			<!--<param-name>useSession</param-name>-->
-			<!--<param-value>true</param-value>-->
-		<!--</init-param>-->
-		<!--<init-param>-->
-			<!--<param-name>authn_method</param-name>-->
-			<!--<param-value>mfa-duo</param-value>-->
-		<!--</init-param>-->
-	<!--</filter>-->
-
-	<!--<filter>-->
-		<!--<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>-->
-		<!--<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>-->
-	<!--</filter>-->
-
-	<!--<filter-mapping>-->
-		<!--<filter-name>CAS Single Sign Out Filter</filter-name>-->
-		<!--<url-pattern>/*</url-pattern>-->
-	<!--</filter-mapping>-->
-
-	<!--<filter-mapping>-->
-		<!--<filter-name>CAS Validation Filter</filter-name>-->
-		<!--<url-pattern>/*</url-pattern>-->
-	<!--</filter-mapping>-->
-
-	<!--<filter-mapping>-->
-		<!--<filter-name>CAS Authentication Filter</filter-name>-->
-		<!--<url-pattern>/*</url-pattern>-->
-	<!--</filter-mapping>-->
-
-	<!--<filter-mapping>-->
-		<!--<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>-->
-		<!--<url-pattern>/*</url-pattern>-->
-	<!--</filter-mapping>-->
-	<!-- CAS融合 配置 End -->
 	
 	<!-- 导出EXCEL Service -->
 	<servlet>

@@ -18,6 +18,9 @@ public interface IUserService {
 	//通过查询条件,查询出用户列表
 	public List<Map<String, Object>> listUsers(Map<String, Object> paramMap)throws Exception;
 	
+	//通过查询条件,查询出用户列表
+	public List<Map<String, Object>> userById()throws Exception;
+	
 	//获取查询出用户列表的总数
 	public String getTotalNum();
 	
@@ -26,6 +29,9 @@ public interface IUserService {
 	
 	//删除用户
 	public void removeUser(String userID)throws Exception;
+	
+	//修改用户信息
+	public void updataUser(SysUser user)throws Exception;
 	
 	//修改用户信息
 	public void modifyUser(HttpServletRequest request,SysUser user)throws Exception;

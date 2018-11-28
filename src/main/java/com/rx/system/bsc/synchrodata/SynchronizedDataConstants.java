@@ -28,20 +28,23 @@ public class SynchronizedDataConstants {
 	public final static String SOAP_WSDL_ADDRESS = "http://127.0.0.1:18001/portal/intlDataSynchronizedService?wsdl";
 
 	public final static String SOAP_TARGET_NAMESPACE = "http://internal.synchrodata.security.portal.quick.com/";
+	
+	public final static String GET_CASLOGIN_URL = "https://127.0.0.1:8443/cas/login?locale=zh_CN&service=http%3A%2F%2F127.0.0.1%3A8080%2Fportal%2Fcallback%3Fclient_name%3DCasClient";
 
 	public final static String WSDL_SERVICE_NAME = "intlDataSynchronizedService";
 
 	public final static String GET_ONEUSER_WSDL_OPERATION_NAME = "getUsersDataByUserID";
 
-	public final static String GET_BATCHUSER_WSDL_OPERATION_NAME = "getUserApplicationPrivilegeByAppID";
+	public final static String GET_BATCHUSER_WSDL_OPERATION_NAME = "getUserBatchDataByAppName";
 
 
 	public final static String GET_ONEUSER_START_PARAM_KEY = "arg0";
 	public final static String GET_ONEUSER_END_PARAM_KEY = "arg1";
 
-	public final static String GET_BATCHUSER_START_PARAM_KEY = "arg0";
-	public final static String GET_BATCHUSER_MIDDLE_PARAM_KEY = "arg1";
+	
 	public final static String GET_BATCHUSER_END_PARAM_KEY = "arg2";
+	public final static String GET_BATCHUSER_MIDDLE_PARAM_KEY = "arg1";
+	public final static String GET_BATCHUSER_START_PARAM_KEY = "arg0";
 
 	public final static String SYS_APP_ID = "S0101";
 
@@ -51,6 +54,8 @@ public class SynchronizedDataConstants {
 	public final static long TIMEOUT_SECONDS =30000;
 
 	public final static String CAS_LOGIN_USER = "sbd.user_name";
+	
+	public final static String CAS_LOGIN_USER_ID= "sbd.user_id";
 
 	public static EndpointReference targetAirline = new EndpointReference(
 			SOAP_WSDL_ADDRESS);

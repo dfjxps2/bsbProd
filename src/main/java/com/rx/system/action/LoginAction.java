@@ -2,18 +2,23 @@ package com.rx.system.action;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.jasig.cas.client.authentication.AttributePrincipal;
 
 import com.rx.log.SessionLogWriter;
 import com.rx.log.annotation.FunDesc;
 import com.rx.log.annotation.UseLog;
 import com.rx.system.base.BaseDispatchAction;
-import com.rx.system.bsc.synchrodata.CookieUtil;
+import com.rx.system.bsc.synchrodata.Dom4jUtil;
 import com.rx.system.bsc.synchrodata.SynchronizedDataConstants;
+import com.rx.system.bsc.synchrodata.WebClient;
 import com.rx.system.domain.SysUser;
 import com.rx.system.service.IUserService;
 import com.rx.system.service.impl.DataStore;
@@ -43,24 +48,23 @@ public class LoginAction extends BaseDispatchAction {
 		//获取前端登陆参数
 		//String user_id = request.getParameter("user_id");
 		//String password = request.getParameter("password");
-		String casUserId = CookieUtil.getValue(request, SynchronizedDataConstants.CAS_LOGIN_USER);
-		System.out.println("----------------cas--------="+casUserId);
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&cas--------="+casUserId);
+		AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
+		String user_id = null;
+		if (String.valueOf(principal).equals("null")==false) {
+			user_id = principal.getName();
+		}
 		//CAS
-		String user_id = "00000";
 		String password = "1";
-
+		 List<Map<String,Object>> list =  getPortalUser();
 		//JSON返回结果Map
 		Map<String, Object> results = new HashMap<String, Object>();
+		//同步用户数据
+		getUserInfo(list);
 
 		try {
 			//根据输入用户名查询用户列表
 			SysUser user = userService.findUserById(user_id);
-
 			//判断用户不存在的情况
-			if (user == null)
-				throw new Exception("不存在用户[" + user_id + "]");
-
 			//验证密码是否一致
 			if (!user.getPassword().equals(password))
 				throw new Exception("密码输入错误");
@@ -82,12 +86,83 @@ public class LoginAction extends BaseDispatchAction {
 			results.put("info", e.getMessage());
 			doFailureInfoResponse(e.getMessage());
 		}
-
 		return "main";
-//		return null;
 	}
+	
+	private String getParamsByReq(HttpServletRequest request, String name) {
+		 ServletContext servletContext = request.getSession().getServletContext();
+		 String val = servletContext.getInitParameter(name);
+	    return val;
+	  }
+	
 
+	public List<Map<String,Object>> getPortalUser() throws Exception{
+		WebClient web = new WebClient();
+		 Map<String,Object> mp = new HashMap<String, Object>();
 
+		 mp.put("arg0",getParamsByReq(request, "thisName"));
+		 mp.put("arg1","");
+		 mp.put("arg2","");
+		 String operationName = SynchronizedDataConstants.GET_BATCHUSER_WSDL_OPERATION_NAME;
+		 String retXml = web.getWsdlResultByCode(mp,operationName); //传入参数名，参数值，方法名
+		 List<Map<String,Object>> retList = Dom4jUtil.readDom4jXml(retXml);
+		 return retList;
+	}
+	
+	public void getUserInfo(List<Map<String, Object>> retList) throws Exception{
+		 for (int i = 0; i < retList.size(); i++) {
+			 if (ifUser((String) retList.get(i).get("user_name"))){
+				userService.updataUser(setUser(retList.get(i)));
+			 }else {
+				userService.addUser(setUser(retList.get(i)));
+			}
+		}
+	}
+	
+	public boolean ifUser(String user_name) throws Exception{
+		List<Map<String, Object>> list = userService.userById();
+		for (int j = 0; j < list.size(); j++) {
+			if (user_name.equals(list.get(j).get("USER_ID"))) {
+				return true;
+			}
+		}	
+		return false;
+	}
+	
+	public boolean ifThisUser(List<Map<String, Object>> list,String user_name) throws Exception{
+		for (int j = 0; j < list.size(); j++) {
+			if (user_name.equals(list.get(j).get("user_name"))) {
+				return true;
+			}
+		}	
+		return false;
+		
+	}
+	
+	public SysUser setUser(Map<String, Object> map){
+		SysUser user = new SysUser();
+		 user.setUser_id((String) map.get("user_name"));
+		 user.setPassword("1");
+		 user.setUser_name((String) map.get("user_real_name"));
+		 user.setBank_org_id("460106");
+		 user.setBank_org_name("460106");
+		 user.setCert_id("1");
+		 user.setGender_code("0");
+		 user.setUser_mobile((String) map.get("user_tel"));
+		 user.setUser_email("");
+		 user.setUser_address("");
+		 user.setUser_post("");
+		 user.setUser_status("00");
+		 user.setBegin_date("");
+		 user.setEnd_date("");
+		 user.setBusi_line_id("oth");
+		 user.setJob_type_id("00");
+		 user.setOwner_org_id("");
+		 user.setOwner_org_name("");
+		 return user;
+	}
+	
+	
 	/**
 	 * 用户退出
 	 *

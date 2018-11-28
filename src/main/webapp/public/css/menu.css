@@ -1,14 +1,12 @@
 @CHARSET "UTF-8";
 #nav {
-	width: 174px;
-	line-height: 40px;
+	width: 200px;
+	line-height: 46px;
 	list-style-type: none;
-	color:#fff;
 	/*定义整个ul菜单的行高和背景色*/
-	margin-top: 20px;
 }
 #menu{
-background-color: #2e3d50;	
+background-color: #292d37;	
 	
 }
 
@@ -44,9 +42,9 @@ background-color: #2e3d50;
 	width: 100%;
 	display: block;
 	font-family: "微软雅黑", "宋体", Arial, sans-serif;
-	font-size:16px;
+	font-size:14px;
 	height:45px;
-	color:#fff;
+	color:#d4d6dc;
 	font-weight: bold;
 	display: inline-block;
 	text-decoration: none;
@@ -54,7 +52,7 @@ background-color: #2e3d50;
 	/*Width(一定要)，否则下面的Li会变形*/
 }
 #nav .level1 a{
-	font-size:14px;
+	font-size:12px;
 }
 #nav .item_focus{
 	background-color: #0c1f36;
@@ -68,10 +66,10 @@ background-color: #2e3d50;
 
 
 #nav a:hover {
-	color: #3f8aff;
+	color:#fff;
 	text-decoration: none;
 	font-weight: bold;
-	background-color: #0c1f36;
+	background-color: #448aff;
 }
 
 /*==================二级目录===================*/
@@ -85,9 +83,11 @@ background-color: #2e3d50;
 	background-color: #17283C;
 	z-index: -12;
 	width: 100%;
+	margin-bottom: -14px;
 }
 #nav li ul li a:hover {
-	background-color: #0c1f36;
+	color:#fff;
+	background-color: #448aff;
 
 	}
 
@@ -97,9 +97,7 @@ background-color: #2e3d50;
 .a1,.a2{
 	margin-top: 17px
 }
-.a0{
-	margin-top: 4px;
-}
+
 
 #nav li ul li {
 	margin: 0px;
@@ -114,9 +112,11 @@ background-color: #2e3d50;
 	
 }
 .a0{
-	margin-left: 24px;
+	margin-left: 20px;
 
 	}
+	
+	
 
 .a1{
 	margin-left: 40px;
@@ -131,14 +131,13 @@ background-color: #2e3d50;
  
 /*下面是二级目录的链接样式*/
 #nav li ul a:link {
-	color:#fff;
+	color:#d4d6dc;
 	text-decoration: none;
 	outline: none;
 }
 
 #nav li ul a:hover {
-	color: #3f8aff;
-	background-image: none;
+	color:#fff;
 	font-weight: normal;
 }
 
@@ -166,15 +165,16 @@ background-color: #2e3d50;
 	width:100%;
 	list-style: none;
 	text-align: center;
-	background-color:#17283c;
+	background-color:#17283C;
 	margin-top: 12px;
 	z-index: 1;
 	padding-top: 0px;
+    margin-bottom: -15px;
 }
 
-#nav li ul li ul li{
+/* #nav li ul li ul li{
 	height : 32px;
-}
+} */
 
 #nav li ul li ul a {
 	width: 100%;
@@ -188,7 +188,7 @@ background-color: #2e3d50;
  
 /*下面是三级目录的链接样式*/
 #nav li ul li ul a:link {
-	color: #fff;
+	color:#d4d6dc;
 	text-decoration: none;
 	vertical-align: middle;
 	outline: none;

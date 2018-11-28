@@ -5,7 +5,7 @@ MainFrameUI = Ext.extend(Ext.Viewport,{
 			items: [{
 				xtype : 'panel',
 				region : 'north',
-				height : 60,
+				height : 54,
 				hideCollapseTool : true,
 				contentEl : 'north'
 			},{
@@ -16,7 +16,7 @@ MainFrameUI = Ext.extend(Ext.Viewport,{
 				},{
 				region : 'west',
 				xtype : 'panel',
-				width : 174,
+				width : 200,
 				layout : 'border',
 				height: '100%',
 				collapsible : true,
@@ -36,10 +36,6 @@ MainFrameUI = Ext.extend(Ext.Viewport,{
 					split: false,
 					border : false
 				}]
-			},{
-				region: 'south',
-				height: 30,
-				html: '<div class="main_footer">北京泰豪智能工程有限公司</div>'
 			}]
 		});
 		MainFrameUI.superclass.initComponent.call(this);

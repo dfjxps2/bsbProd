@@ -27,6 +27,9 @@ public interface RoleDao {
 	//删除角色
 	public void removeRole(SysRole role)throws Exception;
 	
+	//添加用户
+	public void addUserRole(String user_id,String role_id)throws Exception;
+	
 	//删除角色对应资源关系
 	public void deleteRoleResourceRela(String roleID)throws Exception;
 	
