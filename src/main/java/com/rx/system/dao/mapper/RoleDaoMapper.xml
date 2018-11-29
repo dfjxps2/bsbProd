@@ -52,7 +52,7 @@
 	
 	<!-- 添加用户角色 -->
 	<insert id="addUserRole" parameterType="string">
-	insert into bsc_user_role_rela(user_id,role_id) values(#{user_id},#{role_id})
+	insert into bsc_user_role_rela(user_id,role_id) values (#{user_id},#{role_id})
 	</insert>
 	
 	<delete id="deleteRoleUserRela" parameterType="string">

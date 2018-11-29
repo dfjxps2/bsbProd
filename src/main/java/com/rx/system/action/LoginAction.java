@@ -1,5 +1,6 @@
 package com.rx.system.action;
 
+import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.rx.system.bsc.synchrodata.CookieUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
 import com.rx.log.SessionLogWriter;
@@ -48,14 +51,21 @@ public class LoginAction extends BaseDispatchAction {
 		//获取前端登陆参数
 		//String user_id = request.getParameter("user_id");
 		//String password = request.getParameter("password");
-		AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
+/*		AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
 		String user_id = null;
 		if (String.valueOf(principal).equals("null")==false) {
 			user_id = principal.getName();
+
+		}*/
+		String user_id = getCasLoginUsername();
+		if(null == user_id || "".equals(user_id)){
+			user_id = CookieUtil.getValue(request, SynchronizedDataConstants.CAS_LOGIN_USER);
 		}
+		System.out.println("------------------user_id---------="+user_id);
+		System.out.println("------------------user_id---------="+user_id);
 		//CAS
 		String password = "1";
-		 List<Map<String,Object>> list =  getPortalUser();
+		 List<Map<String,Object>> list =  getPortalUser(user_id);
 		//JSON返回结果Map
 		Map<String, Object> results = new HashMap<String, Object>();
 		//同步用户数据
@@ -88,15 +98,44 @@ public class LoginAction extends BaseDispatchAction {
 		}
 		return "main";
 	}
+	private String getCasLoginUsername() {
+		String username = request.getRemoteUser();
+		if(StringUtils.isNotBlank(username))
+			return username;
+		Principal pal = request.getUserPrincipal();
+		if(pal != null){
+			username = pal.getName();
+			if(username != null)
+				return username;
+		}
+		Object obj = request.getAttribute("credentials");
+		if(obj != null){
+			return obj.toString();
+		}
+
+		return username;
+	}
+
 	
 	private String getParamsByReq(HttpServletRequest request, String name) {
 		 ServletContext servletContext = request.getSession().getServletContext();
 		 String val = servletContext.getInitParameter(name);
 	    return val;
 	  }
-	
 
-	public List<Map<String,Object>> getPortalUser() throws Exception{
+
+	public List<Map<String,Object>> getPortalUser(String user_id) throws Exception{
+		WebClient web = new WebClient();
+		Map<String,Object> mp = new HashMap<String, Object>();
+		mp.put("arg0",getParamsByReq(request, "thisName"));
+		mp.put("arg1",user_id);
+		String operationName = SynchronizedDataConstants.GET_ONEUSER_WSDL_OPERATION_NAME;
+		String retXml = web.getWsdlResultByCode(mp,operationName); //传入参数名，参数值，方法名
+		List<Map<String,Object>> retList = Dom4jUtil.readDom4jXml(retXml);
+		return retList;
+	}
+
+/*	public List<Map<String,Object>> getPortalUser() throws Exception{
 		WebClient web = new WebClient();
 		 Map<String,Object> mp = new HashMap<String, Object>();
 
@@ -107,7 +146,7 @@ public class LoginAction extends BaseDispatchAction {
 		 String retXml = web.getWsdlResultByCode(mp,operationName); //传入参数名，参数值，方法名
 		 List<Map<String,Object>> retList = Dom4jUtil.readDom4jXml(retXml);
 		 return retList;
-	}
+	}*/
 	
 	public void getUserInfo(List<Map<String, Object>> retList) throws Exception{
 		 for (int i = 0; i < retList.size(); i++) {

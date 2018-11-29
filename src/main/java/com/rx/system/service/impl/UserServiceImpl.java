@@ -22,7 +22,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
 	private static String totalNum = "0";
 	
 	private UserDao userDao = null;//用户数据库查询接口
-	private RoleDao roleDao = null;//用户数据库查询接口
+//	private RoleDao roleDao = null;//用户数据库查询接口
 	
 	//通过查询条件,查询出用户列表
 	public List<Map<String, Object>> listUsers(Map<String, Object> paramMap)throws Exception{
@@ -44,7 +44,10 @@ public class UserServiceImpl extends BaseService implements IUserService {
 			throw new Exception("用户ID为【"+user.getUser_id()+"】的用户已存在。");
 		}
 		userDao.addUser(user);
-		roleDao.addUserRole(user.getUser_id(),"Excutive");
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("user_id",user.getUser_id());
+		paramMap.put("role_id","Excutive");
+		userDao.addUserRole(paramMap);
 	}
 	
 	//删除用户(删除用户、删除用户角色、删除用户特殊授权)
@@ -256,6 +259,7 @@ public class UserServiceImpl extends BaseService implements IUserService {
 	public void setUserDao(UserDao userDao) {
 		this.userDao = userDao;
 	}
+
 
 	public String getTotalNum() {
 		return totalNum;

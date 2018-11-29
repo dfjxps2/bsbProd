@@ -25,7 +25,7 @@ public class SynchronizedDataConstants {
 	 public static final String USERID_PARAM_ISNULL_FAIL_MSG = "用户帐号参数为空，请核对输入条件";
 
 
-	public final static String SOAP_WSDL_ADDRESS = "http://127.0.0.1:18001/portal/intlDataSynchronizedService?wsdl";
+	public final static String SOAP_WSDL_ADDRESS = "http://10.10.10.42:18001/portal/intlDataSynchronizedService?wsdl";
 
 	public final static String SOAP_TARGET_NAMESPACE = "http://internal.synchrodata.security.portal.quick.com/";
 	
