@@ -49,20 +49,10 @@ public class LoginAction extends BaseDispatchAction {
 	@UseLog
 	public String doLogin() throws Exception {
 		//获取前端登陆参数
-		//String user_id = request.getParameter("user_id");
-		//String password = request.getParameter("password");
-/*		AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
-		String user_id = null;
-		if (String.valueOf(principal).equals("null")==false) {
-			user_id = principal.getName();
-
-		}*/
 		String user_id = getCasLoginUsername();
-		if(null == user_id || "".equals(user_id)){
+		if(null == user_id || "".equals(user_id) || "null".equals(user_id)){
 			user_id = CookieUtil.getValue(request, SynchronizedDataConstants.CAS_LOGIN_USER);
 		}
-		System.out.println("------------------user_id---------="+user_id);
-		System.out.println("------------------user_id---------="+user_id);
 		//CAS
 		String password = "1";
 		 List<Map<String,Object>> list =  getPortalUser(user_id);
