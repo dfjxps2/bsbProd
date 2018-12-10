@@ -1,4 +1,7 @@
-<%@ page contentType="text/html; charset=utf-8" isELIgnored="false" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*,com.rx.system.action.LoginAction" contentType="text/html; charset=utf-8" pageEncoding="utf-8" isELIgnored="false"%>
+<%
+	String casUrl = (String) session.getAttribute("casUrl");
+%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -10,26 +13,28 @@
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/banner.css" />
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/public/css/font-awesome/css/font-awesome.min.css" />
 		<script type="text/javascript">
+            var url = '<%=casUrl%>';
 			$(function(){
 				//$('.container').width(screen.width);
 				$('.r_bg').width(screen.width-174-20);
 				$('.r_bg_r').width(screen.width-154-20-773);
 			});
 			var pathUrl = '${pageContext.request.contextPath}';
+
 			//修改用户密码
 			function modifyPassword(){
 			    new parent.MyModifyWindowUi().show(window.top);
 			}
 			function logout() {
-				window.close();
-				/* $.ajax({
-					url : pathUrl + '/login_doLogout.action',
-					type : 'POST',
-					data : {},
-					success : function(data) {
-						window.close();
-					}
-				}); */
+                $.ajax({
+                    url : pathUrl + '/login_doLogout.action',
+                    type : 'POST',
+                    async:false,
+                    data : {},
+                    success : function(data) {
+                        window.top.location.href = url;
+                    }
+                });
 			}
 			function switchOrg(){
 				window.top.doSwitchOrg()
@@ -44,8 +49,8 @@
 		<div class="opt_item mpsws" style="height: 100%;line-height:100%;float:left;width:180px;" onclick="modifyPassword()">
 			<div id = "logo"></div><p id = "tit">指标管理系统</p>
 		</div>
-		<div class="opt_item mpsws" style="color:#fff;font-size:14px;height: 100%;float: right;width:100px;">
-		<div id = "log_out" onclick = "logout()" style="float: left"></div><p style="float: left;line-height: 26px;margin-left: 12px;">退出</p>
+		<div class="opt_item mpsws" style="color:#fff;font-size:14px;height: 100%;float: right;width:100px;" onclick = "logout()">
+		<div id = "log_out"  style="float: left"></div><p style="float: left;line-height: 26px;margin-left: 12px;">退出</p>
 		</div>
 		<div class="opt_item mpsws" style="color:#fff;font-size:16px;height: 100%;float: right;padding-right: 44px;" onclick="modifyPassword()">
 			<div id = "up_prd" style="width: 20px;height: inherit;float: left;"></div>

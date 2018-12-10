@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.rx.system.bsc.synchrodata.CookieUtil;
+import com.rx.system.bsc.synchrodata.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
@@ -19,9 +19,6 @@ import com.rx.log.SessionLogWriter;
 import com.rx.log.annotation.FunDesc;
 import com.rx.log.annotation.UseLog;
 import com.rx.system.base.BaseDispatchAction;
-import com.rx.system.bsc.synchrodata.Dom4jUtil;
-import com.rx.system.bsc.synchrodata.SynchronizedDataConstants;
-import com.rx.system.bsc.synchrodata.WebClient;
 import com.rx.system.domain.SysUser;
 import com.rx.system.service.IUserService;
 import com.rx.system.service.impl.DataStore;
@@ -79,7 +76,7 @@ public class LoginAction extends BaseDispatchAction {
 			//加载系统时间
 			session.setAttribute("sysDate", store.getSysDate());
 			session.setAttribute("currentMonth", store.getCurrentMonth());
-
+			session.setAttribute("casUrl",this.getServerIp());
 			doSuccessInfoResponse("登陆成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -106,8 +103,8 @@ public class LoginAction extends BaseDispatchAction {
 		return username;
 	}
 
-	
-	private String getParamsByReq(HttpServletRequest request, String name) {
+
+	public static String getParamsByReq(HttpServletRequest request, String name) {
 		 ServletContext servletContext = request.getSession().getServletContext();
 		 String val = servletContext.getInitParameter(name);
 	    return val;
@@ -124,6 +121,19 @@ public class LoginAction extends BaseDispatchAction {
 		List<Map<String,Object>> retList = Dom4jUtil.readDom4jXml(retXml);
 		return retList;
 	}
+
+
+
+	public  String getServerIp(){
+		String casUrl = PropertiesUtil.getPropery("cas.server.ip");
+		String path = request.getScheme() + "://" + request.getServerName()
+				+ ":" + request.getServerPort();
+		String retProtalUrl = path.concat("/portal");
+		String logoutUrl = casUrl.concat("/logout?service=").concat(urlEncode(retProtalUrl));
+		return logoutUrl;
+
+	}
+
 
 /*	public List<Map<String,Object>> getPortalUser() throws Exception{
 		WebClient web = new WebClient();
@@ -228,7 +238,6 @@ public class LoginAction extends BaseDispatchAction {
 			results.put("info", e.getMessage());
 			doFailureInfoResponse(e.getMessage());
 		}
-
 		return null;
 	}
 
@@ -315,6 +324,15 @@ public class LoginAction extends BaseDispatchAction {
 		return request.getHeader("x-forwarded-for");
 	}
 
+	public static String urlEncode(String str) {
+		if("".equals(str) || null ==str)
+			return str;
+		try {
+			return java.net.URLEncoder.encode(str, "UTF-8");
+		} catch (Exception ex) {
+			return str;
+		}
+	}
 
 	public void setUserService(IUserService userService) {
 		this.userService = userService;
@@ -327,6 +345,8 @@ public class LoginAction extends BaseDispatchAction {
 	public void setLogWriter(SessionLogWriter logWriter) {
 		this.logWriter = logWriter;
 	}
+
+
 
 
 
